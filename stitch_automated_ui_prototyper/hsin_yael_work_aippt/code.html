@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI PM Portfolio - Inspector View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Departure Mono representation using a close alternative or standard monospace for fallback as it's a custom font -->
+<style>
+        @font-face {
+            font-family: 'Departure Mono';
+            src: local('Courier New'), monospace; /* Fallback */
+        }
+        
+        /* Custom scrollbar to match dossier feel */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ffffff;
+            border-left: 1px solid #1a1b26;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a1b26;
+        }
+        
+        /* Ensure fixed height to prevent scrolling on the main wrapper */
+        body, html {
+            height: 100%;
+            overflow: hidden;
+            background-color: #ffffff; /* Canvas */
+            color: #1a1b26; /* On-surface */
+        }
+    </style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-error-container": "#93000a",
+                "on-primary-container": "#b3b7ff",
+                "on-tertiary": "#ffffff",
+                "surface-variant": "#e3e1f1",
+                "secondary": "#5f5e5e",
+                "on-tertiary-fixed": "#410000",
+                "surface-bright": "#fbf8ff",
+                "surface": "#fbf8ff",
+                "surface-muted": "#f2f2f2",
+                "primary-fixed-dim": "#bfc2ff",
+                "surface-container": "#eeecfc",
+                "surface-tint": "#353cff",
+                "text-muted": "#666666",
+                "tertiary-fixed": "#ffdad5",
+                "secondary-container": "#e5e2e1",
+                "background-canvas": "#ffffff",
+                "inverse-primary": "#bfc2ff",
+                "on-tertiary-container": "#ffa699",
+                "surface-container-highest": "#e3e1f1",
+                "on-secondary-fixed-variant": "#474646",
+                "signal-green": "#25e85c",
+                "on-primary": "#ffffff",
+                "on-error": "#ffffff",
+                "inverse-surface": "#2f2f3b",
+                "surface-container-high": "#e9e6f6",
+                "tertiary": "#730001",
+                "on-surface": "#1a1b26",
+                "on-surface-variant": "#454558",
+                "error": "#ba1a1a",
+                "tertiary-container": "#9e0002",
+                "surface-container-lowest": "#ffffff",
+                "error-container": "#ffdad6",
+                "primary-container": "#0500ff",
+                "tertiary-fixed-dim": "#ffb4a8",
+                "inverse-on-surface": "#f1efff",
+                "secondary-fixed": "#e5e2e1",
+                "secondary-fixed-dim": "#c8c6c5",
+                "border-primary": "#111111",
+                "outline": "#757589",
+                "surface-dim": "#dad8e8",
+                "primary-fixed": "#e0e0ff",
+                "border-muted": "#d8d8d4",
+                "background": "#fbf8ff",
+                "on-secondary-fixed": "#1c1b1b",
+                "surface-container-low": "#f5f2ff",
+                "on-primary-fixed": "#00006e",
+                "on-secondary-container": "#656464",
+                "on-secondary": "#ffffff",
+                "on-tertiary-fixed-variant": "#930002",
+                "primary": "#0200bb",
+                "on-primary-fixed-variant": "#0400ef",
+                "on-background": "#1a1b26",
+                "outline-variant": "#c5c4db"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "stack-md": "24px",
+                "stack-sm": "12px",
+                "stack-xs": "4px",
+                "gutter": "1px",
+                "panel-margin": "24px",
+                "inner-padding": "16px"
+        },
+        "fontFamily": {
+                "display-lg": [
+                        "Departure Mono"
+                ],
+                "label-mono": [
+                        "IBM Plex Mono"
+                ],
+                "display-mobile": [
+                        "Departure Mono"
+                ],
+                "headline-md": [
+                        "JetBrains Mono"
+                ],
+                "display-xl": [
+                        "Departure Mono"
+                ],
+                "status-code": [
+                        "JetBrains Mono"
+                ],
+                "body-base": [
+                        "JetBrains Mono"
+                ]
+        },
+        "fontSize": {
+                "display-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-mono": [
+                        "11px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.08em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "display-mobile": [
+                        "28px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "500"
+                        }
+                ],
+                "display-xl": [
+                        "48px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "400"
+                        }
+                ],
+                "status-code": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-base": [
+                        "14px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+</head>
+<body class="bg-background-canvas text-on-surface antialiased h-screen w-screen overflow-hidden flex">
+<!-- Top Navigation for Mobile (Hidden on Desktop) -->
+<nav class="md:hidden fixed top-0 w-full h-12 bg-transparent flex justify-between items-center px-inner-padding border-b border-on-surface z-50 bg-background-canvas">
+<div class="font-status-code text-status-code text-on-surface-variant">PROJECT_INSPECTOR_V1</div>
+<div class="flex space-x-4">
+<span class="text-on-surface underline font-label-mono text-label-mono">INDEX</span>
+<span class="text-on-surface-variant opacity-50 font-label-mono text-label-mono">PREVIEW</span>
+</div>
+</nav>
+<!-- Master Grid Container -->
+<main class="flex h-full w-full pt-12 md:pt-0">
+<!-- Column 1: Nav Rail (SideNavBar from JSON) -->
+<aside class="hidden md:flex flex-col justify-between h-full w-[100px] border-r border-on-surface bg-background-canvas py-panel-margin flex-shrink-0 z-20">
+<!-- Header/Logo Area -->
+<div class="flex flex-col items-center gap-stack-sm">
+<div class="w-10 h-10 border border-on-surface flex items-center justify-center bg-surface-muted rounded-none">
+<span class="font-display-lg text-display-lg uppercase tracking-tighter text-on-surface">H</span>
+</div>
+<div class="text-center mt-2">
+<h1 class="font-label-mono text-label-mono text-on-surface uppercase block transform -rotate-90 origin-left translate-x-3 translate-y-10 whitespace-nowrap">HSIN YAEL</h1>
+<span class="font-status-code text-[8px] text-on-surface-variant block mt-24">V.2026</span>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex flex-col items-center gap-stack-md mt-16 w-full">
+<!-- Active Tab: Work -->
+<a class="group relative flex flex-col items-center justify-center w-full h-12 hover:bg-surface-muted transition-colors text-primary font-bold border-l-2 border-primary pl-0 translate-x-1 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open" style="font-variation-settings: 'FILL' 1;">folder_open</span>
+<span class="font-label-mono text-[9px] uppercase mt-1">Work</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="group relative flex flex-col items-center justify-center w-full h-12 hover:text-primary transition-colors text-on-surface-variant pl-0 border-l-2 border-transparent hover:bg-surface-muted" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-mono text-[9px] uppercase mt-1">About</span>
+</a>
+<a class="group relative flex flex-col items-center justify-center w-full h-12 hover:text-primary transition-colors text-on-surface-variant pl-0 border-l-2 border-transparent hover:bg-surface-muted" href="#">
+<span class="material-symbols-outlined" data-icon="science">science</span>
+<span class="font-label-mono text-[9px] uppercase mt-1">Play</span>
+</a>
+<a class="group relative flex flex-col items-center justify-center w-full h-12 hover:text-primary transition-colors text-on-surface-variant pl-0 border-l-2 border-transparent hover:bg-surface-muted" href="#">
+<span class="material-symbols-outlined" data-icon="alternate_email">alternate_email</span>
+<span class="font-label-mono text-[9px] uppercase mt-1">Contact</span>
+</a>
+</nav>
+<!-- Footer Status -->
+<div class="flex flex-col items-center gap-stack-xs text-on-surface-variant pb-inner-padding">
+<span class="material-symbols-outlined text-[16px]" data-icon="terminal">terminal</span>
+<span class="material-symbols-outlined text-[16px] mt-2" data-icon="location_on">location_on</span>
+</div>
+</aside>
+<!-- Column 2: Index (Project List) -->
+<section class="flex flex-col h-full w-full md:w-[30%] border-r border-on-surface bg-background-canvas flex-shrink-0 relative overflow-hidden">
+<!-- Header -->
+<div class="p-inner-padding border-b border-on-surface h-32 flex items-end bg-surface-muted">
+<h2 class="font-headline-md text-headline-md text-on-surface leading-tight w-[90%]">
+                    AI PM creating intelligent and visual experiences.
+                </h2>
+</div>
+<!-- List View -->
+<div class="flex-1 overflow-y-auto w-full">
+<ul class="flex flex-col w-full">
+<!-- Project 01: Active -->
+<li class="relative w-full border-b border-on-surface bg-surface-muted cursor-pointer flex items-stretch min-h-[80px] group">
+<div class="w-[4px] bg-primary h-full absolute left-0 top-0"></div>
+<div class="flex items-center justify-center px-4 font-display-lg text-display-lg text-primary w-16 border-r border-on-surface opacity-50">
+                            01
+                        </div>
+<div class="flex-1 p-inner-padding flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-primary tracking-tight">AIPPT</h3>
+<span class="font-label-mono text-label-mono text-on-surface-variant mt-1 uppercase">// GENERATIVE PRESENTATION</span>
+</div>
+</li>
+<!-- Project 02: Inactive -->
+<li class="relative w-full border-b border-on-surface bg-background-canvas hover:bg-surface-muted cursor-pointer flex items-stretch min-h-[80px] group transition-colors">
+<div class="w-[4px] bg-transparent h-full absolute left-0 top-0 group-hover:bg-outline-variant transition-colors"></div>
+<div class="flex items-center justify-center px-4 font-display-lg text-display-lg text-on-surface-variant w-16 border-r border-on-surface opacity-30">
+                            02
+                        </div>
+<div class="flex-1 p-inner-padding flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-on-surface tracking-tight group-hover:text-primary transition-colors">AI Paper</h3>
+<span class="font-label-mono text-label-mono text-outline mt-1 uppercase">// RESEARCH ASSISTANT</span>
+</div>
+</li>
+<!-- Project 03: Inactive -->
+<li class="relative w-full border-b border-on-surface bg-background-canvas hover:bg-surface-muted cursor-pointer flex items-stretch min-h-[80px] group transition-colors">
+<div class="w-[4px] bg-transparent h-full absolute left-0 top-0 group-hover:bg-outline-variant transition-colors"></div>
+<div class="flex items-center justify-center px-4 font-display-lg text-display-lg text-on-surface-variant w-16 border-r border-on-surface opacity-30">
+                            03
+                        </div>
+<div class="flex-1 p-inner-padding flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-on-surface tracking-tight group-hover:text-primary transition-colors">AI Design</h3>
+<span class="font-label-mono text-label-mono text-outline mt-1 uppercase">// UI GENERATION TOOL</span>
+</div>
+</li>
+<!-- Project 04: Inactive -->
+<li class="relative w-full border-b border-on-surface bg-background-canvas hover:bg-surface-muted cursor-pointer flex items-stretch min-h-[80px] group transition-colors">
+<div class="w-[4px] bg-transparent h-full absolute left-0 top-0 group-hover:bg-outline-variant transition-colors"></div>
+<div class="flex items-center justify-center px-4 font-display-lg text-display-lg text-on-surface-variant w-16 border-r border-on-surface opacity-30">
+                            04
+                        </div>
+<div class="flex-1 p-inner-padding flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-on-surface tracking-tight group-hover:text-primary transition-colors">AI Music</h3>
+<span class="font-label-mono text-label-mono text-outline mt-1 uppercase">// AUDIO SYNTHESIS</span>
+</div>
+</li>
+<!-- Project 05: Inactive -->
+<li class="relative w-full border-b border-on-surface bg-background-canvas hover:bg-surface-muted cursor-pointer flex items-stretch min-h-[80px] group transition-colors">
+<div class="w-[4px] bg-transparent h-full absolute left-0 top-0 group-hover:bg-outline-variant transition-colors"></div>
+<div class="flex items-center justify-center px-4 font-display-lg text-display-lg text-on-surface-variant w-16 border-r border-on-surface opacity-30">
+                            05
+                        </div>
+<div class="flex-1 p-inner-padding flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md text-on-surface tracking-tight group-hover:text-primary transition-colors">Online Editor</h3>
+<span class="font-label-mono text-label-mono text-outline mt-1 uppercase">// COLLABORATIVE CANVAS</span>
+</div>
+</li>
+</ul>
+</div>
+<!-- Bottom Status Bar -->
+<div class="absolute bottom-0 w-full h-8 bg-surface-muted border-t border-on-surface flex items-center px-2 z-10">
+<span class="font-status-code text-status-code text-on-surface">C:\&gt; 5 FILES DETECTED. READY.</span>
+</div>
+</section>
+<!-- Column 3: Preview (Abstract Visuals) -->
+<section class="hidden lg:flex flex-col h-full flex-1 border-r border-on-surface bg-surface-muted relative overflow-hidden">
+<!-- Top App Bar equivalent for inner panel -->
+<div class="h-12 border-b border-on-surface bg-background-canvas flex justify-between items-center px-inner-padding w-full absolute top-0 z-10">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-primary rounded-none"></div>
+<span class="font-label-mono text-label-mono text-on-surface uppercase">Preview: AIPPT_v2.4</span>
+</div>
+<div class="flex gap-4">
+<span class="font-status-code text-status-code text-on-surface-variant">[ LIVE RENDER ]</span>
+</div>
+</div>
+<!-- Canvas Area -->
+<div class="flex-1 mt-12 relative p-panel-margin bg-surface-muted bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWgxOHYxOEgxem0xIDFoMTZ2MTZIMnoiIGZpbGw9IiNlM2UxZjEiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==')] overflow-hidden flex items-center justify-center">
+<!-- Abstract UI Fragments -->
+<div class="relative w-[90%] h-[80%] border border-on-surface bg-background-canvas shadow-none">
+<!-- Internal Header -->
+<div class="h-8 border-b border-on-surface flex items-center px-2 bg-surface">
+<span class="font-status-code text-[10px] text-on-surface-variant">CANVAS_ROOT_ID_992</span>
+</div>
+<!-- Content Collage -->
+<div class="p-4 grid grid-cols-3 gap-4 h-[calc(100%-2rem)]">
+<!-- Left UI Column -->
+<div class="col-span-1 border border-on-surface-variant flex flex-col">
+<div class="h-1/3 border-b border-on-surface-variant bg-surface-dim p-2">
+<div class="w-full h-2 bg-on-surface-variant opacity-20 mb-2"></div>
+<div class="w-3/4 h-2 bg-on-surface-variant opacity-20 mb-2"></div>
+<div class="w-1/2 h-2 bg-on-surface-variant opacity-20"></div>
+</div>
+<div class="flex-1 p-2 relative">
+<div class="absolute top-2 right-2 border border-primary text-primary font-label-mono text-[8px] px-1 bg-surface-bright z-10">
+                                     X:0106PX Y:0116PX
+                                 </div>
+<!-- Decorative crosshair -->
+<div class="absolute left-1/2 top-1/2 w-8 h-8 border border-primary -translate-x-1/2 -translate-y-1/2 opacity-50 flex items-center justify-center">
+<div class="w-full h-px bg-primary"></div>
+<div class="h-full w-px bg-primary absolute"></div>
+</div>
+</div>
+</div>
+<!-- Main Visual Area -->
+<div class="col-span-2 border border-on-surface flex items-center justify-center bg-surface-container-low relative overflow-hidden">
+<!-- Image container with precise styling -->
+<div class="w-[80%] h-[70%] border border-on-surface relative">
+<div class="absolute -top-2 -left-2 w-4 h-4 border-t border-l border-on-surface"></div>
+<div class="absolute -bottom-2 -right-2 w-4 h-4 border-b border-r border-on-surface"></div>
+<img alt="Abstract generative art representation" class="w-full h-full object-cover filter grayscale opacity-80" data-alt="A striking digital installation art piece featuring glowing, generative geometric shapes suspended in a vast, minimalist canvas. The composition uses high-key, soft white lighting to create a bright, modern, flat-ui aesthetic. It relies on a sophisticated palette of deep blacks, pristine whites, and electric blue structural lines outlining abstract UI components. The mood is analytical, highly structured, and technologically precise." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSwJTTnut27ZXwQuXNL15mOVCdcdow7FwwNN3uviDp0uAJ6Ff5lCca1Qo-kArQfbBrNwWx7folwOW-zs-_JKIrFdZV9OcIvAX48U9F6thZDxzyGF6qu0mOeYVPqglnH1Y6gife5SYlkyZz3n779hQw_UHDo7x9p4kzYAPwGAswk1g7Br1BlHXt256IeVxAUoqpnuMyWK0xrWME2ZVxm2qnrgeBWD5nJBBJN5tcWUVJoDSwYyAnCrawlvaesfBSLLIhJtu9sxZZD_4_"/>
+<div class="absolute inset-0 bg-primary opacity-10 mix-blend-multiply"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Coordinate Marker outside main panel -->
+<div class="absolute bottom-10 right-10 flex flex-col gap-1 items-end">
+<span class="font-status-code text-[10px] text-primary border border-primary px-1 bg-background-canvas">SYS.READY</span>
+<div class="w-16 h-px bg-primary"></div>
+</div>
+</div>
+</section>
+<!-- Column 4: Inspector Panel -->
+<aside class="hidden xl:flex flex-col h-full w-[300px] border-r-0 border-on-surface bg-background-canvas flex-shrink-0 relative">
+<div class="h-12 border-b border-on-surface bg-background-canvas flex justify-between items-center px-inner-padding w-full">
+<span class="font-label-mono text-label-mono text-on-surface uppercase">METADATA</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="info">info</span>
+</div>
+<div class="p-panel-margin flex flex-col gap-stack-md overflow-y-auto pb-32">
+<!-- ID Block -->
+<div class="border border-on-surface p-inner-padding bg-surface">
+<h4 class="font-status-code text-status-code text-on-surface-variant uppercase mb-1">PROJECT_ID</h4>
+<p class="font-headline-md text-headline-md text-on-surface font-bold tracking-tighter">_001</p>
+</div>
+<!-- Attributes -->
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-1 border-b border-surface-dim pb-2">
+<span class="font-status-code text-[10px] text-on-surface-variant uppercase">CATEGORY</span>
+<span class="font-label-mono text-label-mono text-on-surface uppercase">AI Product / Design Tool</span>
+</div>
+<div class="flex flex-col gap-1 border-b border-surface-dim pb-2">
+<span class="font-status-code text-[10px] text-on-surface-variant uppercase">ROLE</span>
+<span class="font-label-mono text-label-mono text-on-surface uppercase">Lead Product Manager</span>
+</div>
+<div class="flex flex-col gap-1 border-b border-surface-dim pb-2">
+<span class="font-status-code text-[10px] text-on-surface-variant uppercase">STATUS</span>
+<div class="inline-flex items-center border border-primary px-2 py-1 w-fit mt-1">
+<span class="w-1.5 h-1.5 bg-primary mr-2 rounded-none"></span>
+<span class="font-label-mono text-[9px] text-primary uppercase tracking-widest">DEPLOYED</span>
+</div>
+</div>
+</div>
+<!-- Technical Description -->
+<div class="mt-4">
+<h4 class="font-status-code text-status-code text-on-surface-variant uppercase mb-2">SYNOPSIS</h4>
+<p class="font-body-base text-body-base text-on-surface-variant text-sm">
+                        An intelligent presentation generator utilizing LLMs to automatically structure narrative flow and render corresponding abstract visual assets. Replaces traditional template constraints with generative canvas reasoning.
+                    </p>
+</div>
+</div>
+<!-- Fixed Bottom CTA -->
+<div class="absolute bottom-0 w-full p-inner-padding bg-background-canvas border-t border-on-surface z-20">
+<button class="w-full h-14 bg-on-surface text-background-canvas font-display-mobile text-display-mobile uppercase hover:bg-primary hover:text-white transition-colors flex items-center justify-center gap-2 border border-on-surface group">
+<span class="group-hover:translate-x-1 transition-transform">SAY HEY</span>
+<span class="material-symbols-outlined text-xl" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</aside>
+</main>
+</body></html>

@@ -1,0 +1,59 @@
+.target-cursor-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+.target-cursor-dot {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 6px;
+  height: 6px;
+  background: #ffffff;
+}
+
+.target-cursor-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: #ffffff;
+  border-style: solid;
+  border-width: 0;
+  will-change: transform;
+}
+
+.corner-tl {
+  border-top-width: 3px;
+  border-left-width: 3px;
+  transform: translate(-18px, -18px);
+}
+
+.corner-tr {
+  border-top-width: 3px;
+  border-right-width: 3px;
+  transform: translate(6px, -18px);
+}
+
+.corner-br {
+  border-right-width: 3px;
+  border-bottom-width: 3px;
+  transform: translate(6px, 6px);
+}
+
+.corner-bl {
+  border-bottom-width: 3px;
+  border-left-width: 3px;
+  transform: translate(-18px, 6px);
+}
+
+@media (pointer: coarse), (max-width: 768px) {
+  .target-cursor-wrapper {
+    display: none;
+  }
+}

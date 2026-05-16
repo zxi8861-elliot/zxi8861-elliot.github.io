@@ -1,0 +1,13 @@
+.shuffle-parent {
+  display: inline-block;
+  white-space: pre-wrap;
+}
+
+.shuffle-parent .shuffle-char {
+  display: inline-block;
+  will-change: transform;
+}
+
+.shuffle-parent.is-ready {
+  visibility: visible;
+}

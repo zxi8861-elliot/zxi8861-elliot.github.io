@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Design Portfolio OS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Assuming Departure Mono is loaded locally or via another font service in production, falling back to a similar monospace if unavailable, but specifying it in config -->
+<style>
+        @font-face {
+            font-family: 'Departure Mono';
+            src: local('Courier New'), monospace; /* Fallback for rendering purposes */
+        }
+        
+        /* Utility to hide scrollbars but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#93000a",
+                      "on-primary-container": "#b3b7ff",
+                      "on-tertiary": "#ffffff",
+                      "surface-variant": "#e3e1f1",
+                      "secondary": "#5f5e5e",
+                      "on-tertiary-fixed": "#410000",
+                      "surface-bright": "#fbf8ff",
+                      "surface": "#fbf8ff",
+                      "surface-muted": "#f2f2f2",
+                      "primary-fixed-dim": "#bfc2ff",
+                      "surface-container": "#eeecfc",
+                      "surface-tint": "#353cff",
+                      "text-muted": "#666666",
+                      "tertiary-fixed": "#ffdad5",
+                      "secondary-container": "#e5e2e1",
+                      "background-canvas": "#ffffff",
+                      "inverse-primary": "#bfc2ff",
+                      "on-tertiary-container": "#ffa699",
+                      "surface-container-highest": "#e3e1f1",
+                      "on-secondary-fixed-variant": "#474646",
+                      "signal-green": "#25e85c",
+                      "on-primary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "inverse-surface": "#2f2f3b",
+                      "surface-container-high": "#e9e6f6",
+                      "tertiary": "#730001",
+                      "on-surface": "#1a1b26",
+                      "on-surface-variant": "#454558",
+                      "error": "#ba1a1a",
+                      "tertiary-container": "#9e0002",
+                      "surface-container-lowest": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "primary-container": "#0500ff",
+                      "tertiary-fixed-dim": "#ffb4a8",
+                      "inverse-on-surface": "#f1efff",
+                      "secondary-fixed": "#e5e2e1",
+                      "secondary-fixed-dim": "#c8c6c5",
+                      "border-primary": "#111111",
+                      "outline": "#757589",
+                      "surface-dim": "#dad8e8",
+                      "primary-fixed": "#e0e0ff",
+                      "border-muted": "#d8d8d4",
+                      "background": "#fbf8ff",
+                      "on-secondary-fixed": "#1c1b1b",
+                      "surface-container-low": "#f5f2ff",
+                      "on-primary-fixed": "#00006e",
+                      "on-secondary-container": "#656464",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#930002",
+                      "primary": "#0200bb",
+                      "on-primary-fixed-variant": "#0400ef",
+                      "on-background": "#1a1b26",
+                      "outline-variant": "#c5c4db"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-md": "24px",
+                      "stack-sm": "12px",
+                      "stack-xs": "4px",
+                      "gutter": "1px",
+                      "panel-margin": "24px",
+                      "inner-padding": "16px"
+              },
+              "fontFamily": {
+                      "display-lg": ["Departure Mono"],
+                      "label-mono": ["IBM Plex Mono"],
+                      "display-mobile": ["Departure Mono"],
+                      "headline-md": ["JetBrains Mono"],
+                      "display-xl": ["Departure Mono"],
+                      "status-code": ["JetBrains Mono"],
+                      "body-base": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "display-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                      "label-mono": ["11px", { "lineHeight": "1.2", "letterSpacing": "0.08em", "fontWeight": "500" }],
+                      "display-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                      "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                      "display-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                      "status-code": ["12px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                      "body-base": ["14px", { "lineHeight": "1.6", "fontWeight": "400" }]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-background-canvas text-on-surface overflow-hidden h-screen w-screen flex">
+<!-- Column 1: Nav Rail (SideNavBar) -->
+<nav class="fixed left-0 top-0 h-screen w-[100px] border-r border-on-surface bg-background-canvas flex flex-col justify-between py-panel-margin z-20">
+<!-- Brand / Header -->
+<div class="flex flex-col items-center pt-8">
+<div class="rotate-180" style="writing-mode: vertical-rl;">
+<span class="font-display-lg text-display-lg text-on-surface uppercase tracking-tighter">HSIN YAEL</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant block mt-2 text-center rotate-90">V.2026</span>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<div class="flex flex-col gap-12 items-center w-full">
+<!-- Active Tab: Work -->
+<button class="w-full relative flex justify-center text-primary font-bold border-l-2 border-primary translate-x-1 transition-transform duration-150 group">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">folder_open</span>
+<span class="absolute left-full ml-4 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono bg-on-surface text-on-primary px-2 py-1 pointer-events-none transition-opacity border border-on-surface">Work</span>
+</button>
+<!-- Inactive Tabs -->
+<button class="w-full relative flex justify-center text-on-surface-variant hover:text-primary transition-colors pl-2 border-l-2 border-transparent group">
+<span class="material-symbols-outlined">person</span>
+<span class="absolute left-full ml-4 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono bg-on-surface text-on-primary px-2 py-1 pointer-events-none transition-opacity border border-on-surface">About</span>
+</button>
+<button class="w-full relative flex justify-center text-on-surface-variant hover:text-primary transition-colors pl-2 border-l-2 border-transparent group">
+<span class="material-symbols-outlined">science</span>
+<span class="absolute left-full ml-4 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono bg-on-surface text-on-primary px-2 py-1 pointer-events-none transition-opacity border border-on-surface">Playground</span>
+</button>
+<button class="w-full relative flex justify-center text-on-surface-variant hover:text-primary transition-colors pl-2 border-l-2 border-transparent group">
+<span class="material-symbols-outlined">alternate_email</span>
+<span class="absolute left-full ml-4 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono bg-on-surface text-on-primary px-2 py-1 pointer-events-none transition-opacity border border-on-surface">Contact</span>
+</button>
+</div>
+<!-- Footer / System Status -->
+<div class="flex flex-col gap-4 items-center w-full">
+<button class="bg-on-surface text-on-primary font-label-mono text-label-mono px-2 py-6 w-8 h-24 flex items-center justify-center hover:bg-primary transition-colors" style="writing-mode: vertical-rl;">
+                SAY HEY
+            </button>
+<div class="flex flex-col items-center gap-2 mt-4 text-on-surface-variant opacity-50 hover:opacity-100 transition-opacity cursor-help" title="SYS_STATUS: OK | LOC: 37.7749N">
+<span class="material-symbols-outlined text-sm">terminal</span>
+<span class="material-symbols-outlined text-sm">location_on</span>
+</div>
+</div>
+</nav>
+<!-- Main Content Area (Offset by Nav Rail) -->
+<main class="ml-[100px] flex flex-col flex-1 h-screen w-full relative z-10 bg-surface">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-inner-padding h-12 border-b border-on-surface bg-transparent flex-shrink-0">
+<div class="font-status-code text-status-code text-on-surface-variant flex items-center gap-2">
+<span class="inline-block w-2 h-2 bg-signal-green rounded-none"></span>
+                PROJECT_INSPECTOR_V1
+            </div>
+<div class="flex gap-16 font-label-mono text-label-mono h-full">
+<div class="h-full flex items-center border-b-2 border-on-surface text-on-surface">
+                    INDEX
+                </div>
+<div class="h-full flex items-center text-on-surface-variant opacity-50 hover:opacity-100 cursor-pointer">
+                    PREVIEW
+                </div>
+<div class="h-full flex items-center text-on-surface-variant opacity-50 hover:opacity-100 cursor-pointer">
+                    METADATA
+                </div>
+</div>
+<button class="font-label-mono text-label-mono text-on-surface uppercase border border-on-surface px-4 py-1 hover:bg-on-surface hover:text-on-primary transition-colors">
+                CONNECT
+            </button>
+</header>
+<!-- 3-Column Split View (Cols 2, 3, 4) -->
+<div class="flex flex-1 overflow-hidden w-full">
+<!-- Column 2: Index (Project List) -->
+<section class="w-[30%] flex flex-col border-r border-on-surface bg-background-canvas h-full overflow-y-auto no-scrollbar relative">
+<!-- Section Header -->
+<div class="p-inner-padding border-b border-on-surface sticky top-0 bg-background-canvas z-10">
+<h1 class="font-display-xl text-display-xl text-on-surface tracking-tighter uppercase mb-2">Projects</h1>
+<div class="font-status-code text-status-code text-on-surface-variant flex justify-between">
+<span>// DIRECTORY</span>
+<span>03 SELECTED</span>
+</div>
+</div>
+<!-- List Items -->
+<!-- Idle Item 01 -->
+<article class="flex items-start p-inner-padding border-b border-on-surface hover:bg-surface-muted transition-colors cursor-pointer group">
+<span class="font-status-code text-status-code text-on-surface-variant w-12 pt-1">01</span>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Neural Typo</h2>
+<span class="font-label-mono text-label-mono text-on-surface-variant mt-1 block">Experimental Typography</span>
+</div>
+</article>
+<!-- Idle Item 02 -->
+<article class="flex items-start p-inner-padding border-b border-on-surface hover:bg-surface-muted transition-colors cursor-pointer group">
+<span class="font-status-code text-status-code text-on-surface-variant w-12 pt-1">02</span>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Spatial OS</h2>
+<span class="font-label-mono text-label-mono text-on-surface-variant mt-1 block">Interface Design</span>
+</div>
+</article>
+<!-- Active Item 03 (Expanded State) -->
+<article class="flex flex-col border-b border-on-surface bg-surface-muted border-l-4 border-l-primary cursor-default relative">
+<!-- Header -->
+<div class="flex items-start p-inner-padding pb-4">
+<span class="font-status-code text-status-code text-primary font-bold w-12 pt-1">03</span>
+<div class="flex-1">
+<div class="flex justify-between items-center w-full">
+<h2 class="font-headline-md text-headline-md text-primary font-bold">AI Design</h2>
+<span class="material-symbols-outlined text-primary text-sm bg-primary-fixed p-1 rounded-none">adjust</span>
+</div>
+<span class="font-label-mono text-label-mono text-primary mt-1 block">[ ACTIVE_INSPECTION ]</span>
+</div>
+</div>
+<!-- Expanded Content -->
+<div class="px-inner-padding pb-8 pl-[64px] flex flex-col gap-6">
+<div>
+<h3 class="font-label-mono text-label-mono text-on-surface mb-2 uppercase border-b border-on-surface-variant pb-1 inline-block">About</h3>
+<p class="font-body-base text-body-base text-on-surface-variant leading-relaxed">
+                                A generative design system utilizing neural networks to establish rigid layout protocols and hierarchical typographic structures for automated, high-fidelity brand generation.
+                            </p>
+</div>
+<div>
+<h3 class="font-label-mono text-label-mono text-on-surface mb-2 uppercase border-b border-on-surface-variant pb-1 inline-block">Challenge</h3>
+<p class="font-body-base text-body-base text-on-surface-variant leading-relaxed">
+                                Moving beyond templated solutions to create an autonomous agent capable of reasoning through white space, structural tension, and modular grid systems natively.
+                            </p>
+</div>
+<div>
+<h3 class="font-label-mono text-label-mono text-on-surface mb-2 uppercase border-b border-on-surface-variant pb-1 inline-block">Solution</h3>
+<p class="font-body-base text-body-base text-on-surface-variant leading-relaxed">
+                                Implementation of a recursive constraint engine that generates brutalist, dossier-style interfaces on the fly, prioritizing density and intellectual aesthetic over standard SaaS warmth.
+                            </p>
+</div>
+</div>
+</article>
+<!-- Idle Item 04 -->
+<article class="flex items-start p-inner-padding border-b border-on-surface hover:bg-surface-muted transition-colors cursor-pointer group opacity-50">
+<span class="font-status-code text-status-code text-on-surface-variant w-12 pt-1">04</span>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Quantum Lexicon</h2>
+<span class="font-label-mono text-label-mono text-on-surface-variant mt-1 block">Data Visualization</span>
+</div>
+</article>
+<!-- Bottom Status Bar -->
+<div class="mt-auto p-inner-padding border-t border-on-surface bg-surface-container-lowest sticky bottom-0 z-10">
+<div class="font-status-code text-status-code text-on-surface flex items-center gap-2">
+<span class="text-primary">C:\&gt;</span> AWAITING_INPUT...
+                    </div>
+</div>
+</section>
+<!-- Column 3: Preview (Canvas) -->
+<section class="w-[50%] flex flex-col border-r border-on-surface bg-surface-muted h-full overflow-y-auto no-scrollbar relative p-inner-padding gap-inner-padding">
+<!-- Top Toolbar within Preview -->
+<div class="flex justify-between items-center w-full mb-2">
+<span class="font-label-mono text-label-mono text-on-surface bg-background-canvas px-2 border border-on-surface">CANVAS_RENDER</span>
+<div class="flex gap-2">
+<button class="border border-on-surface bg-background-canvas w-6 h-6 flex items-center justify-center hover:bg-on-surface hover:text-on-primary transition-colors"><span class="material-symbols-outlined text-[14px]">zoom_in</span></button>
+<button class="border border-on-surface bg-background-canvas w-6 h-6 flex items-center justify-center hover:bg-on-surface hover:text-on-primary transition-colors"><span class="material-symbols-outlined text-[14px]">grid_on</span></button>
+</div>
+</div>
+<!-- Bento Grid / Asymmetric Layout for Preview Images -->
+<div class="grid grid-cols-12 grid-rows-12 gap-1 h-full w-full bg-on-surface p-1 border border-on-surface">
+<!-- Large Main Graphic -->
+<div class="col-span-12 row-span-7 bg-background-canvas relative group overflow-hidden border border-on-surface">
+<!-- Coordinate overlay -->
+<div class="absolute top-2 left-2 z-10 bg-on-surface text-on-primary font-status-code text-[10px] px-1 py-0.5 border border-on-surface">X:001 Y:045</div>
+<div class="absolute bottom-2 right-2 z-10 bg-primary text-on-primary font-status-code text-[10px] px-1 py-0.5 border border-on-surface flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-signal-green inline-block"></span> LIVE_PREVIEW
+                        </div>
+<img alt="Abstract Graphic Layout" class="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-500 opacity-90 mix-blend-multiply" data-alt="A sophisticated, high-contrast abstract digital poster design featuring rigid grid layouts and striking brutalist typography. The composition uses pure black, pristine white, and a single accent of electric blue. Geometric shapes and technical schematics overlap in a precise, structured manner, evoking a futuristic AI design tool interface in a brightly lit studio environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRuHxA2hM6nJYOwQA1fKjInmYf6Jz2HzH5vrgp0R1Mon0EHJJj-fkhzeDQkNdX0DTNmS9EnYtcYtkag_fwEmQwC_Az5V5ZIeUyzePW-F3WskOP7dkYe1kzzCQxhi8mqUJL5NdBmee2LTrwGCqSBBZqtEXDSQjm2ACm-csouRRijuuqyrybIrubukidzlpcdbIPM04hTWZoSMxH20pdGkpwKbvP8uvXuIMn6zD5LUH3U0iwKDV47bJpcOrutOdYyD2C1ty_iJOVm6l8"/>
+<!-- Overlay structural lines to enhance dossier feel -->
+<div class="absolute inset-0 pointer-events-none border-[0.5px] border-primary/20 bg-[linear-gradient(rgba(2,0,187,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(2,0,187,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+</div>
+<!-- Secondary Graphic Left -->
+<div class="col-span-5 row-span-5 bg-background-canvas relative border border-on-surface p-2 flex flex-col">
+<div class="font-status-code text-[10px] text-on-surface-variant border-b border-on-surface pb-1 mb-2 uppercase">Fig. 01 - Structural Matrix</div>
+<div class="flex-1 w-full bg-surface-variant relative overflow-hidden">
+<img alt="Grid System" class="w-full h-full object-cover opacity-80 mix-blend-luminosity" data-alt="A minimalist digital art composition showing a close-up of a complex technical diagram. It features thin, precise lines, coordinate markers, and small monospaced data readouts on a very light grey background. The aesthetic is extremely clean, intellectual, and clinical, resembling an architectural blueprint generated by an advanced artificial intelligence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCgsp39qf-Ur-7z5EGeJnoVdPAXkz0RdTrWnWj7fy7Dze-EYnDH35bg1TjMDHIKNFtWLZFFlqV6yy1PvHUKi7N-rXCLbhDPRhG7ac7w82lT_LLbD8FAJViVajskYtCfBEiekC6L010hdV9GuLP8ipFtRXyIvjYBxOEPVVLCMdzDIco0NHTo0QoUg07-qkN3ujvrt-E9D367O07Moky0-RwmbFQKhD5cD1J_CM8n5t-7IV-lfYkyEY6PWfO1clWQvwwcd2RYXB3V0ee"/>
+</div>
+</div>
+<!-- Typographic Poster Block Right -->
+<div class="col-span-7 row-span-5 bg-primary text-on-primary relative border border-on-surface p-6 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-status-code text-[10px] border border-on-primary px-1 py-0.5">SYS.GEN</span>
+<span class="material-symbols-outlined text-lg">memory</span>
+</div>
+<div>
+<h4 class="font-display-mobile text-display-mobile leading-none tracking-tighter mb-2">AUTONOMOUS<br/>LAYOUT<br/>PROTOCOL</h4>
+<p class="font-label-mono text-[10px] opacity-80 mt-4 max-w-[80%]">
+                                V.0.9 // ITERATION 844 //
+                                ESTABLISHING HIERARCHY THROUGH ALGORITHMIC TENSION AND NEGATIVE SPACE ALLOCATION.
+                            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Column 4: Inspector (Metadata) -->
+<aside class="flex-1 flex flex-col bg-background-canvas h-full overflow-y-auto no-scrollbar border-l border-on-surface z-10">
+<!-- Inspector Header -->
+<div class="p-inner-padding border-b border-on-surface bg-surface-muted">
+<h2 class="font-label-mono text-label-mono text-on-surface uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">info</span>
+                        Inspector Panel
+                    </h2>
+</div>
+<!-- Primary CTA -->
+<div class="p-inner-padding border-b border-on-surface">
+<button class="w-full bg-on-surface text-on-primary font-label-mono text-label-mono py-4 px-6 flex justify-between items-center hover:bg-primary transition-colors border border-on-surface group">
+<span>LAUNCH PROTOTYPE</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">open_in_new</span>
+</button>
+</div>
+<!-- Metadata Blocks -->
+<div class="p-inner-padding flex flex-col gap-6 font-label-mono text-label-mono">
+<!-- Block 1 -->
+<div class="flex flex-col gap-1">
+<span class="text-on-surface-variant opacity-70">PROJECT ID</span>
+<div class="border border-on-surface p-2 bg-surface flex justify-between items-center">
+<span class="text-on-surface font-status-code">ID_003</span>
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant cursor-pointer hover:text-primary">content_copy</span>
+</div>
+</div>
+<!-- Block 2 -->
+<div class="flex flex-col gap-1">
+<span class="text-on-surface-variant opacity-70">CATEGORY</span>
+<div class="border border-on-surface p-2 bg-surface">
+<span class="text-on-surface">Design Tool / AI Engine</span>
+</div>
+</div>
+<!-- Block 3 -->
+<div class="flex flex-col gap-1">
+<span class="text-on-surface-variant opacity-70">STATUS</span>
+<div class="border border-on-surface p-2 bg-surface flex items-center gap-2">
+<span class="w-2 h-2 bg-signal-green inline-block border border-on-surface"></span>
+<span class="text-on-surface">BETA_V1.2</span>
+</div>
+</div>
+<!-- Block 4: Tech Stack (Tags) -->
+<div class="flex flex-col gap-2 mt-4">
+<span class="text-on-surface-variant opacity-70 border-b border-on-surface-variant pb-1">TECH STACK</span>
+<div class="flex flex-wrap gap-2 mt-2">
+<span class="border border-on-surface px-2 py-1 text-on-surface bg-surface-variant">Python</span>
+<span class="border border-on-surface px-2 py-1 text-on-surface bg-surface-variant">PyTorch</span>
+<span class="border border-on-surface px-2 py-1 text-on-surface bg-surface-variant">React</span>
+<span class="border border-on-surface px-2 py-1 text-on-surface bg-surface-variant">WebGL</span>
+</div>
+</div>
+<!-- Diagnostics Log -->
+<div class="mt-8 flex flex-col">
+<div class="bg-on-surface text-on-primary font-status-code text-[10px] p-1 border border-on-surface flex justify-between">
+<span>DIAGNOSTICS</span>
+<span>[ LIVE ]</span>
+</div>
+<div class="border border-on-surface border-t-0 p-2 bg-inverse-surface text-surface-muted font-status-code text-[10px] leading-tight h-32 overflow-hidden flex flex-col gap-1">
+<span class="opacity-50">&gt; Init render sequence...</span>
+<span>&gt; Loading weights [model_v3.pt]</span>
+<span class="opacity-50">&gt; Generating structural grid...</span>
+<span class="text-signal-green">&gt; Grid OK. Tension mapping complete.</span>
+<span>&gt; Injecting typographical elements...</span>
+<span class="opacity-50">&gt; Awaiting user interaction...</span>
+<span class="animate-pulse">_</span>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hsin Yael - Playground</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Custom Font (Departure Mono - Simulating with JetBrains for now as it's not a standard Google Font, but using the class name as requested) -->
+<style>
+        @font-face {
+            font-family: 'Departure Mono';
+            src: local('JetBrains Mono'); /* Fallback */
+        }
+        
+        /* Grid Layout */
+        .dossier-grid {
+            display: grid;
+            grid-template-columns: 100px minmax(300px, 1fr) minmax(400px, 1.5fr) minmax(250px, 0.8fr);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        
+        /* Utility for brutalist crosshairs */
+        .crosshair::before, .crosshair::after {
+            content: '';
+            position: absolute;
+            background-color: var(--color-on-surface, #1a1b26);
+        }
+        .crosshair-tl::before { top: 0; left: -4px; width: 8px; height: 1px; }
+        .crosshair-tl::after { top: -4px; left: 0; width: 1px; height: 8px; }
+        .crosshair-tr::before { top: 0; right: -4px; width: 8px; height: 1px; }
+        .crosshair-tr::after { top: -4px; right: 0; width: 1px; height: 8px; }
+        .crosshair-bl::before { bottom: 0; left: -4px; width: 8px; height: 1px; }
+        .crosshair-bl::after { bottom: -4px; left: 0; width: 1px; height: 8px; }
+        .crosshair-br::before { bottom: 0; right: -4px; width: 8px; height: 1px; }
+        .crosshair-br::after { bottom: -4px; right: 0; width: 1px; height: 8px; }
+    </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "on-primary-container": "#b3b7ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#e3e1f1",
+                    "secondary": "#5f5e5e",
+                    "on-tertiary-fixed": "#410000",
+                    "surface-bright": "#fbf8ff",
+                    "surface": "#fbf8ff",
+                    "surface-muted": "#f2f2f2",
+                    "primary-fixed-dim": "#bfc2ff",
+                    "surface-container": "#eeecfc",
+                    "surface-tint": "#353cff",
+                    "text-muted": "#666666",
+                    "tertiary-fixed": "#ffdad5",
+                    "secondary-container": "#e5e2e1",
+                    "background-canvas": "#ffffff",
+                    "inverse-primary": "#bfc2ff",
+                    "on-tertiary-container": "#ffa699",
+                    "surface-container-highest": "#e3e1f1",
+                    "on-secondary-fixed-variant": "#474646",
+                    "signal-green": "#25e85c",
+                    "on-primary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#2f2f3b",
+                    "surface-container-high": "#e9e6f6",
+                    "tertiary": "#730001",
+                    "on-surface": "#1a1b26",
+                    "on-surface-variant": "#454558",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#9e0002",
+                    "surface-container-lowest": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#0500ff",
+                    "tertiary-fixed-dim": "#ffb4a8",
+                    "inverse-on-surface": "#f1efff",
+                    "secondary-fixed": "#e5e2e1",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "border-primary": "#111111",
+                    "outline": "#757589",
+                    "surface-dim": "#dad8e8",
+                    "primary-fixed": "#e0e0ff",
+                    "border-muted": "#d8d8d4",
+                    "background": "#fbf8ff",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "surface-container-low": "#f5f2ff",
+                    "on-primary-fixed": "#00006e",
+                    "on-secondary-container": "#656464",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#930002",
+                    "primary": "#0200bb",
+                    "on-primary-fixed-variant": "#0400ef",
+                    "on-background": "#1a1b26",
+                    "outline-variant": "#c5c4db"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "24px",
+                    "stack-sm": "12px",
+                    "stack-xs": "4px",
+                    "gutter": "1px",
+                    "panel-margin": "24px",
+                    "inner-padding": "16px"
+            },
+            "fontFamily": {
+                    "display-lg": [
+                            "Departure Mono", "monospace"
+                    ],
+                    "label-mono": [
+                            "IBM Plex Mono", "monospace"
+                    ],
+                    "display-mobile": [
+                            "Departure Mono", "monospace"
+                    ],
+                    "headline-md": [
+                            "JetBrains Mono", "monospace"
+                    ],
+                    "display-xl": [
+                            "Departure Mono", "monospace"
+                    ],
+                    "status-code": [
+                            "JetBrains Mono", "monospace"
+                    ],
+                    "body-base": [
+                            "JetBrains Mono", "monospace"
+                    ]
+            },
+            "fontSize": {
+                    "display-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-mono": [
+                            "11px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "0.08em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "display-mobile": [
+                            "28px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "display-xl": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "status-code": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-base": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-background-canvas text-on-surface selection:bg-primary selection:text-on-primary">
+<div class="dossier-grid">
+<!-- Column 1: Nav Rail (SideNavBar from JSON) -->
+<aside class="bg-background-canvas border-r border-on-surface flex flex-col justify-between h-full py-panel-margin relative z-10">
+<!-- Header -->
+<div class="flex flex-col items-center gap-stack-sm px-inner-padding">
+<div class="w-12 h-12 border border-on-surface flex items-center justify-center bg-surface-muted" title="Hsin Yael Logo">
+<span class="font-display-lg text-display-lg text-on-surface uppercase tracking-tighter leading-none">H</span>
+</div>
+<div class="font-status-code text-status-code text-on-surface-variant text-center mt-2">
+                    V.2026
+                </div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-stack-md px-inner-padding w-full">
+<!-- Inactive -->
+<a class="flex flex-col items-center gap-2 group" href="#">
+<span class="material-symbols-outlined text-[24px] text-on-surface-variant group-hover:text-primary transition-colors">folder_open</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant group-hover:text-primary transition-colors uppercase">Work</span>
+</a>
+<!-- Inactive -->
+<a class="flex flex-col items-center gap-2 group" href="#">
+<span class="material-symbols-outlined text-[24px] text-on-surface-variant group-hover:text-primary transition-colors">person</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant group-hover:text-primary transition-colors uppercase">About</span>
+</a>
+<!-- Active (Playground) -->
+<a class="flex flex-col items-center gap-2 group translate-x-1 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[24px] text-primary">science</span>
+<span class="font-label-mono text-label-mono text-primary font-bold uppercase">Playground</span>
+</a>
+<!-- Inactive -->
+<a class="flex flex-col items-center gap-2 group" href="#">
+<span class="material-symbols-outlined text-[24px] text-on-surface-variant group-hover:text-primary transition-colors">alternate_email</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant group-hover:text-primary transition-colors uppercase">Contact</span>
+</a>
+</nav>
+<!-- Footer Status -->
+<div class="flex flex-col gap-stack-sm px-inner-padding">
+<div class="flex items-center gap-2 font-label-mono text-label-mono text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">terminal</span>
+<span class="truncate">SYS_STATUS: OK</span>
+</div>
+<div class="flex items-center gap-2 font-label-mono text-label-mono text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="truncate">LOC: 37.7749N</span>
+</div>
+</div>
+</aside>
+<!-- Column 2: Index (Playground List) -->
+<section class="border-r border-on-surface flex flex-col bg-background-canvas h-full relative">
+<!-- Header -->
+<header class="p-inner-padding border-b border-on-surface bg-surface-muted flex justify-between items-center">
+<h1 class="font-display-lg text-display-lg uppercase tracking-tighter">Experiments</h1>
+<span class="font-label-mono text-label-mono border border-on-surface px-2 py-1 bg-background-canvas">DIR_03</span>
+</header>
+<!-- List Content -->
+<div class="flex-1 overflow-y-auto">
+<!-- Item 1 (Active) -->
+<div class="group border-b border-on-surface bg-surface-muted p-inner-padding cursor-pointer flex flex-col gap-2 relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div class="flex justify-between items-baseline">
+<span class="font-status-code text-status-code text-primary">01</span>
+<span class="font-label-mono text-label-mono border border-primary text-primary px-1">ACTIVE</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface uppercase tracking-tight">Generative Topographies</h2>
+<p class="font-body-base text-body-base text-on-surface-variant line-clamp-2">Algorithmic terrain generation using specialized noise functions to create structural landmass arrays.</p>
+</div>
+<!-- Item 2 -->
+<div class="group border-b border-on-surface p-inner-padding cursor-pointer hover:bg-surface-container-lowest transition-colors flex flex-col gap-2">
+<div class="flex justify-between items-baseline">
+<span class="font-status-code text-status-code text-on-surface-variant">02</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant px-1">[ IDLE ]</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface uppercase tracking-tight">Neural Semantic Trees</h2>
+<p class="font-body-base text-body-base text-on-surface-variant line-clamp-2">Visualizing natural language processing nodes through rigid, brutalist tree structures.</p>
+</div>
+<!-- Item 3 -->
+<div class="group border-b border-on-surface p-inner-padding cursor-pointer hover:bg-surface-container-lowest transition-colors flex flex-col gap-2">
+<div class="flex justify-between items-baseline">
+<span class="font-status-code text-status-code text-on-surface-variant">03</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant px-1">[ ARCHIVE ]</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface uppercase tracking-tight">Scan Texture Synth</h2>
+<p class="font-body-base text-body-base text-on-surface-variant line-clamp-2">Generating degraded analog textures using digital signal processing algorithms.</p>
+</div>
+</div>
+<!-- Bottom Status Bar -->
+<div class="p-inner-padding border-t border-on-surface bg-background-canvas">
+<span class="font-status-code text-status-code text-on-surface-variant">C:\SYS\PLAYGROUND\&gt; await input_</span>
+</div>
+</section>
+<!-- Column 3: Preview (Abstract Visualizations) -->
+<main class="border-r border-on-surface bg-surface-muted relative flex flex-col h-full overflow-hidden">
+<!-- Top Controls -->
+<div class="absolute top-0 w-full p-inner-padding flex justify-between items-center z-10 pointer-events-none">
+<div class="font-label-mono text-label-mono bg-background-canvas border border-on-surface px-2 py-1">VIEWPORT_A</div>
+<div class="font-label-mono text-label-mono text-primary flex gap-4">
+<span>X: 104.2</span>
+<span>Y: 299.8</span>
+</div>
+</div>
+<!-- Visualization Canvas -->
+<div class="flex-1 w-full h-full relative flex items-center justify-center p-panel-margin">
+<!-- Abstract Wireframe / Grid Pattern -->
+<div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(#1a1b26 1px, transparent 1px), linear-gradient(90deg, #1a1b26 1px, transparent 1px); background-size: 40px 40px;"></div>
+<!-- Central Element -->
+<div class="relative w-full max-w-[400px] aspect-square border-2 border-on-surface flex items-center justify-center bg-background-canvas crosshair crosshair-tl crosshair-tr crosshair-bl crosshair-br">
+<!-- Inner structural lines -->
+<div class="absolute inset-4 border border-on-surface-variant opacity-30"></div>
+<div class="absolute inset-8 border border-on-surface-variant opacity-30 rounded-full"></div>
+<!-- Dynamic Element (CSS Representation) -->
+<div class="w-32 h-32 border-2 border-primary rotate-45 relative">
+<div class="absolute inset-0 bg-primary opacity-10"></div>
+<!-- Scanline effect -->
+<div class="absolute top-0 left-0 w-full h-1 bg-primary opacity-50 blur-[1px]"></div>
+</div>
+<!-- Metadata annotations overlay -->
+<div class="absolute top-4 left-4 font-status-code text-status-code bg-background-canvas px-1">NODE_01</div>
+<div class="absolute bottom-4 right-4 font-status-code text-status-code text-primary bg-background-canvas px-1 border border-primary">ACTIVE_SYNC</div>
+</div>
+</div>
+<!-- Bottom Controls -->
+<div class="absolute bottom-0 w-full p-inner-padding flex justify-between items-end z-10 pointer-events-none">
+<div class="font-status-code text-status-code text-on-surface-variant max-w-[200px]">
+                    RENDER_ENGINE: WEBGL<br/>
+                    FPS: 60.0<br/>
+                    MEMORY: 124MB
+                </div>
+<div class="w-12 h-12 border border-on-surface flex items-center justify-center bg-background-canvas">
+<span class="material-symbols-outlined">zoom_in_map</span>
+</div>
+</div>
+</main>
+<!-- Column 4: Inspector Panel -->
+<aside class="bg-background-canvas flex flex-col h-full">
+<!-- Header Status -->
+<div class="p-inner-padding border-b border-on-surface bg-primary text-on-primary">
+<span class="font-status-code text-status-code">// playground mode enabled</span>
+</div>
+<!-- Inspector Content -->
+<div class="flex-1 p-inner-padding flex flex-col gap-stack-md overflow-y-auto">
+<!-- Block 1 -->
+<div class="flex flex-col gap-stack-xs">
+<h3 class="font-label-mono text-label-mono text-on-surface-variant uppercase border-b border-on-surface-variant pb-1">Entity Definition</h3>
+<div class="font-headline-md text-headline-md uppercase tracking-tight mt-2">Gen-Topo Alpha</div>
+<div class="font-status-code text-status-code mt-1 text-on-surface-variant">ID: PT-882-X</div>
+</div>
+<!-- Block 2: Parameters -->
+<div class="flex flex-col gap-stack-xs">
+<h3 class="font-label-mono text-label-mono text-on-surface-variant uppercase border-b border-on-surface-variant pb-1 mb-2">Live Parameters</h3>
+<div class="flex justify-between items-center border border-on-surface p-2 mb-2">
+<span class="font-label-mono text-label-mono">NOISE_SCALE</span>
+<span class="font-status-code text-status-code text-primary">0.045</span>
+</div>
+<div class="flex justify-between items-center border border-on-surface p-2 mb-2">
+<span class="font-label-mono text-label-mono">ITERATIONS</span>
+<span class="font-status-code text-status-code">256</span>
+</div>
+<div class="flex justify-between items-center border border-on-surface p-2">
+<span class="font-label-mono text-label-mono">SEED_VAR</span>
+<span class="font-status-code text-status-code">0x7F8C</span>
+</div>
+</div>
+<!-- Block 3: Log -->
+<div class="flex flex-col gap-stack-xs mt-auto">
+<h3 class="font-label-mono text-label-mono text-on-surface-variant uppercase border-b border-on-surface-variant pb-1 mb-2">Event Log</h3>
+<div class="bg-surface-muted p-2 font-status-code text-status-code text-on-surface-variant h-32 overflow-hidden flex flex-col justify-end">
+<div class="opacity-50">&gt; init complete</div>
+<div class="opacity-70">&gt; loading meshes...</div>
+<div class="opacity-80">&gt; binding textures</div>
+<div class="text-primary">&gt; RUNTIME_ACTIVE</div>
+</div>
+</div>
+</div>
+<!-- CTA Footer -->
+<div class="p-inner-padding border-t border-on-surface">
+<button class="w-full bg-on-surface text-on-primary font-label-mono text-label-mono py-4 uppercase tracking-widest hover:bg-primary transition-colors flex justify-center items-center gap-2 rounded-none">
+<span>Execute Compile</span>
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+</button>
+</div>
+</aside>
+</div>
+</body></html>

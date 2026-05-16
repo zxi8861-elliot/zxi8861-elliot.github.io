@@ -19,77 +19,77 @@ const projects: Project[] = [
   {
     id: "ID_001",
     title: "AIPPT",
-    short: "AI 演示文稿工作流",
-    category: "AI 产品 / 设计工具",
+    short: "AI 演示文稿生成产品",
+    category: "AI 产品 / PPT 生成",
     status: "已上线",
-    scope: "产品策略、提示词流程、编辑器体验、视觉质检",
+    scope: "0-1 产品规划、Prompt 工作流、Web 端编辑器、生成效果评估",
     about:
-      "一个智能演示文稿工作台，把模糊想法、参考资料和结构化大纲转化为可编辑的视觉页面。",
+      "主导 AI PPT 生成产品从 0 到 1 落地，把主题输入、资料解析、大纲生成和页面编辑串成完整工作流。",
     challenge:
-      "多数 AI 做稿工具停在文本生成层。这个产品需要同时处理叙事、版式密度、视觉层级和交付质量。",
+      "PPT 生成不仅要有内容，还要兼顾结构、版式、视觉一致性和可编辑交付，不能停在文本草稿层。",
     solution:
-      "用档案式生成流程，把大纲、页面系统、审阅意见和导出状态放在同一个可检查界面里。",
-    stack: ["LLM", "React", "页面系统", "视觉质检"],
+      "拆解生成链路，建立 Prompt 模板、页面结构协议和质检规则，让产研设计能快速迭代上线。",
+    stack: ["LLM", "Prompt", "Web 编辑器", "视觉评估"],
   },
   {
     id: "ID_002",
     title: "AI Paper",
-    short: "论文阅读助手",
+    short: "论文阅读与知识助手",
     category: "AI 产品 / 知识工具",
-    status: "原型",
-    scope: "阅读链路、引用图谱、摘要卡片",
+    status: "已上线",
+    scope: "RAG 检索、长文解析、摘要卡片、阅读链路设计",
     about:
-      "一个研究阅读伙伴，把复杂论文拆成可追踪的问题、观点、实验方法和后续阅读路径。",
+      "面向论文和长文资料的 AI 阅读工具，把复杂材料拆成问题、观点、方法和可追踪的摘要卡片。",
     challenge:
-      "摘要很容易生成，但不容易信任。界面必须让证据、疑点和原文位置都能被检查。",
+      "AI 总结容易流畅但不一定可信，需要让用户看到依据、原文位置和后续追问路径。",
     solution:
-      "采用分屏阅读表面，结合观点标签、引用锚点和论文方法之间的图谱线索。",
-    stack: ["RAG", "PDF", "图谱界面", "笔记"],
+      "基于 RAG 和分层摘要流程设计阅读闭环，把要点提取、引用定位和笔记沉淀放在同一界面。",
+    stack: ["RAG", "Agent", "PDF", "知识卡片"],
   },
   {
     id: "ID_003",
     title: "AI Design",
-    short: "生成式界面系统",
-    category: "AI 产品 / 创意工具",
-    status: "测试版",
-    scope: "布局协议、提示词评审、复用组件",
+    short: "AI 设计图生成产品",
+    category: "AI 产品 / 设计生成",
+    status: "已上线",
+    scope: "设计生成链路、Prompt 工程、效果评估、组件规范",
     about:
-      "一个生成式设计引擎，从结构化设计 brief 中产出锋利、明确、有意图的产品界面。",
+      "主导 AI 设计图生成产品，把业务需求、风格约束和素材输入转成可评审的视觉方案。",
     challenge:
-      "AI 视觉常常看起来合理，却缺少判断。系统需要约束、审美和可复用的界面推理过程。",
+      "设计生成结果需要稳定、可控、可解释，同时服务产研协作，而不是只产出一张漂亮图片。",
     solution:
-      "在渲染高保真页面前，先评估层级、间距、密度和组件语义，形成可控的设计约束。",
-    stack: ["设计 AI", "Tokens", "React", "Figma"],
+      "建立风格参数、生成评估标准和组件化复用机制，用产品规则约束模型输出质量。",
+    stack: ["设计 AI", "Prompt", "组件库", "评估规范"],
   },
   {
     id: "ID_004",
     title: "AI Music",
     short: "地理声音地图",
     category: "AI 产品 / 音频地图",
-    status: "概念",
-    scope: "自然环境音、地图浏览、生成式混音",
+    status: "开发中",
+    scope: "自然环境音、地图浏览、生成式声音卡片、移动端体验",
     about:
-      "一个声音探索产品，把地理环境转化为可聆听的氛围旅程和生成式声音明信片。",
+      "一个地理自然环境音产品，把地点、气候和自然场景转化为可聆听、可收藏的声音体验。",
     challenge:
-      "体验需要同时有空间感和情绪，但不能退化成普通歌单或静态地图。",
+      "产品需要同时具备地图的空间感和音频的情绪价值，避免变成普通歌单或静态资料库。",
     solution:
-      "用分层地图浏览器呈现地形、气候、记忆和声音纹理，让它们成为可检查的创作材料。",
-    stack: ["音频", "地图", "AI 混音", "移动端"],
+      "以地图探索为主线组织声音素材，结合 AI 生成描述、氛围标签和可分享的声音卡片。",
+    stack: ["音频", "地图", "AI 生成", "移动端"],
   },
   {
     id: "ID_005",
     title: "Online Editor",
-    short: "结构化内容工作台",
+    short: "内容创作工具编辑器",
     category: "效率工具 / 创作工具",
     status: "已上线",
-    scope: "编辑器体验、内容块、发布流程",
+    scope: "Web 编辑器、内容块、素材标签化、审核与发布流程",
     about:
-      "一个专注的长内容编辑器，用 AI 辅助、结构化内容块和清晰发布状态帮助创作者完成作品。",
+      "面向内容生产团队的在线编辑器，承接 AI 生成、人工编辑、素材管理和发布审核。",
     challenge:
-      "AI 写作工具容易抹平作者声音。编辑器需要支持审美、修改和掌控感。",
+      "内容生产链路分散在素材、审核、编辑和发布之间，效率瓶颈会直接影响运营节奏。",
     solution:
-      "用块状工作区把想法捕捉、生成、编辑和最终润色拆成清晰可见的工作模式。",
-    stack: ["编辑器", "CMS", "AI 辅助", "工作流"],
+      "用结构化编辑区和流程状态串联素材标签、AI 辅助、审核自动化与发布交付。",
+    stack: ["编辑器", "CMS", "AI 辅助", "Workflow"],
   },
 ];
 
@@ -106,6 +106,7 @@ const modeLabels: Record<Mode, string> = {
 export function HomePage() {
   const [mode, setMode] = useState<Mode>("Work");
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
+  const [expandedProjectIndex, setExpandedProjectIndex] = useState<number | null>(null);
   const activeProject = projects[activeProjectIndex];
 
   const statusLine = useMemo(() => {
@@ -131,9 +132,10 @@ export function HomePage() {
 
           {mode === "Work" ? (
             <WorkIndex
-              activeProject={activeProject}
               activeProjectIndex={activeProjectIndex}
               onSelectProject={setActiveProjectIndex}
+              expandedProjectIndex={expandedProjectIndex}
+              onToggleProject={setExpandedProjectIndex}
             />
           ) : (
             <ModePanel mode={mode} />
@@ -146,7 +148,7 @@ export function HomePage() {
         </section>
 
         <PreviewPanel mode={mode} project={activeProject} index={activeProjectIndex} />
-        <InspectorPanel mode={mode} project={activeProject} index={activeProjectIndex} />
+        <InspectorPanel project={activeProject} index={activeProjectIndex} />
       </main>
     </>
   );
@@ -180,25 +182,26 @@ function NavRail({
           </button>
         ))}
       </nav>
-
-      <div className="terminal-note">
-        <span>// 初始化序列</span>
-        <span>// 模块: AI 产品系统</span>
-        <span>// 任务: 把想法转成界面</span>
-      </div>
     </aside>
   );
 }
 
 function WorkIndex({
-  activeProject,
   activeProjectIndex,
   onSelectProject,
+  expandedProjectIndex,
+  onToggleProject,
 }: {
-  activeProject: Project;
   activeProjectIndex: number;
   onSelectProject: (index: number) => void;
+  expandedProjectIndex: number | null;
+  onToggleProject: (index: number | null) => void;
 }) {
+  const handleProjectClick = (index: number) => {
+    onSelectProject(index);
+    onToggleProject(expandedProjectIndex === index ? null : index);
+  };
+
   return (
     <div className="work-index">
       <div className="intro-block">
@@ -232,27 +235,31 @@ function WorkIndex({
 
       <div className="project-list">
         {projects.map((project, index) => (
-          <button
-            className={`project-row cursor-target ${activeProjectIndex === index ? "active" : ""}`}
-            key={project.id}
-            onClick={() => onSelectProject(index)}
-          >
-            <span className="project-number">{String(index + 1).padStart(2, "0")}</span>
-            <span className="project-title-group">
-              <span className="project-title">{project.title}</span>
-              <span className="project-short">{project.short}</span>
-            </span>
-            <span className="project-state">{activeProjectIndex === index ? "选中" : "待机"}</span>
-          </button>
+          <div className={`project-item ${expandedProjectIndex === index ? "expanded" : ""}`} key={project.id}>
+            <button
+              className={`project-row cursor-target ${activeProjectIndex === index ? "active" : ""}`}
+              onClick={() => handleProjectClick(index)}
+              aria-expanded={expandedProjectIndex === index}
+            >
+              <span className="project-number">{String(index + 1).padStart(2, "0")}</span>
+              <span className="project-title-group">
+                <span className="project-title">{project.title}</span>
+                <span className="project-short">{project.short}</span>
+              </span>
+              <span className="project-state">{expandedProjectIndex === index ? "折叠" : "展开"}</span>
+            </button>
+
+            {expandedProjectIndex === index ? (
+              <article className="detail-dossier">
+                <DossierBlock label="项目说明" value={project.about} />
+                <DossierBlock label="关键挑战" value={project.challenge} />
+                <DossierBlock label="解决方式" value={project.solution} />
+                <DossierBlock label="项目范围" value={project.scope} />
+              </article>
+            ) : null}
+          </div>
         ))}
       </div>
-
-      <article className="detail-dossier">
-        <DossierBlock label="项目说明" value={activeProject.about} />
-        <DossierBlock label="关键挑战" value={activeProject.challenge} />
-        <DossierBlock label="解决方式" value={activeProject.solution} />
-        <DossierBlock label="项目范围" value={activeProject.scope} />
-      </article>
     </div>
   );
 }
@@ -429,36 +436,59 @@ function ModeVisual({ mode }: { mode: Mode }) {
   );
 }
 
-function InspectorPanel({ mode, project, index }: { mode: Mode; project: Project; index: number }) {
+function InspectorPanel({ project, index }: { project: Project; index: number }) {
+  const [copyNotice, setCopyNotice] = useState<string | null>(null);
+
+  const contacts = [
+    { label: "姓名", value: "新宇" },
+    { label: "邮箱", value: "zxi8861@gmail.com" },
+    { label: "微信", value: "whitebirds8" },
+    { label: "手机号", value: "15046310957" },
+    { label: "GitHub", value: "zxi8861@gmail.com" },
+    { label: "Base", value: "上海" },
+  ];
+
+  const copyContact = async (label: string, value: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+    } catch {
+      const textarea = document.createElement("textarea");
+      textarea.value = value;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+
+    setCopyNotice(`${label} 已复制`);
+    window.setTimeout(() => setCopyNotice(null), 1600);
+  };
+
   return (
     <aside className="inspector-panel">
       <div className="inspector-top">
-        <a className="hey-button cursor-target" href="mailto:zxi8861@gmail.com">
+        <div className="hey-button" aria-label="联系我">
           <span>联系我</span>
           <span>{"->"}</span>
-        </a>
+        </div>
       </div>
 
       <div className="contact-links">
-        {[
-          { label: "姓名", value: "新宇" },
-          { label: "邮箱", value: "zxi8861@gmail.com", href: "mailto:zxi8861@gmail.com" },
-          { label: "微信", value: "whitebirds8" },
-          { label: "手机号", value: "15046310957", href: "tel:15046310957" },
-          { label: "GitHub", value: "zxi8861@gmail.com" },
-        ].map((contact) => (
-          <a className="cursor-target" href={contact.href ?? "#"} key={contact.label}>
+        {contacts.map((contact) => (
+          <button className="cursor-target" key={contact.label} onClick={() => copyContact(contact.label, contact.value)}>
             <span>{contact.label}</span>
             <strong>{contact.value}</strong>
-            <span>↗</span>
-          </a>
+            <span>复制</span>
+          </button>
         ))}
+        {copyNotice ? <div className="copy-toast" role="status">{copyNotice}</div> : null}
       </div>
 
       <div className="metadata-stack">
-        <DossierBlock label="项目编号" value={mode === "Work" ? project.id : `模式_${modeLabels[mode]}`} />
-        <DossierBlock label="类别" value={mode === "Work" ? project.category : "个人作品系统"} />
-        <DossierBlock label="状态" value={mode === "Work" ? project.status : "就绪"} />
+        <DossierBlock label="状态" value={project.status} />
         <DossierBlock label="链接" value="网站 / GitHub / 演示" />
       </div>
 

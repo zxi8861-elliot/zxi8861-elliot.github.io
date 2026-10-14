@@ -1,528 +1,275 @@
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Shuffle from "../components/Shuffle";
 import TargetCursor from "../components/Target_cursor";
 
+type Mode = "Work" | "Lab" | "Notes" | "Contact";
+type Section = { label: string; text: string };
 type Project = {
-  id: string;
-  title: string;
-  short: string;
-  category: string;
-  status: string;
-  scope: string;
-  about: string;
-  challenge: string;
-  solution: string;
-  stack: string[];
+  id: string; title: string; short: string; category: "Work" | "Lab"; status: string;
+  tags: string[]; role: string; result: string; sections: Section[]; cover?: string; url?: string;
 };
+const modes: Mode[] = ["Work", "Lab", "Notes", "Contact"];
+const labels: Record<Mode, string> = { Work: "工作作品", Lab: "个人实验", Notes: "知识沉淀", Contact: "联系我" };
+const hasMixedCjkLatin = (text: string) => /\p{Script=Han}/u.test(text) && /[A-Za-z]/.test(text);
+const isHanCharacter = (text: string) => /\p{Script=Han}/u.test(text);
+
+function renderTitleText(text: string) {
+  if (!hasMixedCjkLatin(text)) return text;
+  return Array.from(text).map((character, index) => isHanCharacter(character)
+    ? <span className="cjk-size-adjust" key={`${character}-${index}`}>{character}</span>
+    : character);
+}
 
 const projects: Project[] = [
   {
-    id: "ID_001",
-    title: "AIPPT",
-    short: "AI 演示文稿生成产品",
-    category: "AI 产品 / PPT 生成",
-    status: "已上线",
-    scope: "0-1 产品规划、Prompt 工作流、Web 端编辑器、生成效果评估",
-    about:
-      "主导 AI PPT 生成产品从 0 到 1 落地，把主题输入、资料解析、大纲生成和页面编辑串成完整工作流。",
-    challenge:
-      "PPT 生成不仅要有内容，还要兼顾结构、版式、视觉一致性和可编辑交付，不能停在文本草稿层。",
-    solution:
-      "拆解生成链路，建立 Prompt 模板、页面结构协议和质检规则，让产研设计能快速迭代上线。",
-    stack: ["LLM", "Prompt", "Web 编辑器", "视觉评估"],
+    id: "ai-ppt", title: "AI PPT", short: "觅知网线上产品｜从主题或文档生成演示文稿",
+    category: "Work", status: "线上运行", role: "产品规划 / 生成链路 / 编辑体验",
+    result: "约 1.5 个月上线 / 项目累计营收千万级 / 注册充值率翻倍",
+    url: "https://www.51miz.com/ai/ppt", tags: ["AI 应用", "PPT 生成", "在线编辑"],
+    sections: [
+      { label: "项目概览", text: "觅知网 AI PPT 线上产品。负责产品规划、生成流程与编辑体验设计。" },
+      { label: "背景与问题", text: "从主题或文档开始制作 PPT，需要经历资料整理、结构规划、内容撰写和视觉排版。单独生成文本，不能完成可编辑演示稿的交付。" },
+      { label: "产品策略", text: "将生成目标从“写出内容”扩展到“形成可编辑演示文稿”，围绕主题/文档输入、大纲、页面内容、排版和编辑组织完整流程。" },
+      { label: "核心设计", text: "用户输入主题或上传文档后生成大纲与正文，并提供排版、配图建议。页面结构覆盖封面、目录、章节、正文和结尾；正文页按内容组织 3–10 个要点。" },
+      { label: "项目成果", text: "约 1.5 个月完成核心功能并上线，跑通“需求输入 → 内容生成 → 在线编辑 → 导出 → 付费转化”闭环。项目累计营收达千万级，注册充值率较优化前翻倍。线上版本目前仍在运行，技术方案保留了当年的实现水平，后续未持续迭代。" },
+      { label: "复盘沉淀", text: "项目实践沉淀了 AI PPT 内容结构、页面类型、Prompt 规则与生成效果评估方面的经验。新版技术探索作为个人实验单独展示。" },
+    ],
   },
   {
-    id: "ID_002",
-    title: "AI Paper",
-    short: "论文阅读与知识助手",
-    category: "AI 产品 / 知识工具",
-    status: "已上线",
-    scope: "RAG 检索、长文解析、摘要卡片、阅读链路设计",
-    about:
-      "面向论文和长文资料的 AI 阅读工具，把复杂材料拆成问题、观点、方法和可追踪的摘要卡片。",
-    challenge:
-      "AI 总结容易流畅但不一定可信，需要让用户看到依据、原文位置和后续追问路径。",
-    solution:
-      "基于 RAG 和分层摘要流程设计阅读闭环，把要点提取、引用定位和笔记沉淀放在同一界面。",
-    stack: ["RAG", "Agent", "PDF", "知识卡片"],
+    id: "ai-design", title: "AI 设计图", short: "觅知网线上产品｜生成设计图与内容模板",
+    category: "Work", status: "线上运行", role: "生成流程 / Prompt 约束 / 效果评估",
+    result: "百万级营收 / 节约供稿成本约 80 万元 / 作品中心年降存储及带宽成本约 200 万元",
+    url: "https://www.51miz.com/ai/image", tags: ["AI 设计图", "模板生产", "在线编辑"],
+    sections: [
+      { label: "项目概览", text: "觅知网 AI 设计图线上产品，面向有设计素材与内容模板需求的用户。" },
+      { label: "背景与问题", text: "传统素材更新依赖人工生产，内容更新速度和热点需求之间存在差距。" },
+      { label: "产品策略", text: "同时覆盖后台选题批量生产和前台用户按需生成，让 AI 生成服务内容供给与用户创作。" },
+      { label: "核心设计", text: "围绕设计品类与用途设置生成要求，并根据输出效果迭代 Prompt。手抄报方向明确黑白线稿、A4 版式、留白和文本框等约束；生成结果可继续在线编辑。" },
+      { label: "项目成果", text: "项目实现百万级营收。AI 素材生产节约供稿成本约 80 万元；统一作品中心每年降低存储及带宽成本约 200 万元。" },
+      { label: "复盘沉淀", text: "积累了面向不同设计场景拆解生成约束、用实际输出验证效果，并持续调整生成策略的实践经验。" },
+    ],
   },
   {
-    id: "ID_003",
-    title: "AI Design",
-    short: "AI 设计图生成产品",
-    category: "AI 产品 / 设计生成",
-    status: "已上线",
-    scope: "设计生成链路、Prompt 工程、效果评估、组件规范",
-    about:
-      "主导 AI 设计图生成产品，把业务需求、风格约束和素材输入转成可评审的视觉方案。",
-    challenge:
-      "设计生成结果需要稳定、可控、可解释，同时服务产研协作，而不是只产出一张漂亮图片。",
-    solution:
-      "建立风格参数、生成评估标准和组件化复用机制，用产品规则约束模型输出质量。",
-    stack: ["设计 AI", "Prompt", "组件库", "评估规范"],
+    id: "avora", title: "Avora / 声映", short: "把形象、歌曲与分镜组合成音乐视频",
+    category: "Work", status: "工作项目", role: "移动端产品 / 生成流程 / 创作体验",
+    result: "RTF 从 42 降至 8 / iOS 与 Android 产品交付", tags: ["AI 音视频", "移动端", "创作流程"],
+    sections: [
+      { label: "项目概览", text: "面向移动端的 AI 音乐视频应用，覆盖 iOS 与 Android。" },
+      { label: "背景与问题", text: "音乐视频创作需要确定人物形象、歌曲和镜头内容，用户需要清楚的创作入口与生成步骤。" },
+      { label: "产品策略", text: "以创作流程组织多个输入项，让用户通过形象、歌曲和分镜模板表达创作意图。" },
+      { label: "核心设计", text: "围绕预设形象、歌曲选择与分镜模板设计生成流程，形成从选择创作素材到生成视频的路径。" },
+      { label: "项目成果", text: "完成 iOS 与 Android 产品的研发交付，并协同算法优化视频生成工作流，将 RTF 从 42 降至 8。RTF 的具体单位与统计口径可在确认后补充说明。" },
+      { label: "复盘沉淀", text: "在多模态生成产品中，创作选项和模板需要帮助用户表达意图，同时保持流程容易理解。" },
+    ],
   },
   {
-    id: "ID_004",
-    title: "AI Music",
-    short: "地理声音地图",
-    category: "AI 产品 / 音频地图",
-    status: "开发中",
-    scope: "自然环境音、地图浏览、生成式声音卡片、移动端体验",
-    about:
-      "一个地理自然环境音产品，把地点、气候和自然场景转化为可聆听、可收藏的声音体验。",
-    challenge:
-      "产品需要同时具备地图的空间感和音频的情绪价值，避免变成普通歌单或静态资料库。",
-    solution:
-      "以地图探索为主线组织声音素材，结合 AI 生成描述、氛围标签和可分享的声音卡片。",
-    stack: ["音频", "地图", "AI 生成", "移动端"],
+    id: "meeting-workflow", title: "会议 AI 内容工作流", short: "将会议内容转为 PPT、信息图与 H5 等交付物",
+    category: "Work", status: "工作项目", role: "Skill 体系 / 生成规范 / Workflow 生产链路",
+    result: "AI 生成 → 质量验收 → 前台素材供给",
+    tags: ["AI 会议", "Agent Skill", "内容生产"],
+    sections: [
+      { label: "项目概览", text: "面向 AI 会议产品的内容产物工程化项目，负责将会议内容转成 PPT、信息图、H5 等交付物，并建设对应的 Skill 体系。" },
+      { label: "背景与问题", text: "会议内容需要进一步加工成不同形式的可交付产物。项目需要统一生成规范与质量标准，并让生成能力能够接入素材生产流程。" },
+      { label: "产品策略", text: "将内容产物能力拆解并沉淀为 Skill，制定生成规范、质量评估与验收标准，再把生成 Skill 集成到后台 Workflow。" },
+      { label: "核心设计", text: "围绕模板批量生产设计后台流程，串联生成、审核、标签与发布，让内容从 AI 生成进入前台素材供给。" },
+      { label: "项目成果", text: "形成从 AI 生成、质量验收到前台素材供给的完整链路，推动内容生成能力标准化、工程化。" },
+      { label: "复盘沉淀", text: "生成 Skill 只有进入可复用的生产流程，并配套清晰的验收标准，才能稳定支持规模化内容供给。" },
+    ],
   },
   {
-    id: "ID_005",
-    title: "Online Editor",
-    short: "内容创作工具编辑器",
-    category: "效率工具 / 创作工具",
-    status: "已上线",
-    scope: "Web 编辑器、内容块、素材标签化、审核与发布流程",
-    about:
-      "面向内容生产团队的在线编辑器，承接 AI 生成、人工编辑、素材管理和发布审核。",
-    challenge:
-      "内容生产链路分散在素材、审核、编辑和发布之间，效率瓶颈会直接影响运营节奏。",
-    solution:
-      "用结构化编辑区和流程状态串联素材标签、AI 辅助、审核自动化与发布交付。",
-    stack: ["编辑器", "CMS", "AI 辅助", "Workflow"],
+    id: "ai-ppt-lab", title: "AI PPT / 自研版", short: "以新的技术方案重新探索 PPT 生成体验",
+    category: "Lab", status: "计划中", role: "个人探索", result: "等待立项与开发",
+    tags: ["AI PPT", "独立探索", "新技术方案"],
+    sections: [
+      { label: "探索动机", text: "线上工作项目保留了当年的技术水平，希望通过独立项目探索新的技术与生成体验。" },
+      { label: "当前阶段", text: "计划中，尚未发布。与觅知网线上版本分开记录，后续补充真实实现、演示与体验地址。" },
+    ],
+  },
+  {
+    id: "baoda", title: "暴打老板", short: "敲键盘，出出气。一个 Mac 像素解压桌宠。",
+    category: "Lab", status: "可体验", role: "产品构思与实现",
+    result: "键盘触发 / 连击与暴击 / 本地运行",
+    tags: ["像素桌宠", "macOS", "情绪价值"], cover: "/assets/baoda-office.webp",
+    url: "https://baoda-boss-website.vercel.app/",
+    sections: [
+      { label: "探索动机", text: "桌宠除了可爱和陪伴，还能提供什么价值？这次尝试把日常打字变成轻量的解压反馈。" },
+      { label: "核心设想", text: "让像素老板住进桌面，每次敲击键盘都触发键帽撞击和角色受击，把重复输入转化为有趣的反馈。" },
+      { label: "当前实现", text: "已提供产品网站与 macOS 下载入口。玩法包含键盘触发、连击与暴击，网站也提供可点击的互动演示。" },
+      { label: "体验与边界", text: "产品网站说明：输入文字不读取、不保存、不上传，动画和偏好设置留在本机。跨应用键盘反馈需要按需开启辅助功能权限。" },
+      { label: "当前阶段", text: "已有可体验版本。这里展示真实产品素材与玩法；效果反馈与后续迭代记录持续补充。" },
+    ],
   },
 ];
 
-const modes = ["Work", "About", "Playground", "Contact"] as const;
-type Mode = (typeof modes)[number];
-
-const modeLabels: Record<Mode, string> = {
-  Work: "作品",
-  About: "关于",
-  Playground: "实验",
-  Contact: "联系",
-};
+function readLocation() {
+  const [route, query] = window.location.hash.slice(1).split("?");
+  const [slug, detailId] = route.split("/");
+  const mode = modes.find((item) => item.toLowerCase() === slug) ?? "Work";
+  const selectedId = detailId ?? new URLSearchParams(query).get("selected");
+  const selected = projects.find((project) => project.id === selectedId && project.category === mode);
+  const first = mode === "Lab" ? "baoda" : projects.find((project) => project.category === mode)?.id ?? "ai-ppt";
+  return { mode, id: selected?.id ?? first, detail: Boolean(detailId && selected) };
+}
 
 export function HomePage() {
-  const [mode, setMode] = useState<Mode>("Work");
-  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-  const [expandedProjectIndex, setExpandedProjectIndex] = useState<number | null>(null);
-  const activeProject = projects[activeProjectIndex];
-
-  const statusLine = useMemo(() => {
-    if (mode === "Work") {
-      return `项目 ${String(activeProjectIndex + 1).padStart(3, "0")} / ${String(projects.length).padStart(3, "0")} - 正在查看`;
-    }
-
-    return `模式 ${modeLabels[mode]} - 系统就绪`;
-  }, [activeProjectIndex, mode]);
+  const [view, setView] = useState(readLocation);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const listScroll = useRef(0);
+  useEffect(() => {
+    const sync = () => setView(readLocation());
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
+  const selected = projects.find((project) => project.id === view.id) ?? projects[0];
+  const collection = projects.filter((project) => project.category === view.mode);
+  const changeMode = (mode: Mode) => {
+    listScroll.current = 0;
+    window.location.hash = mode.toLowerCase();
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  };
+  const open = (projectId = selected.id) => {
+    listScroll.current = scrollRef.current?.scrollTop ?? 0;
+    window.location.hash = `${view.mode.toLowerCase()}/${projectId}`;
+    scrollRef.current?.scrollTo(0, 0);
+  };
+  const back = () => {
+    window.location.hash = `${view.mode.toLowerCase()}?selected=${selected.id}`;
+    requestAnimationFrame(() => scrollRef.current?.scrollTo(0, listScroll.current));
+  };
 
   return (
     <>
-      <TargetCursor spinDuration={2} hideDefaultCursor parallaxOn hoverDuration={0.2} />
-
+      <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn hoverDuration={0.2} />
       <main className="portfolio-shell">
-        <NavRail mode={mode} onModeChange={setMode} />
+        <aside className="nav-rail">
+          <div className="brand-block">
+            <button className="brand-mark cursor-target" onClick={() => changeMode("Work")}>Hsin</button>
+            <span className="brand-year">AI PM / PORTFOLIO 2026</span>
+          </div>
+          <nav className="nav-links" aria-label="主导航">
+            {modes.map((mode, index) => (
+              <button key={mode} className={`nav-item cursor-target ${view.mode === mode ? "active" : ""}`}
+                onClick={() => changeMode(mode)} aria-current={view.mode === mode ? "page" : undefined}>
+                <span className="nav-icon">0{index + 1}</span><span>{labels[mode]}</span>
+              </button>
+            ))}
+          </nav>
+        </aside>
 
         <section className="content-panel">
-          <div className="panel-toolbar">
-            <span>// 标识符</span>
-            <span>{mode === "Work" ? "001_WORK" : `00${modes.indexOf(mode) + 1}_${mode.toUpperCase()}`}</span>
+          <div className="panel-toolbar"><span>// {labels[view.mode]}</span><span>0{modes.indexOf(view.mode) + 1} / INDEX</span></div>
+          <div className="work-index" ref={scrollRef}>
+            {view.detail ? (
+              <article className="case-detail">
+                <button className="back-link cursor-target" onClick={back}>← 返回{labels[view.mode]}</button>
+                <span className="eyebrow">CASE / {selected.status}</span>
+                <h1 className={hasMixedCjkLatin(selected.title) ? "mixed-script-title" : undefined}>{renderTitleText(selected.title)}</h1><p className="case-lede">{selected.short}</p>
+                {selected.category === "Work" ? (
+                  <div className="case-at-a-glance">
+                    <div><span>个人职责</span><p>{selected.role}</p></div>
+                    <div><span>代表成果</span><p>{selected.result}</p></div>
+                  </div>
+                ) : null}
+                {selected.cover ? <img className="case-image" src={selected.cover} alt="来自暴打老板产品网站的像素办公室画面" /> : null}
+                {selected.sections.map((section, index) => (
+                  <section className="case-section" key={section.label}>
+                    <span>0{index + 1} / {section.label}</span><p>{section.text}</p>
+                  </section>
+                ))}
+                {selected.url ? <a className="action-link cursor-target" href={selected.url} target="_blank" rel="noreferrer">打开产品网站 ↗</a> : null}
+              </article>
+            ) : collection.length ? (
+              <>
+                {view.mode === "Work" ? <section className="portfolio-intro">
+                  <span className="eyebrow">AI PRODUCT MANAGER / 6 YEARS</span>
+                  <p>6 年产品经验，3 年+ AI 产品经验。聚焦 AI 内容生成与 Agent 应用，做过 AI PPT、AI 设计图、AI 音视频与会议工作流，擅长把模型能力落到生成流程、在线编辑与规模化交付。</p>
+                </section> : null}
+                <div className="project-list">
+                  {collection.map((project, index) => (
+                    <article className={`project-card ${selected.id === project.id ? "active" : ""}`} key={project.id}>
+                      <button className="project-row cursor-target" onClick={() => setView((current) => ({ ...current, id: project.id }))}
+                        aria-pressed={selected.id === project.id}>
+                        <span className="project-number">0{index + 1}</span>
+                        <span className="project-title-group">
+                          {selected.id === project.id ? <Headline text={project.title} className={`project-title project-selected-title${hasMixedCjkLatin(project.title) ? " project-selected-title--mixed" : ""}`} /> : <span className={`project-title${hasMixedCjkLatin(project.title) ? " mixed-script-title" : ""}`}>{renderTitleText(project.title)}</span>}
+                          <span className="project-short">{project.short}</span>
+                        </span>
+                        <span className="project-state">{project.status}</span>
+                      </button>
+                      {selected.id === project.id ? <div className="project-facts">
+                          <p><span>个人职责</span>{project.role}</p><p><span>代表成果</span>{project.result}</p>
+                          <div className="project-actions">
+                            <button className="text-action cursor-target" onClick={() => open(project.id)}>查看完整案例 ↗</button>
+                            {project.url ? <a className="text-action cursor-target" href={project.url} target="_blank" rel="noreferrer">访问线上产品 ↗</a> : null}
+                          </div>
+                      </div> : null}
+                    </article>
+                  ))}
+                </div>
+              </>
+            ) : view.mode === "Notes" ? (
+              <div className="mode-panel"><span className="eyebrow">NOTES & THINKING</span><Headline text="Thinking in progress." />
+                <p>知识沉淀 · 搭建中</p><div className="notes-empty"><strong>把经验，整理成方法。</strong>
+                  <p>这里将记录 AI 产品、生成质量评估、交互设计与工作流实践。内容准备好后陆续发布。</p><span>COMING SOON / 03</span></div>
+              </div>
+            ) : <Contact />}
           </div>
-
-          {mode === "Work" ? (
-            <WorkIndex
-              activeProjectIndex={activeProjectIndex}
-              onSelectProject={setActiveProjectIndex}
-              expandedProjectIndex={expandedProjectIndex}
-              onToggleProject={setExpandedProjectIndex}
-            />
-          ) : (
-            <ModePanel mode={mode} />
-          )}
-
-          <div className="status-bar">
-            <span>C:\HSINYAEL\{mode.toUpperCase()}</span>
-            <span>{statusLine}</span>
-          </div>
+          <div className="status-bar"><span>ZHANG XINYU / {view.mode.toUpperCase()}</span><span>{view.detail ? "案例档案" : labels[view.mode]}</span></div>
         </section>
 
-        <PreviewPanel mode={mode} project={activeProject} index={activeProjectIndex} />
-        <InspectorPanel project={activeProject} index={activeProjectIndex} />
+        {view.mode === "Work" || view.mode === "Lab" ? <section className="preview-panel">
+          <div className="panel-toolbar"><span>// 项目预览</span><span>PORTFOLIO / 2026</span></div>
+          <div className="preview-canvas editorial-canvas" key={`${view.mode}-${selected.id}`}>
+            {selected.url ? <iframe
+              className="product-preview-frame"
+              src={selected.url}
+              title={`${selected.title}产品页面预览`}
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+            /> : selected.cover ? <img className="product-preview-image" src={selected.cover} alt={`${selected.title}产品画面`} /> : null}
+          </div>
+        </section> : null}
+
       </main>
     </>
   );
 }
 
-function NavRail({
-  mode,
-  onModeChange,
-}: {
-  mode: Mode;
-  onModeChange: (mode: Mode) => void;
-}) {
-  return (
-    <aside className="nav-rail">
-      <div className="brand-block">
-        <button className="brand-mark cursor-target" onClick={() => onModeChange("Work")} aria-label="返回作品">
-          HY
-        </button>
-        <span className="brand-year">AI PM / 2026</span>
-      </div>
-
-      <nav className="nav-links" aria-label="主导航">
-        {modes.map((item) => (
-          <button
-            className={`nav-item cursor-target ${mode === item ? "active" : ""}`}
-            key={item}
-            onClick={() => onModeChange(item)}
-          >
-            <span className="nav-icon">{item === "Work" ? "01" : item === "About" ? "02" : item === "Playground" ? "03" : "04"}</span>
-            <span>{modeLabels[item]}</span>
-          </button>
-        ))}
-      </nav>
-    </aside>
-  );
+function Headline({ text, className }: { text: string; className?: string }) {
+  return <Shuffle text={text} className={className} tag="h1" textAlign="left" duration={0.35} shuffleTimes={1} triggerOnce respectReducedMotion loop={false} />;
 }
 
-function WorkIndex({
-  activeProjectIndex,
-  onSelectProject,
-  expandedProjectIndex,
-  onToggleProject,
-}: {
-  activeProjectIndex: number;
-  onSelectProject: (index: number) => void;
-  expandedProjectIndex: number | null;
-  onToggleProject: (index: number | null) => void;
-}) {
-  const handleProjectClick = (index: number) => {
-    onSelectProject(index);
-    onToggleProject(expandedProjectIndex === index ? null : index);
-  };
-
-  return (
-    <div className="work-index">
-      <div className="intro-block">
-        <span className="eyebrow">AI 产品经理</span>
-        <Shuffle
-          text="AI PM creating intelligent and visual experiences."
-          tag="h1"
-          textAlign="left"
-          shuffleDirection="right"
-          duration={0.35}
-          animationMode="evenodd"
-          shuffleTimes={1}
-          ease="power3.out"
-          stagger={0.03}
-          threshold={0.1}
-          triggerOnce={true}
-          triggerOnHover
-          respectReducedMotion={true}
-          loop={false}
-          loopDelay={0}
-        />
-        <p>
-          关注 AI 产品、体验设计、内容工具和创意系统，擅长把松散想法压缩成可以被使用、被讨论、被迭代的界面。
-        </p>
-      </div>
-
-      <div className="section-label">
-        <span>精选项目</span>
-        <span>{projects.length} 个已收录</span>
-      </div>
-
-      <div className="project-list">
-        {projects.map((project, index) => (
-          <div className={`project-item ${expandedProjectIndex === index ? "expanded" : ""}`} key={project.id}>
-            <button
-              className={`project-row cursor-target ${activeProjectIndex === index ? "active" : ""}`}
-              onClick={() => handleProjectClick(index)}
-              aria-expanded={expandedProjectIndex === index}
-            >
-              <span className="project-number">{String(index + 1).padStart(2, "0")}</span>
-              <span className="project-title-group">
-                <span className="project-title">{project.title}</span>
-                <span className="project-short">{project.short}</span>
-              </span>
-              <span className="project-state">{expandedProjectIndex === index ? "折叠" : "展开"}</span>
-            </button>
-
-            {expandedProjectIndex === index ? (
-              <article className="detail-dossier">
-                <DossierBlock label="项目说明" value={project.about} />
-                <DossierBlock label="关键挑战" value={project.challenge} />
-                <DossierBlock label="解决方式" value={project.solution} />
-                <DossierBlock label="项目范围" value={project.scope} />
-              </article>
-            ) : null}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ModePanel({ mode }: { mode: Mode }) {
-  if (mode === "About") {
-    return (
-      <div className="mode-panel">
-        <span className="eyebrow">身份档案</span>
-        <Shuffle
-          text="System architect for AI-native product experiences."
-          tag="h1"
-          textAlign="left"
-          shuffleDirection="right"
-          duration={0.35}
-          animationMode="evenodd"
-          shuffleTimes={1}
-          ease="power3.out"
-          stagger={0.03}
-          threshold={0.1}
-          triggerOnce={true}
-          triggerOnHover
-          respectReducedMotion={true}
-          loop={false}
-          loopDelay={0}
-        />
-        <p>
-          Hsin Yael 横跨产品策略、交互设计和创意 AI 系统。工作方式很直接：把模糊意图压缩成可用的产品结构，再让结构在界面里变得清楚。
-        </p>
-        <div className="mode-grid">
-          <DossierBlock label="当前关注" value="AI 产品、内容工具、设计系统和创作者工作流。" />
-          <DossierBlock label="工作方法" value="尽早原型化，检查真实行为，压缩复杂度，让界面保持诚实。" />
-          <DossierBlock label="擅长动作" value="把暧昧的创作流程转化为结构清晰、有编辑感的可视系统。" />
-        </div>
-      </div>
-    );
-  }
-
-  if (mode === "Playground") {
-    return (
-      <div className="mode-panel">
-        <span className="eyebrow">实验目录</span>
-        <Shuffle
-          text="Small tools, strange interfaces, and AI experiments in motion."
-          tag="h1"
-          textAlign="left"
-          shuffleDirection="right"
-          duration={0.35}
-          animationMode="evenodd"
-          shuffleTimes={1}
-          ease="power3.out"
-          stagger={0.03}
-          threshold={0.1}
-          triggerOnce={true}
-          triggerOnHover
-          respectReducedMotion={true}
-          loop={false}
-          loopDelay={0}
-        />
-        <div className="experiment-list">
-          {["Generative Topographies", "Neural Semantic Trees", "Scan Texture Synth", "Prompt Critic", "Ambient Map Sketch"].map((item, index) => (
-            <div className="experiment-row" key={item}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <strong>{item}</strong>
-              <em>{index === 0 ? "运行中" : "归档"}</em>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="mode-panel">
-      <span className="eyebrow">联系协议</span>
-      <Shuffle
-        text="Say hey, send context, or open a new collaboration thread."
-        tag="h1"
-        textAlign="left"
-        shuffleDirection="right"
-        duration={0.35}
-        animationMode="evenodd"
-        shuffleTimes={1}
-        ease="power3.out"
-        stagger={0.03}
-        threshold={0.1}
-        triggerOnce={true}
-        triggerOnHover
-        respectReducedMotion={true}
-        loop={false}
-        loopDelay={0}
-      />
-      <p>
-        邮件是最好的入口。可以聊产品想法、AI 工作流实验、作品集反馈，或一段边界清楚的协作。
-      </p>
-      <a className="large-mail-link cursor-target" href="mailto:zxi8861@gmail.com">
-        zxi8861@gmail.com
-      </a>
-    </div>
-  );
-}
-
-function PreviewPanel({ mode, project, index }: { mode: Mode; project: Project; index: number }) {
-  return (
-    <section className={`preview-panel preview-${mode.toLowerCase()}`}>
-      <div className="panel-toolbar">
-        <span>// 可视化预览</span>
-        <span>X:0106PX Y:0116PX</span>
-      </div>
-
-      <div className="preview-canvas">
-        <div className="canvas-tag">画布渲染 / {modeLabels[mode]}</div>
-        <div className="active-coordinate">NODE_{String(index + 1).padStart(2, "0")}</div>
-
-        {mode === "Work" ? <ProjectVisual project={project} index={index} /> : <ModeVisual mode={mode} />}
-
-        <div className="crosshair horizontal" />
-        <div className="crosshair vertical" />
-      </div>
-    </section>
-  );
-}
-
-function ProjectVisual({ project, index }: { project: Project; index: number }) {
-  return (
-    <div className="project-visual" aria-label={`${project.title} abstract project preview`}>
-      <div className="visual-main">
-        <div className="slide-stack">
-          <div className="slide-card large">
-            <span>{project.title}</span>
-            <i />
-            <b />
-          </div>
-          <div className="slide-card small top" />
-          <div className="slide-card small bottom" />
-        </div>
-        <div className="wire-grid">
-          {Array.from({ length: 16 }).map((_, cellIndex) => (
-            <span className={cellIndex % (index + 2) === 0 ? "on" : ""} key={cellIndex} />
-          ))}
-        </div>
-      </div>
-
-      <div className="visual-strip">
-        <div className="mini-chart">
-          {project.stack.map((_, stackIndex) => (
-            <span style={{ height: `${28 + stackIndex * 14}%` }} key={stackIndex} />
-          ))}
-        </div>
-        <div className="poster-block">
-          <span>自动生成协议</span>
-          <strong>{project.category.split("/")[0]}</strong>
-          <small>{project.id} / {project.status}</small>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ModeVisual({ mode }: { mode: Mode }) {
-  return (
-    <div className="mode-visual">
-      <div className="id-card">
-        <span>{mode === "About" ? "身份卡片" : mode === "Playground" ? "实验视窗" : "联系面板"}</span>
-        <strong>{mode === "About" ? "HSIN YAEL" : mode === "Playground" ? "GEN-TOPO ALPHA" : "OPEN_CHANNEL"}</strong>
-        <div />
-      </div>
-      <div className="orbital-map">
-        <span />
-        <span />
-        <span />
-      </div>
-    </div>
-  );
-}
-
-function InspectorPanel({ project, index }: { project: Project; index: number }) {
-  const [copyNotice, setCopyNotice] = useState<string | null>(null);
-
-  const contacts = [
-    { label: "姓名", value: "新宇" },
-    { label: "邮箱", value: "zxi8861@gmail.com" },
-    { label: "微信", value: "whitebirds8" },
-    { label: "手机号", value: "15046310957" },
-    { label: "GitHub", value: "zxi8861@gmail.com" },
-    { label: "Base", value: "上海" },
-  ];
-
-  const copyContact = async (label: string, value: string) => {
-    try {
-      await navigator.clipboard.writeText(value);
-    } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = value;
-      textarea.setAttribute("readonly", "");
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
+function Contact() {
+  const [notice, setNotice] = useState("");
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  const copy = async (value: string) => {
+    let success = false;
+    try { await navigator.clipboard.writeText(value); success = true; }
+    catch {
+      const field = document.createElement("textarea");
+      field.value = value;
+      field.style.position = "fixed";
+      field.style.opacity = "0";
+      document.body.appendChild(field);
+      field.select();
+      success = document.execCommand("copy");
+      field.remove();
     }
-
-    setCopyNotice(`${label} 已复制`);
-    window.setTimeout(() => setCopyNotice(null), 1600);
+    setNotice(success ? "复制成功" : "复制失败，请重试");
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setNotice(""), 2000);
   };
-
   return (
-    <aside className="inspector-panel">
-      <div className="inspector-top">
-        <div className="hey-button" aria-label="联系我">
-          <span>联系我</span>
-          <span>{"->"}</span>
-        </div>
+    <div className="mode-panel"><span className="eyebrow">CONTACT / 04</span><Headline text="Let’s talk products." />
+      <p>可以聊 AI 产品、创意实验与工作流实践，也欢迎作品集反馈。</p>
+      <div className="contact-directory">
+        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("zxi8861@gmail.com")}><span>EMAIL</span><strong>zxi8861@gmail.com</strong><span>复制 →</span></button><a href="mailto:zxi8861@gmail.com" aria-label="写邮件">写邮件 ↗</a></div>
+        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("zxi8861-elliot")}><span>GITHUB</span><strong>zxi8861-elliot</strong><span>复制 →</span></button><a href="https://github.com/zxi8861-elliot" target="_blank" rel="noreferrer" aria-label="打开 GitHub">打开 ↗</a></div>
+        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("132-***-*****")}><span>手机号</span><strong>132-***-*****</strong><span>复制 →</span></button></div>
+        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("********")}><span>微信号</span><strong>********</strong><span>复制 →</span></button></div>
       </div>
-
-      <div className="contact-links">
-        {contacts.map((contact) => (
-          <button className="cursor-target" key={contact.label} onClick={() => copyContact(contact.label, contact.value)}>
-            <span>{contact.label}</span>
-            <strong>{contact.value}</strong>
-            <span>复制</span>
-          </button>
-        ))}
-        {copyNotice ? <div className="copy-toast" role="status">{copyNotice}</div> : null}
-      </div>
-
-      <div className="metadata-stack">
-        <DossierBlock label="状态" value={project.status} />
-        <DossierBlock label="链接" value="网站 / GitHub / 演示" />
-      </div>
-
-      <div className="thumbnail-box">
-        <span>缩略图_{String(index + 1).padStart(2, "0")}</span>
-        <div className="thumbnail-grid">
-          {Array.from({ length: 9 }).map((_, cellIndex) => (
-            <i className={cellIndex === index || cellIndex % 4 === 0 ? "active" : ""} key={cellIndex} />
-          ))}
-        </div>
-      </div>
-
-      <div className="tech-stack">
-        <span>技术栈</span>
-        <div>
-          {project.stack.map((item) => (
-            <b key={item}>{item}</b>
-          ))}
-        </div>
-      </div>
-
-      <footer className="rights">
-        <span>保留所有权利。</span>
-        <span>由 HSIN YAEL 创建。</span>
-      </footer>
-    </aside>
-  );
-}
-
-function DossierBlock({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="dossier-block">
-      <span>{label}</span>
-      <p>{value}</p>
+      {notice ? <div className="system-toast" role="status" aria-live="polite"><span aria-hidden="true">✓</span>{notice}</div> : null}
     </div>
   );
 }

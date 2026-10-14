@@ -139,10 +139,12 @@ const Shuffle: React.FC<ShuffleProps> = ({
 
         const rolls = Math.max(1, Math.floor(shuffleTimes));
         const rand = (set: string) => set.charAt(Math.floor(Math.random() * set.length)) || '';
+        const cjkCharacter = /[\p{Script=Han}\u3000-\u303F\uFF00-\uFFEF]/u;
 
         chars.forEach(ch => {
           const parent = ch.parentElement;
           if (!parent) return;
+          if (cjkCharacter.test(ch.textContent || '')) ch.classList.add('shuffle-char-cjk');
 
           const w = ch.getBoundingClientRect().width;
           const h = ch.getBoundingClientRect().height;

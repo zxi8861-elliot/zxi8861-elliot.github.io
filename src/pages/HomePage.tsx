@@ -168,7 +168,7 @@ export function HomePage() {
   return (
     <>
       <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn hoverDuration={0.2} />
-      <main className="portfolio-shell">
+      <main className={`portfolio-shell${view.mode === "Notes" ? " notes-layout" : ""}`}>
         <aside className="nav-rail">
           <div className="brand-block">
             <button className="brand-mark cursor-target" onClick={() => changeMode("Work")}>Hsin</button>

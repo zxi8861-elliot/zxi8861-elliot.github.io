@@ -1254,3 +1254,15 @@ h1 {
     min-height: 720px;
   }
 }
+
+/* Knowledge notes favor the reading surface over the chapter directory. */
+@media (min-width: 821px) {
+  .portfolio-shell.notes-layout {
+    grid-template-columns: 110px minmax(0, 0.78fr) minmax(0, 1.22fr);
+  }
+}
+@media (max-width: 1180px) and (min-width: 821px) {
+  .portfolio-shell.notes-layout {
+    grid-template-columns: 90px minmax(280px, 0.78fr) minmax(320px, 1.22fr);
+  }
+}

@@ -136,8 +136,8 @@ function readLocation() {
   const mode = modes.find((item) => item.toLowerCase() === slug) ?? "Work";
   const selectedId = detailId ?? new URLSearchParams(query).get("selected");
   const selected = projects.find((project) => project.id === selectedId && project.category === mode);
-  const first = mode === "Lab" ? "baoda" : projects.find((project) => project.category === mode)?.id ?? "ai-ppt";
-  return { mode, id: selected?.id ?? first, detail: Boolean(detailId && selected) };
+  const first = mode === "Lab" ? "heara" : projects.find((project) => project.category === mode)?.id ?? "ai-ppt";
+  return { mode, id: selected?.id ?? first, detail: mode !== "Lab" && Boolean(detailId && selected) };
 }
 
 export function HomePage() {
@@ -165,6 +165,10 @@ export function HomePage() {
     window.location.hash = `${view.mode.toLowerCase()}?selected=${selected.id}`;
     requestAnimationFrame(() => scrollRef.current?.scrollTo(0, listScroll.current));
   };
+  const selectLabProject = (projectId: string) => {
+    window.location.hash = `lab?selected=${projectId}`;
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  };
 
   return (
     <>
@@ -187,8 +191,30 @@ export function HomePage() {
 
         <section className="content-panel">
           <div className="panel-toolbar"><span>// {labels[view.mode]}</span><span>0{modes.indexOf(view.mode) + 1} / INDEX</span></div>
-          <div className="work-index" ref={scrollRef}>
-            {view.detail ? (
+          <div className={`work-index${view.mode === "Lab" ? " lab-index" : ""}`} ref={scrollRef}>
+            {view.mode === "Lab" ? <article className="lab-project-view">
+              <nav className="lab-project-tabs" role="tablist" aria-label="个人实验项目">
+                {collection.map((project, index) => <button
+                  key={project.id}
+                  id={`lab-tab-${project.id}`}
+                  className={`lab-project-tab cursor-target${selected.id === project.id ? " active" : ""}`}
+                  role="tab"
+                  aria-selected={selected.id === project.id}
+                  aria-controls="lab-case-panel"
+                  onClick={() => selectLabProject(project.id)}
+                >
+                  <span>0{index + 1}</span><strong>{project.title}</strong><em>{project.status}</em>
+                </button>)}
+              </nav>
+              <section className="lab-case-detail" id="lab-case-panel" role="tabpanel" aria-labelledby={`lab-tab-${selected.id}`}>
+                <span className="eyebrow">PERSONAL PROJECT / {selected.status}</span>
+                <h1 className={hasMixedCjkLatin(selected.title) ? "mixed-script-title" : undefined}>{renderTitleText(selected.title)}</h1>
+                <p className="case-lede">{selected.short}</p>
+                {selected.sections.map((section, index) => <section className="case-section" key={section.label}>
+                  <span>0{index + 1} / {section.label}</span><p>{section.text}</p>
+                </section>)}
+              </section>
+            </article> : view.detail ? (
               <article className="case-detail">
                 <button className="back-link cursor-target" onClick={back}>← 返回{labels[view.mode]}</button>
                 <span className="eyebrow">CASE / {selected.status}</span>
@@ -256,9 +282,9 @@ export function HomePage() {
               title="课映 AI PPT 系统原理地图"
             />
           </div>
-        </section> : view.mode === "Work" || view.mode === "Lab" ? <section className={`preview-panel${view.detail ? " project-detail-panel" : ""}`}>
-          <div className="panel-toolbar"><span>// {view.detail ? "项目视觉" : "项目预览"}</span><span>PORTFOLIO / 2026</span></div>
-          {view.detail ? <div className="project-detail-showcase" key={`${view.mode}-${selected.id}`}>
+        </section> : view.mode === "Lab" ? <section className="preview-panel project-detail-panel">
+          <div className="panel-toolbar"><span>// 项目视觉</span><span>PORTFOLIO / 2026</span></div>
+          <div className="project-detail-showcase" key={`Lab-${selected.id}`}>
             {selected.gallery?.length ? <div className={`project-detail-gallery${selected.id === "heara" ? " heara-detail-gallery" : ""}`}>
               {selected.gallery.map((image) => <figure key={image.src}>
                 <img src={image.src} alt={image.alt} />
@@ -269,6 +295,15 @@ export function HomePage() {
               <div><span>个人职责</span><p>{selected.role}</p></div>
               <div><span>代表成果</span><p>{selected.result}</p></div>
             </div>
+            {selected.url ? <a className="project-visit-button cursor-target" href={selected.url} target="_blank" rel="noreferrer">去访问 <span aria-hidden="true">↗</span></a> : null}
+          </div>
+        </section> : view.mode === "Work" ? <section className={`preview-panel${view.detail ? " project-detail-panel" : ""}`}>
+          <div className="panel-toolbar"><span>// {view.detail ? "项目视觉" : "项目预览"}</span><span>PORTFOLIO / 2026</span></div>
+          {view.detail ? <div className="project-detail-showcase" key={`${view.mode}-${selected.id}`}>
+            {selected.gallery?.length ? <div className="project-detail-gallery">
+              {selected.gallery.map((image) => <figure key={image.src}><img src={image.src} alt={image.alt} />{image.label ? <figcaption>{image.label}</figcaption> : null}</figure>)}
+            </div> : selected.cover ? <img className="project-detail-cover" src={selected.cover} alt={`${selected.title}项目画面`} /> : <div className="project-visual-empty">尚无项目视觉素材</div>}
+            <div className="project-detail-facts"><div><span>个人职责</span><p>{selected.role}</p></div><div><span>代表成果</span><p>{selected.result}</p></div></div>
             {selected.url ? <a className="project-visit-button cursor-target" href={selected.url} target="_blank" rel="noreferrer">去访问 <span aria-hidden="true">↗</span></a> : null}
           </div> : <>
             <div className="preview-canvas editorial-canvas" key={`${view.mode}-${selected.id}`}>

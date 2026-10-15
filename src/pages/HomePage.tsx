@@ -35,6 +35,11 @@ const projects: Project[] = [
     category: "Work", status: "线上运行", role: "产品规划 / 生成链路 / 编辑体验",
     result: "约 1.5 个月上线 / 项目累计营收千万级 / 注册充值率翻倍",
     url: "https://www.51miz.com/ai/ppt", tags: ["AI 应用", "PPT 生成", "在线编辑"],
+    gallery: [
+      { src: "/assets/portfolio/ai-ppt/01-topic.jpg", alt: "AI PPT 输入主题并生成演示文稿", label: "01 / 输入主题生成 PPT" },
+      { src: "/assets/portfolio/ai-ppt/02-upload.jpg", alt: "AI PPT 上传文档后生成演示文稿", label: "02 / 上传文档生成 PPT" },
+      { src: "/assets/portfolio/ai-ppt/03-beautify.jpg", alt: "AI PPT 上传现有演示稿并自动美化", label: "03 / 上传 PPT 自动美化" },
+    ],
     sections: [
       { label: "项目概览", text: "觅知网 AI PPT 线上产品。负责产品规划、生成流程与编辑体验设计。" },
       { label: "背景与问题", text: "从主题或文档开始制作 PPT，需要经历资料整理、结构规划、内容撰写和视觉排版。单独生成文本，不能完成可编辑演示稿的交付。" },
@@ -49,6 +54,11 @@ const projects: Project[] = [
     category: "Work", status: "线上运行", role: "生成流程 / Prompt 约束 / 效果评估",
     result: "百万级营收 / 节约供稿成本约 80 万元 / 作品中心年降存储及带宽成本约 200 万元",
     url: "https://www.51miz.com/ai/image", tags: ["AI 设计图", "模板生产", "在线编辑"],
+    gallery: [
+      { src: "/assets/portfolio/ai-design/01-create.jpg", alt: "AI 一键生图创作界面与设计模板示例", label: "01 / 一句话描述，浏览多品类生成素材" },
+      { src: "/assets/portfolio/ai-design/02-poster.jpg", alt: "觅知 AI 海报设计与模板素材页面", label: "02 / AI 海报：灵感模板与按需生成" },
+      { src: "/assets/portfolio/ai-design/03-handcopy.jpg", alt: "觅知 AI 手抄报生成页面及彩稿线稿示例", label: "03 / AI 手抄报：彩稿与线稿输出" },
+    ],
     sections: [
       { label: "项目概览", text: "觅知网 AI 设计图线上产品，面向有设计素材与内容模板需求的用户。" },
       { label: "背景与问题", text: "传统素材更新依赖人工生产，内容更新速度和热点需求之间存在差距。" },
@@ -120,6 +130,11 @@ const projects: Project[] = [
     result: "macOS 可下载体验 / 键盘与鼠标交互 / 本地优先",
     tags: ["像素桌宠", "macOS", "情绪价值"], cover: "/assets/baoda-office.webp",
     url: "https://baoda-boss-website.vercel.app/",
+    gallery: [
+      { src: "/assets/portfolio/baoda/01-home.jpg", alt: "暴打老板像素桌宠产品介绍首页", label: "01 / 产品定位与桌面陪伴" },
+      { src: "/assets/portfolio/baoda/02-play.jpg", alt: "暴打老板键盘与鼠标互动玩法介绍", label: "02 / 键盘触发与像素互动" },
+      { src: "/assets/portfolio/baoda/03-install.jpg", alt: "暴打老板桌面宠物安装与权限说明页面", label: "03 / 安装体验与权限边界" },
+    ],
     sections: [
       { label: "S / 背景与问题", text: "工作中的烦闷常常很轻，却会反复累积；专门打开一个解压应用又会打断手头任务。桌面宠物通常提供陪伴，但我想继续追问：能不能把用户正在做的事本身，转化成即时、轻量、带一点幽默感的反馈？" },
       { label: "T / 目标与职责", text: "目标是在不切换工作流的前提下，让敲键盘、点击或拖动都能触发短促而有反馈的互动。我独立完成产品定义、核心交互和体验取舍，并通过 AI coding agent 协作实现与打包验证。" },
@@ -285,28 +300,34 @@ export function HomePage() {
           </div>
         </section> : view.mode === "Lab" ? <section className="preview-panel project-detail-panel">
           <div className="panel-toolbar"><span>// 项目视觉</span><span>PORTFOLIO / 2026</span></div>
-          <div className="project-detail-showcase" key={`Lab-${selected.id}`}>
-            {selected.gallery?.length ? <div className={`project-detail-gallery${selected.id === "heara" ? " heara-detail-gallery" : ""}`}>
-              {selected.gallery.map((image) => <figure key={image.src}>
-                <img src={image.src} alt={image.alt} />
-                {image.label ? <figcaption>{image.label}</figcaption> : null}
-              </figure>)}
-            </div> : selected.cover ? <img className="project-detail-cover" src={selected.cover} alt={`${selected.title}项目画面`} /> : <div className="project-visual-empty">尚无项目视觉素材</div>}
-            <div className="project-detail-facts">
-              <div><span>个人职责</span><p>{selected.role}</p></div>
-              <div><span>代表成果</span><p>{selected.result}</p></div>
+          <div className="project-detail-scroll">
+            <div className="project-detail-showcase" key={`Lab-${selected.id}`}>
+              {selected.gallery?.length ? <div className={`project-detail-gallery${selected.id === "heara" ? " heara-detail-gallery" : ""}`}>
+                {selected.gallery.map((image) => <figure key={image.src}>
+                  <img src={image.src} alt={image.alt} />
+                  {image.label ? <figcaption>{image.label}</figcaption> : null}
+                </figure>)}
+              </div> : selected.cover ? <img className="project-detail-cover" src={selected.cover} alt={`${selected.title}项目画面`} /> : <div className="project-visual-empty">尚无项目视觉素材</div>}
+              <div className="project-detail-facts">
+                <div><span>个人职责</span><p>{selected.role}</p></div>
+                <div><span>代表成果</span><p>{selected.result}</p></div>
+              </div>
             </div>
-            {selected.url ? <a className="project-visit-button cursor-target" href={selected.url} target="_blank" rel="noreferrer">去访问 <span aria-hidden="true">↗</span></a> : null}
           </div>
+          {selected.url ? <div className="project-detail-dock"><a className="project-visit-button cursor-target" href={selected.url} target="_blank" rel="noreferrer">去访问 <span aria-hidden="true">↗</span></a></div> : null}
         </section> : view.mode === "Work" ? <section className={`preview-panel${view.detail ? " project-detail-panel" : ""}`}>
           <div className="panel-toolbar"><span>// {view.detail ? "项目视觉" : "项目预览"}</span><span>PORTFOLIO / 2026</span></div>
-          {view.detail ? <div className="project-detail-showcase" key={`${view.mode}-${selected.id}`}>
-            {selected.gallery?.length ? <div className="project-detail-gallery">
-              {selected.gallery.map((image) => <figure key={image.src}><img src={image.src} alt={image.alt} />{image.label ? <figcaption>{image.label}</figcaption> : null}</figure>)}
-            </div> : selected.cover ? <img className="project-detail-cover" src={selected.cover} alt={`${selected.title}项目画面`} /> : <div className="project-visual-empty">尚无项目视觉素材</div>}
-            <div className="project-detail-facts"><div><span>个人职责</span><p>{selected.role}</p></div><div><span>代表成果</span><p>{selected.result}</p></div></div>
-            {selected.url ? <a className="project-visit-button cursor-target" href={selected.url} target="_blank" rel="noreferrer">去访问 <span aria-hidden="true">↗</span></a> : null}
-          </div> : <>
+          {view.detail ? <>
+            <div className="project-detail-scroll">
+              <div className="project-detail-showcase" key={`${view.mode}-${selected.id}`}>
+                {selected.gallery?.length ? <div className="project-detail-gallery">
+                  {selected.gallery.map((image) => <figure key={image.src}><img src={image.src} alt={image.alt} />{image.label ? <figcaption>{image.label}</figcaption> : null}</figure>)}
+                </div> : selected.cover ? <img className="project-detail-cover" src={selected.cover} alt={`${selected.title}项目画面`} /> : <div className="project-visual-empty">尚无项目视觉素材</div>}
+                <div className="project-detail-facts"><div><span>个人职责</span><p>{selected.role}</p></div><div><span>代表成果</span><p>{selected.result}</p></div></div>
+              </div>
+            </div>
+            {selected.url ? <div className="project-detail-dock"><a className="project-visit-button cursor-target" href={selected.url} target="_blank" rel="noreferrer">去访问 <span aria-hidden="true">↗</span></a></div> : null}
+          </> : <>
             <div className="preview-canvas editorial-canvas" key={`${view.mode}-${selected.id}`}>
               {selected.gallery?.length ? <div className="project-preview-gallery">
                 {selected.gallery.slice(0, 3).map((image) => <img key={image.src} src={image.src} alt={image.alt} />)}

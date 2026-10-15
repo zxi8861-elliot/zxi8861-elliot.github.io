@@ -4,14 +4,14 @@ import TargetCursor from "../components/Target_cursor";
 
 type Mode = "Work" | "Lab" | "Notes" | "Contact";
 type Section = { label: string; text: string };
-type Project = {
-  id: string; title: string; short: string; category: "Work" | "Lab"; status: string;
+export type Project = {
+  id: string; title: string; short: string; category: "Work" | "Lab"; source: "company" | "personal"; period: string; status: string;
   tags: string[]; role: string; result: string; sections: Section[]; cover?: string;
   gallery?: Array<{ src: string; alt: string; label?: string }>; url?: string;
 };
 const modes: Mode[] = ["Work", "Lab", "Notes", "Contact"];
 const labels: Record<Mode, string> = { Work: "工作作品", Lab: "个人实验", Notes: "知识沉淀", Contact: "联系我" };
-const coursewareDirectory = [
+export const coursewareDirectory = [
   ["overview", "总览"], ["diagram-index", "全部图谱"], ["beginner-guide", "新手入口"],
   ["architecture", "总架构"], ["generation", "生成链路"], ["callbacks", "调用回调"],
   ["sequence", "生成时序"], ["state", "状态机"], ["ai-calls", "AI 调用"], ["scene-types", "Scene 分支"],
@@ -29,10 +29,10 @@ function renderTitleText(text: string) {
     : character);
 }
 
-const projects: Project[] = [
+export const projects: Project[] = [
   {
     id: "ai-ppt", title: "AI PPT", short: "觅知网线上产品｜从主题或文档生成演示文稿",
-    category: "Work", status: "线上运行", role: "产品规划 / 生成链路 / 编辑体验",
+    category: "Work", source: "company", period: "2024", status: "线上运行", role: "产品规划 / 生成链路 / 编辑体验",
     result: "约 1.5 个月上线 / 项目累计营收千万级 / 注册充值率翻倍",
     url: "https://www.51miz.com/ai/ppt", tags: ["AI 应用", "PPT 生成", "在线编辑"],
     gallery: [
@@ -51,7 +51,7 @@ const projects: Project[] = [
   },
   {
     id: "ai-design", title: "AI 设计图", short: "觅知网线上产品｜生成设计图与内容模板",
-    category: "Work", status: "线上运行", role: "生成流程 / Prompt 约束 / 效果评估",
+    category: "Work", source: "company", period: "2024", status: "线上运行", role: "生成流程 / Prompt 约束 / 效果评估",
     result: "百万级营收 / 节约供稿成本约 80 万元 / 作品中心年降存储及带宽成本约 200 万元",
     url: "https://www.51miz.com/ai/image", tags: ["AI 设计图", "模板生产", "在线编辑"],
     gallery: [
@@ -70,7 +70,7 @@ const projects: Project[] = [
   },
   {
     id: "avora", title: "Avora / 声映", short: "把形象、歌曲与分镜组合成音乐视频",
-    category: "Work", status: "工作项目", role: "移动端产品 / 生成流程 / 创作体验",
+    category: "Work", source: "company", period: "2026", status: "工作项目", role: "移动端产品 / 生成流程 / 创作体验",
     result: "RTF 从 42 降至 8 / iOS 与 Android 产品交付", tags: ["AI 音视频", "移动端", "创作流程"],
     sections: [
       { label: "项目概览", text: "面向移动端的 AI 音乐视频应用，覆盖 iOS 与 Android。" },
@@ -82,8 +82,8 @@ const projects: Project[] = [
     ],
   },
   {
-    id: "meeting-workflow", title: "会议 AI 内容工作流", short: "将会议内容转为 PPT、信息图与 H5 等交付物",
-    category: "Work", status: "工作项目", role: "Skill 体系 / 生成规范 / Workflow 生产链路",
+    id: "meeting-workflow", title: "杭州百零 / AI 会议工作流", short: "将会议内容转为 PPT、信息图与 H5 等交付物",
+    category: "Work", source: "company", period: "2026", status: "工作项目", role: "Skill 体系 / 生成规范 / Workflow 生产链路",
     result: "AI 生成 → 质量验收 → 前台素材供给",
     tags: ["AI 会议", "Agent Skill", "内容生产"],
     sections: [
@@ -97,16 +97,17 @@ const projects: Project[] = [
   },
   {
     id: "ai-ppt-lab", title: "AI PPT / 自研版", short: "以新的技术方案重新探索 PPT 生成体验",
-    category: "Lab", status: "计划中", role: "个人探索", result: "等待立项与开发",
+    category: "Lab", source: "personal", period: "2026", status: "进行中", role: "独立产品探索 / 方案验证",
+    result: "个人项目持续迭代中，阶段成果将随产品验证补充",
     tags: ["AI PPT", "独立探索", "新技术方案"],
     sections: [
       { label: "探索动机", text: "线上工作项目保留了当年的技术水平，希望通过独立项目探索新的技术与生成体验。" },
-      { label: "当前阶段", text: "计划中，尚未发布。与觅知网线上版本分开记录，后续补充真实实现、演示与体验地址。" },
+      { label: "当前阶段", text: "个人项目持续推进中，与觅知网线上版本分开记录；当前聚焦新技术方案与 PPT 生成体验的探索，阶段性实现与验证结果会在完成后补充。" },
     ],
   },
   {
     id: "heara", title: "Heara / 地球声音地图", short: "从地图上的一个地点出发，听见真实世界正在发生的声音。",
-    category: "Lab", status: "已完成", role: "AI Native 产品主导 / 体验架构 / AI 协作交付",
+    category: "Lab", source: "personal", period: "2026", status: "已完成", role: "AI Native 产品主导 / 体验架构 / AI 协作交付",
     result: "21 条来源可核验录音 / 7 大洲 / 中英日完整体验",
     tags: ["地点驱动探索", "真实现场录音", "地图 × 音频交互", "AI 协作构建"],
     url: "https://heara-earth.vercel.app/",
@@ -126,7 +127,7 @@ const projects: Project[] = [
   },
   {
     id: "baoda", title: "暴打老板", short: "把工作里的烦闷，变成桌面上一记像素反馈。",
-    category: "Lab", status: "可体验", role: "独立产品定义 / 交互设计 / AI 协作交付",
+    category: "Lab", source: "personal", period: "2026", status: "可体验", role: "独立产品定义 / 交互设计 / AI 协作交付",
     result: "macOS 可下载体验 / 键盘与鼠标交互 / 本地优先",
     tags: ["像素桌宠", "macOS", "情绪价值"], cover: "/assets/baoda-office.webp",
     url: "https://baoda-boss-website.vercel.app/",
@@ -346,7 +347,7 @@ function Headline({ text, className }: { text: string; className?: string }) {
   return <Shuffle text={text} className={className} tag="h1" textAlign="left" duration={0.35} shuffleTimes={1} triggerOnce respectReducedMotion loop={false} />;
 }
 
-function Contact() {
+export function Contact() {
   const [notice, setNotice] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);

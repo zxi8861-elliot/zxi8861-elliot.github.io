@@ -7,7 +7,7 @@ type Section = { label: string; text: string };
 type Project = {
   id: string; title: string; short: string; category: "Work" | "Lab"; status: string;
   tags: string[]; role: string; result: string; sections: Section[]; cover?: string;
-  gallery?: Array<{ src: string; alt: string }>; url?: string;
+  gallery?: Array<{ src: string; alt: string; label?: string }>; url?: string;
 };
 const modes: Mode[] = ["Work", "Lab", "Notes", "Contact"];
 const labels: Record<Mode, string> = { Work: "工作作品", Lab: "个人实验", Notes: "知识沉淀", Contact: "联系我" };
@@ -95,24 +95,23 @@ const projects: Project[] = [
     ],
   },
   {
-    id: "heara", title: "Heara / 地球声音地图", short: "把世界各地的现场录音做成可探索、可聆听、可进入的声音地图",
-    category: "Lab", status: "已完成", role: "产品定义 / 体验架构 / 地图与音频交互 / 内容系统",
-    result: "21 条来源可追溯录音 / 7 大洲地点覆盖 / 地球探索与沉浸播放闭环",
-    tags: ["声音地图", "沉浸式体验", "独立项目"], cover: "/assets/heara-earth-voice-logo.png",
+    id: "heara", title: "Heara / 地球声音地图", short: "从地球上的一个光点出发，走进真实地点的现场声音。",
+    category: "Lab", status: "已完成", role: "AI Native 产品主导 / 体验架构 / AI 协作实现",
+    result: "21 条可溯源录音 / 7 大洲覆盖 / 推荐与实时双探索入口",
+    tags: ["地点驱动探索", "真实现场录音", "地图 × 音频交互", "AI 协作构建"],
+    url: "https://heara-earth.vercel.app/",
     gallery: [
-      { src: "/assets/heara/earth-topology-v2.png", alt: "Heara 地球地图视觉" },
-      { src: "/assets/heara/alpine-valley-desktop.jpg", alt: "Heara 山谷声音场景" },
-      { src: "/assets/heara/chiang-mai-midnight-frogs.avif", alt: "Heara 清迈夜间蛙鸣声音现场" },
-      { src: "/assets/heara/live-forest.jpg", alt: "Heara 实时森林声音流" },
+      { src: "/assets/heara/screens/heara-map-16x9.jpg", alt: "Heara 地球地图与卡伦堡海浪地点播放界面", label: "01 / 地球探索与地点聆听" },
+      { src: "/assets/heara/screens/heara-live-16x9.jpg", alt: "Heara 实时声音目录、地区与声音类型筛选界面", label: "02 / 实时声音与地点筛选" },
+      { src: "/assets/heara/screens/heara-immersive-16x9.jpg", alt: "Heara 卡伦堡海浪沉浸式地点聆听界面", label: "03 / 沉浸式地点聆听" },
     ],
     sections: [
-      { label: "项目概览", text: "Heara 是一个以地球为入口的现场声音地图：用户可以旋转、缩放地球，发现来自海岸、森林、雨夜、城市边缘、极地冰体与热带雨林的真实录音，再进入一个地点的沉浸式聆听体验。它不是把环境音做成一组可随意叠加的背景音，而是把声音、地点、叙事和探索动作组织成一个有空间关系的产品。" },
-      { label: "背景与意义", text: "大多数环境音产品从“我要专注 / 睡眠 / 放松”出发，把声音当作功能素材；Heara 反过来从“我想去一个地方”出发。现场声音保留了距离、天气、动物、城市底噪和录音者所在位置，让用户在没有出发的情况下先获得一种远方的在场感。项目因此把声音从背景层提升为认识世界、建立空间想象和短暂逃离日常的入口。" },
-      { label: "产品行动", text: "用户进入后先看到一颗缓慢旋转的地球，系统会从可定位的声音中选出一个起点并播放。用户可以拖拽地球寻找光点，也可以通过地点入口、分类筛选或搜索快速抵达目标声音；点击地点先更新右侧故事和播放状态，确认“沉浸体验”后才进入全屏地点页。这个“探索 → 了解 → 进入”的层级，避免地图点位变成没有内容的装饰。" },
-      { label: "特色交互", text: "核心交互围绕“地点与声音保持同一状态”展开：地图金色光点与当前播放声音联动，选中地点会旋转和缩放地球并同步地点背景、描述与音频；沉浸页支持上一个 / 下一个地点切换，不退回地图；播放中的音频驱动蓝金声纹，声纹不是装饰而是 Web Audio 实时分析结果；声音搜索、分类、收藏和全局音量共享同一播放器，切换页面不会丢失聆听上下文。" },
-      { label: "内容与编辑策略", text: "声音库不是随意收集的素材列表。首批 21 条录音覆盖七大洲，并按地点、地形、声音类型、体验和质量标签组织；每条记录保留来源页、作者、许可证、地点精度与坐标精度。只有来源明确的真实录音才生成地图地点；代表性坐标不会伪装成精确采集点。原始音频保留在本地，播放版本统一做响度处理，让海浪、雨声、鸟鸣和冰体共鸣切换时保持更自然的听感。" },
-      { label: "技术实现要点", text: "项目基于 Astro + React + TypeScript，复用 Howler 管理音频生命周期、淡入淡出、循环和跨页面播放状态，用 Zustand 统一当前声音、播放、收藏与音量。地球使用 react-globe.gl / Three.js，叠加本地地表纹理、地形 bump、昼夜城市灯光、星空、大气边缘光和可点击地点光点；地点投影会根据相机变化重新计算，遮挡或空间不足时隐藏预览卡。声纹通过 Howler 的 masterGain 接入 Web Audio AnalyserNode，按频段和能量绘制蓝金动态线束；声音素材使用 FFmpeg loudnorm 生成约 -20 LUFS、-1.5 dBTP 的统一播放版本。" },
-      { label: "完成结果", text: "完成从声音数据、地理内容、地图探索、地点叙事到沉浸播放的完整闭环，并补齐中文默认、多语言路由、PWA、窄屏响应式、实时流入口、收藏与来源归因。这个项目最终沉淀的不是一个“声音网站”，而是一套把地点型内容转成可探索体验的方法：先用空间建立好奇，再用声音建立在场感，最后用连续播放让用户停留。" },
+      { label: "S / 背景与问题", text: "环境声常按睡眠、专注等用途被消费，声音背后的地点、录音者与现场关系容易隐去。Heara 从另一个问题出发：如果用户先选择“想去哪里”，声音能否成为认识一个地方的入口？" },
+      { label: "T / 产品目标", text: "围绕真实地点建立可信、可探索、可持续聆听的声音体验：让用户从全球地图发现现场录音，理解声音来自哪里，再自然进入一段沉浸聆听。" },
+      { label: "A / 产品行动", text: "定义“地球探索 → 地点卡片 → 沉浸聆听”的体验路径；以真实录音和地点档案组织内容，同时提供推荐与实时两种探索入口，并用地区、声音类型筛选帮助用户找到下一站。" },
+      { label: "A / 特色交互", text: "地图光点、地点叙事与当前播放保持联动：选择地点时同步地图视角、现场背景、故事和音频；进入沉浸页后可切换上一站 / 下一站，聆听上下文不断开。播放声纹由 Web Audio 实时分析音频信号生成，让声音本身成为可见反馈。" },
+      { label: "A / 内容与技术", text: "首批 21 条来源可追溯录音覆盖七大洲，记录来源、作者、许可与坐标精度；定位不确定时不展示虚假精度。产品以 Astro、React、TypeScript 构建；react-globe.gl / Three.js 实现交互地球，Howler 与 Zustand 管理跨界面播放状态，Web Audio AnalyserNode 驱动声纹。" },
+      { label: "R / 结果与个人实践", text: "交付中英日多语言网站，贯通地图发现、地点内容、推荐 / 实时筛选和沉浸播放。作为 AI Native 产品经理，我主导产品定义、交互架构、内容规则与体验验证，并以 AI coding agent 加速从方案到可运行产品的迭代；AI 是构建方式，不是 Heara 的产品功能。" },
     ],
   },
   {
@@ -201,8 +200,11 @@ export function HomePage() {
                   </div>
                 ) : null}
                 {selected.cover ? <img className="case-image" src={selected.cover} alt={`${selected.title}项目画面`} /> : null}
-                {selected.gallery?.length ? <div className="case-gallery">
-                  {selected.gallery.map((image) => <img key={image.src} src={image.src} alt={image.alt} />)}
+                {selected.gallery?.length ? <div className={`case-gallery${selected.id === "heara" ? " heara-gallery" : ""}`}>
+                  {selected.gallery.map((image) => <figure key={image.src}>
+                    <img src={image.src} alt={image.alt} />
+                    {image.label ? <figcaption>{image.label}</figcaption> : null}
+                  </figure>)}
                 </div> : null}
                 {selected.sections.map((section, index) => (
                   <section className="case-section" key={section.label}>

@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="课映互动课件系统原理地图：前端、后端、AI、媒体和 Agent 的调用链路。" />
+  <title>课映 / 知识沉淀 / 系统原理</title>
+  <style>
+    :root {
+      --black: #111; --white: #fff; --paper: #fbfbfb; --gray: #777; --line: #191919;
+      --blue: #1616e8; --soft: #f1f1f1; --mono: "SFMono-Regular", "JetBrains Mono", ui-monospace, monospace;
+      --serif: Georgia, "Noto Serif SC", "Songti SC", serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--black); font-family: Arial, "Noto Sans SC", sans-serif; }
+    a { color: inherit; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 110px minmax(0, 1fr); }
+    .rail { border-right: 1px solid var(--line); min-height: 100vh; display: flex; flex-direction: column; align-items: center; position: sticky; top: 0; height: 100vh; background: var(--paper); z-index: 2; }
+    .name { width: 82px; height: 48px; margin-top: 24px; border: 1px solid var(--line); display: grid; place-items: center; font: 17px var(--serif); text-decoration: none; }
+    .vertical { writing-mode: vertical-rl; margin-top: 12px; color: var(--gray); font: 10px var(--mono); letter-spacing: .08em; }
+    .rail-nav { width: 100%; margin-top: 38px; max-height: calc(100vh - 120px); overflow-y: auto; }
+    .rail-nav a { display: block; padding: 10px 8px 11px 24px; text-decoration: none; border-left: 2px solid transparent; }
+    .rail-nav a:hover, .rail-nav a.active { border-left-color: var(--blue); color: var(--blue); }
+    .rail-nav b { display: block; width: 34px; border: 1px solid var(--line); padding: 5px 0; text-align: center; font: 11px var(--mono); font-weight: 400; }
+    .rail-nav span { display: block; margin-top: 7px; font-size: 11px; white-space: nowrap; }
+    .main { min-width: 0; }
+    .main-inner { max-width: 1180px; margin: 0 auto; padding: 0 28px 82px; }
+    .topline { height: 49px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; color: var(--gray); font: 10px var(--mono); }
+    .hero { padding: 22px 0 58px; }
+    .label { display: block; background: var(--soft); border: 1px solid var(--line); padding: 5px 9px; font: 10px var(--mono); letter-spacing: .04em; }
+    h1 { margin: 31px 0 28px; font: 500 clamp(45px, 7vw, 70px)/.96 var(--mono); letter-spacing: -.08em; }
+    .hero-meta { color: var(--gray); font-size: 13px; }
+    .hero-rule { margin-top: 74px; border-top: 1px solid var(--line); padding-top: 31px; }
+    .hero-rule h2 { margin: 0 0 20px; font: 24px/1.25 var(--serif); font-weight: 400; }
+    .hero-rule p { margin: 0; color: var(--gray); font-size: 13px; line-height: 1.9; }
+    .chapter { border-top: 1px solid var(--line); padding: 27px 0 44px; scroll-margin-top: 20px; }
+    .chapter-head { display: flex; justify-content: space-between; gap: 18px; align-items: baseline; margin-bottom: 19px; }
+    .chapter-head h2 { margin: 0; font: 24px/1.2 var(--serif); font-weight: 400; }
+    .chapter-no { color: var(--gray); font: 10px var(--mono); white-space: nowrap; }
+    .chapter p { color: var(--gray); font-size: 13px; line-height: 1.8; }
+    .flowline { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding: 8px 0 16px; }
+    .node { min-width: 128px; flex: 1; min-height: 115px; border: 1px solid var(--line); background: var(--white); padding: 13px 12px; position: relative; }
+    .node:not(:last-child) { margin-right: 28px; }
+    .node:not(:last-child)::after { content: "→"; position: absolute; right: -24px; top: 50%; transform: translateY(-50%); font: 18px var(--mono); }
+    .node strong { display: block; margin-bottom: 14px; font: 11px var(--mono); }
+    .node b { display: block; font-size: 14px; font-weight: 500; }
+    .node small { display: block; margin-top: 8px; color: var(--gray); font-size: 11px; line-height: 1.55; }
+    .node.blue { border-color: var(--blue); }
+    .node.blue strong, .blue-text { color: var(--blue); }
+    .trace { border-top: 1px solid var(--line); }
+    .trace-row { display: grid; grid-template-columns: 108px 24px 1fr; align-items: center; min-height: 58px; border-bottom: 1px solid #c8c8c8; }
+    .trace-row:last-child { border-bottom: 0; }
+    .trace-label { color: var(--gray); font: 10px var(--mono); }
+    .trace-dot { width: 10px; height: 10px; border: 1px solid var(--black); border-radius: 50%; position: relative; }
+    .trace-row:not(:last-child) .trace-dot::after { content: ""; position: absolute; top: 9px; left: 4px; width: 1px; height: 48px; background: var(--black); }
+    .trace-text { font-size: 13px; line-height: 1.6; }
+    .trace-text code, code { background: var(--soft); padding: 2px 4px; font: 11px var(--mono); }
+    .sequence { overflow-x: auto; border: 1px solid var(--line); background: var(--white); }
+    .sequence-grid { min-width: 640px; display: grid; grid-template-columns: 100px repeat(4, minmax(116px, 1fr)); }
+    .sequence-grid > div { min-height: 54px; padding: 11px 9px; border-right: 1px solid #c8c8c8; border-bottom: 1px solid #c8c8c8; font-size: 11px; line-height: 1.45; }
+    .sequence-grid > div:nth-child(5n) { border-right: 0; }
+    .sequence-grid .head { min-height: 36px; background: var(--soft); color: var(--gray); font: 10px var(--mono); }
+    .sequence-grid .actor { color: var(--blue); font: 10px var(--mono); }
+    .sequence-grid .event { color: var(--gray); }
+    .sequence-grid .arrow { color: var(--black); font-family: var(--mono); }
+    .sequence-note { margin: 11px 0 0; color: var(--gray); font: 10px var(--mono); }
+    .logic-figure { margin-top: 18px; border: 1px solid var(--line); background: var(--white); overflow-x: auto; }
+    .logic-figure svg { display: block; width: 100%; min-width: 920px; height: auto; }
+    .logic-figure .figure-title { fill: var(--black); font: 600 18px Arial, sans-serif; }
+    .logic-figure .figure-note { fill: var(--gray); font: 11px Arial, sans-serif; }
+    .logic-figure .box { fill: var(--white); stroke: var(--line); stroke-width: 1.2; }
+    .logic-figure .box-accent { fill: #f5f5ff; stroke: var(--blue); stroke-width: 1.4; }
+    .logic-figure .box-muted { fill: var(--soft); stroke: #aaa; stroke-width: 1.1; }
+    .logic-figure .box-label { fill: var(--black); font: 600 12px Arial, sans-serif; text-anchor: middle; }
+    .logic-figure .box-meta { fill: var(--gray); font: 10px var(--mono); text-anchor: middle; }
+    .logic-figure .line { fill: none; stroke: var(--black); stroke-width: 1.3; marker-end: url(#logic-arrow); }
+    .logic-figure .line-accent { fill: none; stroke: var(--blue); stroke-width: 1.3; marker-end: url(#logic-arrow-blue); }
+    .logic-figure .line-dashed { fill: none; stroke: #888; stroke-width: 1.2; stroke-dasharray: 5 4; marker-end: url(#logic-arrow-gray); }
+    .logic-figure .line-label { fill: var(--gray); font: 10px var(--mono); text-anchor: middle; }
+    .logic-figure .decision { fill: #fff; stroke: var(--blue); stroke-width: 1.3; }
+    .logic-figure .decision-label { fill: var(--blue); font: 600 10px Arial, sans-serif; text-anchor: middle; }
+    .logic-figure .lane-line { stroke: #aaa; stroke-width: 1; stroke-dasharray: 3 5; }
+    .status-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; border: 1px solid var(--line); background: var(--line); margin-top: 22px; }
+    .status-item { background: var(--white); padding: 13px 12px; min-height: 104px; }
+    .status-item strong { display: block; color: var(--blue); font: 10px var(--mono); margin-bottom: 17px; }
+    .status-item b { display: block; font-size: 14px; font-weight: 500; margin-bottom: 7px; }
+    .status-item span { display: block; color: var(--gray); font-size: 11px; line-height: 1.55; }
+    .beginner-guide { border: 1px solid var(--line); background: var(--white); }
+    .beginner-intro { display: grid; grid-template-columns: 1.05fr .95fr; gap: 0; border-bottom: 1px solid var(--line); }
+    .beginner-copy, .beginner-example { padding: 18px 16px; }
+    .beginner-copy { border-right: 1px solid var(--line); }
+    .beginner-copy h3, .beginner-example h3 { margin: 0 0 12px; font: 18px/1.3 var(--serif); font-weight: 400; }
+    .beginner-copy p, .beginner-example p { margin: 0; color: var(--gray); font-size: 12px; line-height: 1.75; }
+    .beginner-copy strong, .beginner-example strong { color: var(--black); }
+    .beginner-steps { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--line); }
+    .beginner-step { min-height: 150px; padding: 15px 12px; border-right: 1px solid var(--line); position: relative; }
+    .beginner-step:last-child { border-right: 0; }
+    .beginner-step:not(:last-child)::after { content: "→"; position: absolute; right: -9px; top: 60px; z-index: 1; background: var(--white); color: var(--blue); font: 18px var(--mono); }
+    .beginner-step span { color: var(--blue); font: 10px var(--mono); }
+    .beginner-step h3 { margin: 26px 0 8px; font-size: 14px; font-weight: 500; }
+    .beginner-step p { margin: 0; color: var(--gray); font-size: 11px; line-height: 1.6; }
+    .beginner-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .term-box, .reading-box { padding: 17px 16px; }
+    .term-box { border-right: 1px solid var(--line); }
+    .beginner-bottom h3 { margin: 0 0 14px; font: 16px var(--serif); font-weight: 400; }
+    .term-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+    .term { min-height: 82px; padding: 9px 8px; border: 1px solid #bdbdbd; }
+    .term b { display: block; color: var(--blue); font: 10px var(--mono); margin-bottom: 9px; }
+    .term span { display: block; color: var(--gray); font-size: 10px; line-height: 1.5; }
+    .reading-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: reading; }
+    .reading-list li { counter-increment: reading; display: grid; grid-template-columns: 28px 1fr; gap: 7px; color: var(--gray); font-size: 12px; line-height: 1.6; }
+    .reading-list li::before { content: counter(reading, decimal-leading-zero); color: var(--blue); font: 10px var(--mono); padding-top: 2px; }
+    .reading-list strong { color: var(--black); font-weight: 500; }
+    .render-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); }
+    .render-step { padding: 15px 12px; min-height: 140px; border-right: 1px solid var(--line); background: var(--white); }
+    .render-step:last-child { border-right: 0; }
+    .render-step span { color: var(--blue); font: 10px var(--mono); }
+    .render-step h3 { margin: 28px 0 8px; font-size: 14px; font-weight: 500; }
+    .render-step p { margin: 0; color: var(--gray); font-size: 11px; line-height: 1.6; }
+    .fallback { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .fallback-card { background: var(--white); padding: 16px; min-height: 132px; }
+    .fallback-card h3 { margin: 0 0 9px; font: 15px var(--serif); }
+    .fallback-card p { margin: 0; font-size: 12px; line-height: 1.7; }
+    .fallback-card strong { color: var(--blue); font: 10px var(--mono); }
+    .state-grid { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--line); }
+    .state { min-height: 142px; padding: 14px 12px; border-right: 1px solid var(--line); position: relative; }
+    .state:last-child { border-right: 0; }
+    .state:not(:last-child)::after { content: "›"; position: absolute; right: -8px; top: 53px; z-index: 1; background: var(--paper); font: 25px var(--mono); }
+    .state span { color: var(--gray); font: 10px var(--mono); }
+    .state h3 { margin: 32px 0 9px; font-size: 14px; font-weight: 500; }
+    .state p { margin: 0; font-size: 11px; line-height: 1.6; }
+    .call-table { border-top: 1px solid var(--line); }
+    .call { display: grid; grid-template-columns: 132px 1fr; padding: 14px 0; border-bottom: 1px solid #c8c8c8; gap: 16px; }
+    .call-name { font: 11px var(--mono); }
+    .call-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 12px; line-height: 1.6; }
+    .call-body span { color: var(--gray); display: block; font-size: 11px; margin-bottom: 4px; }
+    .media-list { border-top: 1px solid var(--line); }
+    .media-row { display: grid; grid-template-columns: 42px 130px 1fr; gap: 14px; align-items: start; border-bottom: 1px solid #c8c8c8; padding: 17px 0; }
+    .media-row:last-child { border-bottom: 0; }
+    .media-index { font: 11px var(--mono); color: var(--blue); }
+    .media-title { font: 15px var(--serif); }
+    .media-copy { color: var(--gray); font-size: 12px; line-height: 1.7; }
+    .agent-flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .agent-step { background: var(--white); min-height: 136px; padding: 13px 10px; }
+    .agent-step span { color: var(--blue); font: 10px var(--mono); }
+    .agent-step h3 { margin: 28px 0 8px; font-size: 13px; font-weight: 500; }
+    .agent-step p { margin: 0; font-size: 11px; line-height: 1.55; }
+    .object-tree { border: 1px solid var(--line); padding: 18px; font: 12px/2 var(--mono); background: var(--white); }
+    .object-tree .indent { padding-left: 26px; }
+    .object-tree .indent-2 { padding-left: 52px; }
+    .object-tree .key { color: var(--blue); }
+    .code-index { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); }
+    .code-item { padding: 14px 0; border-bottom: 1px solid #c8c8c8; font: 11px var(--mono); }
+    .code-item span { color: var(--gray); display: block; margin-top: 5px; font-family: Arial, sans-serif; font-size: 11px; }
+    .footer { background: var(--black); color: var(--white); height: 40px; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; font: 10px var(--mono); }
+    .architecture { border: 1px solid var(--line); background: var(--white); }
+    .arch-layer { display: grid; grid-template-columns: 112px 1fr; min-height: 92px; border-bottom: 1px solid var(--line); }
+    .arch-layer:last-child { border-bottom: 0; }
+    .arch-label { padding: 14px 12px; background: var(--soft); color: var(--gray); font: 10px var(--mono); border-right: 1px solid var(--line); }
+    .arch-items { display: flex; align-items: stretch; gap: 8px; padding: 13px; }
+    .arch-item { flex: 1; border: 1px solid #bdbdbd; padding: 10px; min-width: 0; position: relative; }
+    .arch-item strong { display: block; font: 11px var(--mono); margin-bottom: 8px; }
+    .arch-item span { display: block; color: var(--gray); font-size: 11px; line-height: 1.5; }
+    .arch-item.blue { border-color: var(--blue); }
+    .arch-item.blue strong { color: var(--blue); }
+    .arch-arrow { display: grid; place-items: center; color: var(--blue); font: 15px var(--mono); }
+    .loop-diagram { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; border: 1px solid var(--line); background: var(--line); }
+    .loop-node { min-height: 122px; padding: 14px 12px; background: var(--white); }
+    .loop-node:nth-child(1), .loop-node:nth-child(4) { background: var(--soft); }
+    .loop-node span { color: var(--blue); font: 10px var(--mono); }
+    .loop-node h3 { margin: 25px 0 8px; font-size: 14px; font-weight: 500; }
+    .loop-node p { margin: 0; color: var(--gray); font-size: 11px; line-height: 1.6; }
+    .branch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .branch { background: var(--white); min-height: 120px; padding: 14px 12px; }
+    .branch strong { color: var(--blue); font: 10px var(--mono); }
+    .branch h3 { margin: 24px 0 8px; font: 15px var(--serif); font-weight: 400; }
+    .branch p { margin: 0; color: var(--gray); font-size: 11px; line-height: 1.6; }
+    .sequence-figure { margin-top: 18px; border: 1px solid var(--line); background: var(--white); overflow-x: auto; }
+    .sequence-figure svg { display: block; width: 100%; min-width: 860px; height: auto; }
+    .sequence-figure .title { fill: var(--black); font: 700 22px Arial, sans-serif; }
+    .sequence-figure .actor-box { fill: #f5f5ff; stroke: var(--blue); stroke-width: 1; }
+    .sequence-figure .actor-label { fill: var(--black); font: 14px Arial, sans-serif; text-anchor: middle; }
+    .sequence-figure .lane { stroke: #aaa; stroke-width: 1.5; }
+    .sequence-figure .msg { stroke: var(--black); stroke-width: 1.2; marker-end: url(#arrow); }
+    .sequence-figure .reply { stroke: #777; stroke-width: 1.1; stroke-dasharray: 5 5; marker-end: url(#arrow); }
+    .sequence-figure .loop { fill: none; stroke: #777; stroke-width: 1.1; marker-end: url(#arrow); }
+    .sequence-figure .msg-label { fill: var(--black); font: 13px Arial, sans-serif; text-anchor: middle; }
+    .sequence-figure .caption { fill: var(--gray); font: 12px Arial, sans-serif; }
+    .sequence-explain { border-left: 2px solid var(--blue); padding: 14px 16px; margin-top: 16px; color: var(--gray); font-size: 13px; line-height: 1.8; }
+    .pipeline-full { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; border: 1px solid var(--line); background: var(--line); }
+    .pipeline-stage { position: relative; min-height: 132px; padding: 14px 12px; background: var(--white); }
+    .pipeline-stage:nth-child(4n+3) { background: #f5f5ff; }
+    .pipeline-stage span { color: var(--blue); font: 10px var(--mono); }
+    .pipeline-stage h3 { margin: 25px 0 8px; font-size: 14px; font-weight: 500; }
+    .pipeline-stage p { margin: 0; color: var(--gray); font-size: 11px; line-height: 1.6; }
+    .pipeline-stage::after { content: "→"; position: absolute; right: -10px; top: 57px; z-index: 2; font: 16px var(--mono); color: var(--blue); }
+    .pipeline-stage:nth-child(4n)::after { display: none; }
+    .detail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; border: 1px solid var(--line); background: var(--line); }
+    .detail-card { min-height: 132px; padding: 14px 12px; background: var(--white); }
+    .detail-card:nth-child(4n+2) { background: #f5f5ff; }
+    .detail-card strong { display: block; color: var(--blue); font: 10px var(--mono); margin-bottom: 23px; }
+    .detail-card h3 { margin: 0 0 8px; font: 16px var(--serif); font-weight: 400; }
+    .detail-card p { margin: 0; color: var(--gray); font-size: 11px; line-height: 1.65; }
+    .detail-card code { font-size: 10px; }
+    .diagram-map { display: grid; gap: 1px; border: 1px solid var(--line); background: var(--line); }
+    .map-group { padding: 17px 16px 15px; background: var(--white); }
+    .map-group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 22px; margin-bottom: 14px; }
+    .map-group-title { display: flex; align-items: baseline; gap: 12px; }
+    .map-group-code { color: var(--blue); font: 10px var(--mono); white-space: nowrap; }
+    .map-group-head h3 { margin: 0; font: 18px var(--serif); font-weight: 400; }
+    .map-group-head p { max-width: 540px; margin: 0; color: var(--gray); font-size: 11px; line-height: 1.6; text-align: right; }
+    .map-track { display: flex; align-items: stretch; gap: 28px; overflow-x: auto; padding: 4px 0 7px; }
+    .map-item { position: relative; flex: 1 0 168px; min-height: 118px; padding: 13px 12px; border: 1px solid #bdbdbd; background: var(--white); text-decoration: none; }
+    .map-item:not(:last-child)::after { content: "→"; position: absolute; z-index: 1; top: 50%; right: -23px; transform: translateY(-50%); color: var(--blue); background: var(--white); font: 18px var(--mono); }
+    .map-item:hover { border-color: var(--blue); background: var(--soft); }
+    .map-item b { display: block; color: var(--blue); font: 10px var(--mono); margin-bottom: 18px; }
+    .map-item strong { display: block; font: 15px var(--serif); font-weight: 400; }
+    .map-item span { display: block; color: var(--gray); font-size: 11px; margin-top: 7px; line-height: 1.5; }
+    @media (max-width: 900px) {
+      .app { display: block; }
+      .rail { height: auto; min-height: 0; position: static; border-right: 0; border-bottom: 1px solid var(--line); display: block; padding: 14px; }
+      .name { margin: 0; width: 70px; height: 36px; display: inline-grid; font-size: 14px; }
+      .vertical { display: none; }
+      .rail-nav { display: flex; margin: 14px -14px -14px; overflow-x: auto; }
+      .rail-nav a { padding: 9px 13px; border-left: 0; border-bottom: 2px solid transparent; }
+      .rail-nav a:hover, .rail-nav a.active { border-left: 0; border-bottom-color: var(--blue); }
+      .main-inner { padding: 0 18px 60px; }
+      .flowline { margin-right: -18px; padding-right: 18px; }
+      .beginner-intro, .beginner-bottom { grid-template-columns: 1fr; }
+      .beginner-copy, .term-box { border-right: 0; border-bottom: 1px solid var(--line); }
+      .beginner-steps { grid-template-columns: 1fr 1fr; }
+      .beginner-step:nth-child(2n) { border-right: 0; }
+      .beginner-step:not(:last-child)::after { display: none; }
+      .term-grid { grid-template-columns: 1fr 1fr; }
+      .state-grid, .agent-flow { grid-template-columns: 1fr 1fr; }
+      .status-strip { grid-template-columns: 1fr; }
+      .state:nth-child(2n) { border-right: 0; }
+      .state:not(:last-child)::after { display: none; }
+      .render-grid, .fallback, .loop-diagram, .branch-grid { grid-template-columns: 1fr 1fr; }
+      .map-group-head { display: block; }
+      .map-group-head p { margin-top: 7px; text-align: left; }
+      .map-item { flex-basis: 170px; }
+      .pipeline-full { grid-template-columns: 1fr 1fr; }
+      .pipeline-stage:nth-child(4n)::after { display: block; }
+      .pipeline-stage:nth-child(2n)::after { display: none; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
+      .arch-layer { grid-template-columns: 86px 1fr; }
+      .call-body { grid-template-columns: 1fr; }
+      .code-index { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="rail">
+      <a class="name" href="/">课映</a>
+      <div class="vertical">AI COURSEWARE / SYSTEM LOGIC</div>
+      <nav class="rail-nav" aria-label="知识沉淀章节">
+        <a href="#overview"><b>01</b><span>总览</span></a>
+        <a href="#diagram-index"><b>02</b><span>全部图谱</span></a>
+        <a href="#beginner-guide"><b>02.1</b><span>新手入口</span></a>
+        <a href="#architecture"><b>03</b><span>总架构</span></a>
+        <a href="#generation"><b>04</b><span>生成链路</span></a>
+        <a href="#callbacks"><b>05</b><span>调用回调</span></a>
+        <a href="#sequence"><b>06</b><span>生成时序</span></a>
+        <a href="#state"><b>07</b><span>状态机</span></a>
+        <a href="#ai-calls"><b>08</b><span>AI 调用</span></a>
+        <a href="#scene-types"><b>09</b><span>Scene 分支</span></a>
+        <a href="#routing"><b>10</b><span>能力路由</span></a>
+        <a href="#research"><b>11</b><span>联网搜索</span></a>
+        <a href="#assets"><b>12</b><span>资源生命周期</span></a>
+        <a href="#media"><b>13</b><span>媒体管线</span></a>
+        <a href="#agents"><b>14</b><span>课堂 Agent</span></a>
+        <a href="#runtime"><b>15</b><span>播放引擎</span></a>
+        <a href="#interactive-runtime"><b>16</b><span>互动 HTML</span></a>
+        <a href="#recovery"><b>17</b><span>错误恢复</span></a>
+        <a href="#iteration"><b>18</b><span>编辑重生成</span></a>
+        <a href="#security"><b>19</b><span>安全边界</span></a>
+        <a href="#objects"><b>20</b><span>对象关系</span></a>
+        <a href="#code-index"><b>21</b><span>代码索引</span></a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="main-inner">
+        <div class="topline"><span>// 知识沉淀</span><span>03 / INDEX</span></div>
+        <section class="hero" id="overview">
+          <span class="label">NOTES &amp; THINKING / COURSEWARE SYSTEM MAP</span>
+          <h1>THINKING<br />IN SYSTEMS.</h1>
+          <div class="hero-meta">知识沉淀 · AI 互动课件原理</div>
+          <div class="hero-rule"><h2>把 Query，整理成一堂可以运行的课。</h2><p>用户输入一句话，系统先补齐资料和教学计划，再把每个知识点变成可播放、可互动的 Scene，最后由浏览器把它运行成课堂。</p></div>
+          <div class="status-strip" aria-label="系统逻辑的实现状态说明">
+            <div class="status-item"><strong>01 / CODE VERIFIED</strong><b>当前代码主链路</b><span>Generation Run、Runner、SSE、Scene、Renderer、PlaybackEngine、ActionEngine、Interactive iframe。</span></div>
+            <div class="status-item"><strong>02 / SUPPORTING LOGIC</strong><b>支撑系统</b><span>身份隔离、模型能力路由、资料与 Asset、checkpoint、重试、编辑和资源对账。</span></div>
+            <div class="status-item"><strong>03 / OPTIONAL CAPABILITY</strong><b>可选能力</b><span>联网搜索、TTS、生图、生视频依赖 Provider 和配置；图中标为异步或可降级路径。</span></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="diagram-index">
+          <div class="chapter-head"><h2>02 / 全部运行图谱</h2><span class="chapter-no">READ THE SYSTEM AS DIAGRAMS</span></div>
+          <p>这不是运行时的一张总图，而是一张“怎么读这些图”的地图：先建立全局，再顺着一次生成，继续看外部能力、播放互动，最后看工程保障。蓝色编号表示推荐阅读顺序；每组内部从左到右阅读。</p>
+          <nav class="diagram-map" aria-label="运行逻辑图谱阅读地图">
+            <section class="map-group">
+              <div class="map-group-head"><div class="map-group-title"><span class="map-group-code">A / ORIENT</span><h3>先建立全局</h3></div><p>先知道系统由哪些层组成，再用一个真实例子把 Query、Scene 和课堂串起来。</p></div>
+              <div class="map-track">
+                <a class="map-item" href="#beginner-guide"><b>02.1 / START</b><strong>新手入口</strong><span>先用一个真实例子读懂 Query → Scene → 课堂</span></a>
+                <a class="map-item" href="#architecture"><b>03 / LAYERS</b><strong>系统总架构</strong><span>体验、API、编排、Provider、存储</span></a>
+              </div>
+            </section>
+            <section class="map-group">
+              <div class="map-group-head"><div class="map-group-title"><span class="map-group-code">B / GENERATE</span><h3>看懂一次生成</h3></div><p>顺着一次 Generation Run，看 Query 如何被规划、调用、校验并变成可播放的 Scene。</p></div>
+              <div class="map-track">
+                <a class="map-item" href="#generation"><b>04 / FLOW</b><strong>Query → 最终输出</strong><span>16 步端到端生成、校验、持久化与播放流程</span></a>
+                <a class="map-item" href="#callbacks"><b>05 / CALL</b><strong>调用与回调</strong><span>Browser、API、Runner、AI、DB、SSE</span></a>
+                <a class="map-item" href="#sequence"><b>06 / SEQUENCE</b><strong>生成完整时序</strong><span>从创建 Run 到完成课堂</span></a>
+                <a class="map-item" href="#state"><b>07 / STATE</b><strong>状态机与断点</strong><span>lease、checkpoint、retry、complete</span></a>
+                <a class="map-item" href="#ai-calls"><b>08 / AI CALLS</b><strong>AI 调用矩阵</strong><span>每一步的输入、输出、工具与重试</span></a>
+                <a class="map-item" href="#scene-types"><b>09 / SCENE</b><strong>大纲到具体课件</strong><span>Slide、Quiz、Interactive、PBL 分支</span></a>
+              </div>
+            </section>
+            <section class="map-group">
+              <div class="map-group-head"><div class="map-group-title"><span class="map-group-code">C / CAPABILITIES</span><h3>看外部能力如何接入</h3></div><p>理解搜索、上传资料和媒体能力如何被路由，并最终成为课件的一部分。</p></div>
+              <div class="map-track">
+                <a class="map-item" href="#routing"><b>10 / ROUTE</b><strong>模型与资料路由</strong><span>搜索、视觉、模型、降级</span></a>
+                <a class="map-item" href="#research"><b>11 / SEARCH</b><strong>联网搜索流程</strong><span>Query 改写、结果整理、researchContext</span></a>
+                <a class="map-item" href="#assets"><b>12 / ASSETS</b><strong>资料与资源生命周期</strong><span>上传、解析、引用、清理</span></a>
+                <a class="map-item" href="#media"><b>13 / MEDIA</b><strong>媒体辅助管线</strong><span>字幕、TTS、图片、视频</span></a>
+              </div>
+            </section>
+            <section class="map-group">
+              <div class="map-group-head"><div class="map-group-title"><span class="map-group-code">D / RUN</span><h3>看课件如何被运行</h3></div><p>生成完成后，Scene 如何进入浏览器、播放内容，并通过互动事件与学生响应。</p></div>
+              <div class="map-track">
+                <a class="map-item" href="#agents"><b>14 / AGENT</b><strong>课堂 Agent 闭环</strong><span>提问、取证、工具、动作、继续</span></a>
+                <a class="map-item" href="#runtime"><b>15 / RENDER</b><strong>播放渲染链路</strong><span>Scene、Renderer、Actions、Bridge</span></a>
+                <a class="map-item" href="#interactive-runtime"><b>16 / IFRAME</b><strong>互动 HTML 时序</strong><span>沙箱 iframe 与 postMessage</span></a>
+              </div>
+            </section>
+            <section class="map-group">
+              <div class="map-group-head"><div class="map-group-title"><span class="map-group-code">E / GUARANTEES</span><h3>最后看工程保障</h3></div><p>最后再看失败怎么恢复、修改如何生效、数据如何隔离，以及源码应该从哪里读。</p></div>
+              <div class="map-track">
+                <a class="map-item" href="#recovery"><b>17 / RECOVERY</b><strong>错误恢复与降级</strong><span>模型、Schema、媒体、Worker</span></a>
+                <a class="map-item" href="#iteration"><b>18 / ITERATE</b><strong>编辑与重生成</strong><span>版本、局部生成、资源对账</span></a>
+                <a class="map-item" href="#security"><b>19 / SECURITY</b><strong>租户与安全边界</strong><span>owner、allowlist、sandbox、校验</span></a>
+                <a class="map-item" href="#objects"><b>20 / DATA</b><strong>核心对象层级</strong><span>Owner、Run、Stage、Scene、Asset</span></a>
+                <a class="map-item" href="#code-index"><b>21 / CODE</b><strong>代码阅读索引</strong><span>从入口、Runner、Scene 到播放层</span></a>
+              </div>
+            </section>
+          </nav>
+        </section>
+
+        <section class="chapter" id="beginner-guide">
+          <div class="chapter-head"><h2>02.1 / 先用一个例子看懂</h2><span class="chapter-no">BEGINNER START</span></div>
+          <p>如果你第一次看这个项目，不要先读代码名。先把它想成一位“备课助理”：你给它一个教学目标，它负责查资料、列课纲、写每个场景，再把结果交给浏览器播放。</p>
+          <div class="beginner-guide">
+            <div class="beginner-intro">
+              <div class="beginner-copy">
+                <h3>例子：给五年级学生做《月相变化》互动课件</h3>
+                <p>用户说：<strong>“请用适合五年级的方式，讲清楚月相为什么每天不同，并加入一个可以拖动日期观察月相的互动。”</strong> 这句话不会直接变成一张网页，而是会经过下面五个中间对象。</p>
+              </div>
+              <div class="beginner-example">
+                <h3>一句话先记住</h3>
+                <p><strong>Query</strong> 是需求，<strong>Scene</strong> 是一个可播放的课件场景，<strong>Runtime</strong> 是把场景真正运行起来的播放层。</p>
+                <p style="margin-top:10px;color:var(--black);font:12px var(--mono)">一句话需求 → 研究上下文 → 课程大纲 → Scene → 浏览器课堂</p>
+              </div>
+            </div>
+            <div class="beginner-steps" aria-label="新手理解互动课件生成的五个步骤">
+              <div class="beginner-step"><span>01 / INPUT</span><h3>用户说需求</h3><p>主题、学生年龄、教学目标和想要的互动。</p></div>
+              <div class="beginner-step"><span>02 / CONTEXT</span><h3>系统找资料</h3><p>读取教材或联网搜索，整理成模型能使用的上下文。</p></div>
+              <div class="beginner-step"><span>03 / PLAN</span><h3>AI 列课纲</h3><p>决定课程标题、知识点顺序和每个 Scene 的类型。</p></div>
+              <div class="beginner-step"><span>04 / SCENE</span><h3>AI 写课件</h3><p>为每个场景生成内容、教学动作和图片/声音引用。</p></div>
+              <div class="beginner-step"><span>05 / PLAY</span><h3>浏览器运行</h3><p>Renderer 显示页面，PlaybackEngine 驱动时间轴，ActionEngine 执行动作。</p></div>
+            </div>
+            <div class="beginner-bottom">
+              <div class="term-box">
+                <h3>先看懂这 5 个词</h3>
+                <div class="term-grid">
+                  <div class="term"><b>QUERY</b><span>用户提出的课程需求。</span></div>
+                  <div class="term"><b>RUN</b><span>一次完整的生成任务。</span></div>
+                  <div class="term"><b>SCENE</b><span>一页或一个互动课件场景。</span></div>
+                  <div class="term"><b>ASSET</b><span>被课程引用的文件或媒体。</span></div>
+                  <div class="term"><b>ACTION</b><span>课堂中的讲解、聚焦和等待动作。</span></div>
+                </div>
+              </div>
+              <div class="reading-box">
+                <h3>推荐阅读顺序</h3>
+                <ol class="reading-list">
+                  <li><span><strong>先看本例</strong>，建立“需求变课堂”的整体印象。</span></li>
+                  <li><span><strong>再看主生成链路</strong>，理解 Query 如何变成 Scene。</span></li>
+                  <li><span><strong>再看调用时序</strong>，理解前端、后端、AI 和数据库谁调用谁。</span></li>
+                  <li><span><strong>再看播放与互动</strong>，理解 Scene 如何在浏览器里运行。</span></li>
+                  <li><span><strong>最后看恢复、安全和代码索引</strong>，进入工程细节。</span></li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="architecture">
+          <div class="chapter-head"><h2>03 / 系统总架构</h2><span class="chapter-no">USER → RUNTIME</span></div>
+          <p>课件不是一段直接返回的 HTML，而是由五层协作完成：浏览器负责交互，API 负责边界，Runner 负责编排，模型和搜索负责能力，数据库与资源层负责持久化。</p>
+          <div class="architecture" aria-label="互动课件系统总架构图">
+            <div class="arch-layer"><div class="arch-label">01 / EXPERIENCE</div><div class="arch-items"><div class="arch-item blue"><strong>BROWSER</strong><span>Query 输入、进度、确认大纲、播放课堂</span></div><div class="arch-arrow">→</div><div class="arch-item"><strong>PLAYER</strong><span>Renderer、PlaybackEngine、ActionEngine、iframe bridge</span></div></div></div>
+            <div class="arch-layer"><div class="arch-label">02 / API</div><div class="arch-items"><div class="arch-item"><strong>ROUTES</strong><span>创建 Run、SSE、确认、重试、Agent chat</span></div><div class="arch-arrow">↕</div><div class="arch-item blue"><strong>OWNER BOUNDARY</strong><span>身份、ownerId、权限与资源可见性</span></div></div></div>
+            <div class="arch-layer"><div class="arch-label">03 / ORCHESTRATION</div><div class="arch-items"><div class="arch-item blue"><strong>RUNNER</strong><span>research → outline → scene → actions</span></div><div class="arch-arrow">→</div><div class="arch-item"><strong>CHECKPOINT</strong><span>状态、lease、stepId、错误和断点恢复</span></div></div></div>
+            <div class="arch-layer"><div class="arch-label">04 / PROVIDERS</div><div class="arch-items"><div class="arch-item"><strong>LLM</strong><span>改写、研究、大纲、内容、动作、Agent</span></div><div class="arch-item"><strong>SEARCH</strong><span>关键词改写、联网结果、来源引用</span></div><div class="arch-item"><strong>MEDIA</strong><span>TTS、图片、视频异步任务</span></div></div></div>
+            <div class="arch-layer"><div class="arch-label">05 / STORAGE</div><div class="arch-items"><div class="arch-item"><strong>DATABASE</strong><span>Stage、Scene、Run、Agent 会话</span></div><div class="arch-item"><strong>ASSET STORE</strong><span>教材、图片、音频、视频、生成 HTML</span></div></div></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="generation">
+          <div class="chapter-head"><h2>04 / 从 Query 到 Scene</h2><span class="chapter-no">CORE PIPELINE</span></div>
+          <p>用户输入不会直接变成 HTML。先看下面这张带分支、异步媒体和重试回路的主图，再看 16 个“理解节点”。它是把源码动态步骤压缩成便于阅读的概念图，不代表每次 Run 都固定执行 16 个数据库步骤。</p>
+          <div class="logic-figure" aria-label="Query 到互动课件输出的完整连线流程图">
+            <svg viewBox="0 0 1320 540" role="img" aria-labelledby="query-flow-title">
+              <title id="query-flow-title">用户 Query 到互动课件输出的主流程、分支和重试回路</title>
+              <defs>
+                <marker id="logic-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#111" /></marker>
+                <marker id="logic-arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1616e8" /></marker>
+                <marker id="logic-arrow-gray" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#888" /></marker>
+              </defs>
+              <text class="figure-title" x="24" y="30">QUERY → OUTPUT / 主生成链路</text>
+              <text class="figure-note" x="1296" y="30" text-anchor="end">实线 = 主路径　虚线 = 异步 / 重试</text>
+              <line class="lane-line" x1="20" y1="155" x2="1300" y2="155" />
+              <line class="lane-line" x1="20" y1="365" x2="1300" y2="365" />
+              <g>
+                <rect class="box-accent" x="24" y="72" width="116" height="58" /><text class="box-meta" x="82" y="91">01 / INPUT</text><text class="box-label" x="82" y="113">用户 Query</text>
+                <rect class="box" x="160" y="72" width="116" height="58" /><text class="box-meta" x="218" y="91">02 / PARSE</text><text class="box-label" x="218" y="113">需求解析</text>
+                <rect class="box" x="296" y="72" width="116" height="58" /><text class="box-meta" x="354" y="91">03 / NORMALIZE</text><text class="box-label" x="354" y="113">参数标准化</text>
+                <rect class="box-accent" x="432" y="72" width="116" height="58" /><text class="box-meta" x="490" y="91">05 / CONTEXT</text><text class="box-label" x="490" y="113">研究上下文</text>
+                <rect class="box" x="568" y="72" width="116" height="58" /><text class="box-meta" x="626" y="91">06 / OUTLINE</text><text class="box-label" x="626" y="113">课程大纲</text>
+                <rect class="box" x="704" y="72" width="116" height="58" /><text class="box-meta" x="762" y="91">08 / CONFIRM</text><text class="box-label" x="762" y="113">确认 / 修改</text>
+                <rect class="box-accent" x="840" y="72" width="116" height="58" /><text class="box-meta" x="898" y="91">09 / CONTENT</text><text class="box-label" x="898" y="113">Scene 内容</text>
+                <rect class="box" x="976" y="72" width="116" height="58" /><text class="box-meta" x="1034" y="91">10 / ACTIONS</text><text class="box-label" x="1034" y="113">教学动作</text>
+                <rect class="box-accent" x="1112" y="72" width="116" height="58" /><text class="box-meta" x="1170" y="91">13 / ASSEMBLE</text><text class="box-label" x="1170" y="113">完整 Scene</text>
+                <path class="line" d="M140 101 H160 M276 101 H296 M412 101 H432 M548 101 H568 M684 101 H704 M820 101 H840 M956 101 H976 M1092 101 H1112" />
+              </g>
+              <g>
+                <rect class="box" x="1112" y="282" width="116" height="58" /><text class="box-meta" x="1170" y="301">11 / VALIDATE</text><text class="box-label" x="1170" y="323">结构校验</text>
+                <rect class="box-muted" x="976" y="282" width="116" height="58" /><text class="box-meta" x="1034" y="301">12 / MEDIA</text><text class="box-label" x="1034" y="323">媒体编排</text>
+                <rect class="box" x="840" y="282" width="116" height="58" /><text class="box-meta" x="898" y="301">14 / STORE</text><text class="box-label" x="898" y="323">持久化</text>
+                <rect class="box" x="704" y="282" width="116" height="58" /><text class="box-meta" x="762" y="301">15 / RENDER</text><text class="box-label" x="762" y="323">选择 Renderer</text>
+                <rect class="box" x="568" y="282" width="116" height="58" /><text class="box-meta" x="626" y="301">16 / PLAY</text><text class="box-label" x="626" y="323">执行课堂动作</text>
+                <rect class="box-accent" x="432" y="282" width="116" height="58" /><text class="box-meta" x="490" y="301">OUTPUT</text><text class="box-label" x="490" y="323">可运行课件</text>
+                <path class="line" d="M1170 130 V282 M1112 311 H1092 M976 311 H956 M840 311 H820 M704 311 H684 M568 311 H548" />
+              </g>
+              <g>
+                <rect class="box-muted" x="294" y="410" width="160" height="52" /><text class="box-meta" x="374" y="429">BRANCH A</text><text class="box-label" x="374" y="449">资料解析 / 跳过</text>
+                <rect class="box-muted" x="520" y="410" width="160" height="52" /><text class="box-meta" x="600" y="429">BRANCH B</text><text class="box-label" x="600" y="449">Query rewrite / 搜索</text>
+                <rect class="box-muted" x="1000" y="410" width="160" height="52" /><text class="box-meta" x="1080" y="429">BRANCH D</text><text class="box-label" x="1080" y="449">失败 → 当前步骤重试</text>
+                <path class="line-accent" d="M354 130 V180 H374 V410 M490 130 V180 H374" />
+                <path class="line-accent" d="M490 130 V205 H600 V410 M626 130 V205 H600" />
+                <path class="line-dashed" d="M1170 340 V382 H1080 V410" />
+                <path class="line-dashed" d="M1000 436 H930 V205 H898" />
+                <text class="line-label" x="374" y="197">有资料</text><text class="line-label" x="518" y="197">开启搜索</text><text class="line-label" x="953" y="198">retry</text>
+              </g>
+              <text class="figure-note" x="24" y="505">媒体可以异步补齐；Schema 校验失败不写入课程文档；所有阶段由 checkpoint 连接。</text>
+            </svg>
+          </div>
+          <div class="pipeline-full" aria-label="用户 Query 到最终互动课件输出的完整流程图">
+            <div class="pipeline-stage"><span>01 / INPUT</span><h3>用户 Query</h3><p>主题、学段、目标、资料、互动要求</p></div>
+            <div class="pipeline-stage"><span>02 / PARSE</span><h3>需求解析</h3><p>识别主题、年龄、语言、教学目标与输出形态</p></div>
+            <div class="pipeline-stage"><span>03 / NORMALIZE</span><h3>参数标准化</h3><p>合并 taskEngine、learnerProfile、materials、settings</p></div>
+            <div class="pipeline-stage"><span>04 / RESEARCH</span><h3>搜索与资料读取</h3><p>Query rewrite、联网搜索、教材解析、来源整理</p></div>
+            <div class="pipeline-stage"><span>05 / CONTEXT</span><h3>研究上下文</h3><p>搜索结果、教材文本、图片、学习者信息合并</p></div>
+            <div class="pipeline-stage"><span>06 / OUTLINE</span><h3>生成课程大纲</h3><p>courseTitle、教学目标、SceneOutline[]、互动规划</p></div>
+            <div class="pipeline-stage"><span>07 / STREAM</span><h3>流式返回</h3><p>outline_item 经 SSE 返回前端，用户实时看到大纲</p></div>
+            <div class="pipeline-stage"><span>08 / CONFIRM</span><h3>确认或修改</h3><p>confirm-outline、revision、暂停或重新生成</p></div>
+            <div class="pipeline-stage"><span>09 / CONTENT</span><h3>生成 Scene 内容</h3><p>Slide、Quiz、Interactive、PBL JSON</p></div>
+            <div class="pipeline-stage"><span>10 / ACTIONS</span><h3>生成教学动作</h3><p>speech、highlight、wait、focus、control</p></div>
+            <div class="pipeline-stage"><span>11 / VALIDATE</span><h3>解析与校验</h3><p>JSON parse、Schema validate、规范化、失败重试</p></div>
+            <div class="pipeline-stage"><span>12 / MEDIA</span><h3>媒体编排</h3><p>字幕、TTS、图片、视频异步生成并绑定 assetId</p></div>
+            <div class="pipeline-stage"><span>13 / STORE</span><h3>持久化</h3><p>Stage、Scene、Actions、Media Refs、checkpoint 写入数据库</p></div>
+            <div class="pipeline-stage"><span>14 / RENDER</span><h3>选择 Renderer</h3><p>按 Scene type 进入 slide、quiz、interactive、pbl 渲染路径</p></div>
+            <div class="pipeline-stage"><span>15 / PLAY</span><h3>执行课堂动作</h3><p>PlaybackEngine 驱动时间轴，ActionEngine 执行讲解和互动动作</p></div>
+            <div class="pipeline-stage"><span>16 / OUTPUT</span><h3>可运行互动课件</h3><p>浏览器画面、HTML iframe、学生交互和状态回传</p></div>
+          </div>
+          <div class="branch-grid" style="margin-top:18px" aria-label="Query 主流程中的四个分支判断">
+            <div class="branch"><strong>BRANCH A / MATERIAL</strong><h3>是否上传资料？</h3><p>是：PDF / Word / PPT / 音视频 → 文本、图片、关键帧、转写；否：跳过材料解析。</p></div>
+            <div class="branch"><strong>BRANCH B / SEARCH</strong><h3>是否开启联网搜索？</h3><p>是：Query rewrite → 搜索服务 → 摘要和来源；否：只使用 Query 与已有材料。</p></div>
+            <div class="branch"><strong>BRANCH C / OUTLINE</strong><h3>是否需要确认大纲？</h3><p>是：用户编辑或确认后继续；否：自动确认，直接进入逐场景生成。</p></div>
+            <div class="branch"><strong>BRANCH D / VALIDATE</strong><h3>结构校验是否通过？</h3><p>通过：写入 Stage / Scene；失败：只重试当前步骤，保留已有 checkpoint。</p></div>
+          </div>
+          <div class="flowline">
+            <div class="node"><strong>01 / INPUT</strong><b>用户需求</b><small>主题、年龄、目标、资料、互动要求</small></div>
+            <div class="node"><strong>02 / CONTEXT</strong><b>研究上下文</b><small>搜索结果、教材文本、图片和学习者资料</small></div>
+            <div class="node blue"><strong>03 / PLAN</strong><b>课程大纲</b><small>courseTitle、SceneOutline[]、场景类型</small></div>
+            <div class="node"><strong>04 / CONTENT</strong><b>场景内容</b><small>Slide、Quiz、Interactive、PBL JSON</small></div>
+            <div class="node blue"><strong>05 / RUNTIME</strong><b>可运行 Scene</b><small>content + actions + media</small></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="callbacks">
+          <div class="chapter-head"><h2>05 / 前端、后端与 AI</h2><span class="chapter-no">CALL &amp; CALLBACK</span></div>
+          <p>生成任务通过 202 响应创建，再由 Runner 后台执行。浏览器不等待一个超长请求，而是通过 SSE 持续收取进度。</p>
+          <div class="logic-figure" aria-label="浏览器、API、Runner、Provider、数据库之间的调用和回调泳道图">
+            <svg viewBox="0 0 1320 520" role="img" aria-labelledby="callback-flow-title">
+              <title id="callback-flow-title">前端、后端、Runner、AI Provider 和数据库之间的调用与回调时序</title>
+              <text class="figure-title" x="24" y="30">CALL / CALLBACK / 泳道时序</text>
+              <text class="figure-note" x="1296" y="30" text-anchor="end">AI 不直接回调浏览器</text>
+              <g>
+                <rect class="box-accent" x="34" y="58" width="170" height="48" /><text class="box-label" x="119" y="87">浏览器前端</text>
+                <rect class="box" x="286" y="58" width="170" height="48" /><text class="box-label" x="371" y="87">Next.js API</text>
+                <rect class="box" x="538" y="58" width="170" height="48" /><text class="box-label" x="623" y="87">Generation Runner</text>
+                <rect class="box-muted" x="790" y="58" width="170" height="48" /><text class="box-label" x="875" y="87">Search / LLM</text>
+                <rect class="box" x="1042" y="58" width="170" height="48" /><text class="box-label" x="1127" y="87">PostgreSQL / Events</text>
+                <line class="lane-line" x1="119" y1="106" x2="119" y2="470" /><line class="lane-line" x1="371" y1="106" x2="371" y2="470" /><line class="lane-line" x1="623" y1="106" x2="623" y2="470" /><line class="lane-line" x1="875" y1="106" x2="875" y2="470" /><line class="lane-line" x1="1127" y1="106" x2="1127" y2="470" />
+              </g>
+              <g>
+                <line class="line-accent" x1="119" y1="138" x2="371" y2="138" /><text class="line-label" x="245" y="130">POST /generation-runs</text>
+                <line class="line" x1="371" y1="180" x2="1127" y2="180" /><text class="line-label" x="749" y="172">创建 Run / ownerId / state=preparing</text>
+                <line class="line" x1="371" y1="222" x2="623" y2="222" /><text class="line-label" x="497" y="214">wake Runner</text>
+                <line class="line-accent" x1="119" y1="264" x2="371" y2="264" /><text class="line-label" x="245" y="256">EventSource / SSE</text>
+                <line class="line" x1="623" y1="306" x2="875" y2="306" /><text class="line-label" x="749" y="298">rewrite + search / outline stream</text>
+                <line class="line-dashed" x1="875" y1="348" x2="623" y2="348" /><text class="line-label" x="749" y="340">结果 / token / JSON chunk</text>
+                <line class="line" x1="623" y1="390" x2="1127" y2="390" /><text class="line-label" x="875" y="382">checkpoint / outline_item / scene_ready</text>
+                <line class="line-accent" x1="1127" y1="432" x2="371" y2="432" /><text class="line-label" x="749" y="424">DB event → API → SSE</text>
+                <line class="line-accent" x1="371" y1="474" x2="119" y2="474" /><text class="line-label" x="245" y="466">UI 更新进度 / 场景</text>
+              </g>
+            </svg>
+          </div>
+          <div class="trace">
+            <div class="trace-row"><span class="trace-label">BROWSER → API</span><i class="trace-dot"></i><span class="trace-text">提交 <code>POST /api/generation-runs</code>，收到 <code>202 + runId</code>。</span></div>
+            <div class="trace-row"><span class="trace-label">API → DB</span><i class="trace-dot"></i><span class="trace-text">创建 Generation Run，绑定 <code>ownerId</code>，保存输入和初始状态。</span></div>
+            <div class="trace-row"><span class="trace-label">RUNNER → AI</span><i class="trace-dot"></i><span class="trace-text">Runner 按顺序调用 research、outline、scene-content、scene-actions。</span></div>
+            <div class="trace-row"><span class="trace-label">AI → RUNNER</span><i class="trace-dot"></i><span class="trace-text">模型返回文本或 JSON；服务端解析、规范化、校验，然后写入 checkpoint。</span></div>
+            <div class="trace-row"><span class="trace-label">DB → SSE</span><i class="trace-dot"></i><span class="trace-text">推送 <code>outline_item</code>、<code>scene_ready</code>、<code>step_retry</code> 和完成事件。</span></div>
+            <div class="trace-row"><span class="trace-label">SSE → UI</span><i class="trace-dot"></i><span class="trace-text">前端更新进度、显示大纲、挂载新场景，用户可以实时看到课程长出来。</span></div>
+          </div>
+          <div class="detail-grid" style="margin-top:18px" aria-label="三种前后端与模型回调机制">
+            <div class="detail-card"><strong>01 / HTTP 202</strong><h3>创建异步任务</h3><p><code>POST /api/generation-runs</code> 只返回 <code>runId</code> 和初始状态，浏览器不阻塞等待整堂课。</p></div>
+            <div class="detail-card"><strong>02 / SSE</strong><h3>服务端进度回调</h3><p><code>EventSource</code> 读取持久化事件，例如 <code>research_sources</code>、<code>outline_item</code>、<code>scene_ready</code>、<code>step_retry</code>、<code>completed</code>。</p></div>
+            <div class="detail-card"><strong>03 / MODEL STREAM</strong><h3>模型流式回调</h3><p>Runner 从流中识别 <code>courseTitle</code>、<code>languageDirective</code> 和完整 outline object，先写 checkpoint，再转成 SSE。</p></div>
+            <div class="detail-card"><strong>04 / CALLBACK RULE</strong><h3>回调不是直连</h3><p>模型不直接回调浏览器；AI → Runner → DB checkpoint → API → SSE → UI，所有进度都经过服务端边界。</p></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="sequence">
+          <div class="chapter-head"><h2>06 / 一次生成的完整时序</h2><span class="chapter-no">BROWSER / API / RUNNER / AI / DB</span></div>
+          <p>这张横向时序图回答“谁在什么时候调用谁”。模型返回后，Runner 先校验和落库，再由数据库事件回到浏览器。</p>
+          <div class="sequence" aria-label="一次生成的完整时序图">
+            <div class="sequence-grid">
+              <div class="head">STEP</div><div class="head">BROWSER</div><div class="head">NEXT API</div><div class="head">RUNNER</div><div class="head">AI / DB</div>
+              <div class="actor">01 / START</div><div>填写 Query</div><div class="arrow">POST →</div><div class="event">创建 Run</div><div>DB: state=preparing</div>
+              <div class="actor">02 / RESEARCH</div><div class="event">监听 SSE</div><div class="event">保持连接</div><div class="arrow">→ search / rewrite</div><div>搜索结果写入 DB</div>
+              <div class="actor">03 / OUTLINE</div><div>显示 outline_item</div><div class="event">转发事件</div><div class="arrow">→ outline prompt</div><div>LLM stream → checkpoint</div>
+              <div class="actor">04 / CONFIRM</div><div class="arrow">confirm-outline →</div><div>更新 revision</div><div>恢复 lease</div><div>DB: state=generating</div>
+              <div class="actor">05 / SCENE</div><div>显示 scene_ready</div><div class="event">转发事件</div><div class="arrow">→ content → actions</div><div>LLM → validate → DB</div>
+              <div class="actor">06 / DONE</div><div>进入课堂</div><div class="event">推送 complete</div><div>释放 lease</div><div>DB: state=completed</div>
+            </div>
+          </div>
+          <p class="sequence-note">SSE 不是模型直接回调浏览器；它是 DB / Runner 事件经过 API 转发后的产品级进度通道。</p>
+        </section>
+
+        <section class="chapter" id="state">
+          <div class="chapter-head"><h2>07 / Generation Run 状态机</h2><span class="chapter-no">STATE / LEASE / RETRY</span></div>
+          <p>每个阶段都有 stepId 和 checkpoint。Worker 使用 lease 防止任务重复执行，失败时只重跑当前阶段，不丢失已经完成的场景。</p>
+          <div class="state-grid">
+            <div class="state"><span>00 / PREPARE</span><h3>准备</h3><p>识别用户、检查能力、解析资料、执行搜索。</p></div>
+            <div class="state"><span>01 / OUTLINE</span><h3>大纲</h3><p>流式生成 SceneOutline，等待确认或自动确认。</p></div>
+            <div class="state"><span>02 / GENERATE</span><h3>生成</h3><p>逐场景执行 content → actions → narration。</p></div>
+            <div class="state"><span>03 / PAUSE</span><h3>暂停 / 重试</h3><p>记录失败原因，从失败步骤继续。</p></div>
+            <div class="state"><span>04 / COMPLETE</span><h3>完成</h3><p>课程文档和资源引用写入持久化存储。</p></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="ai-calls">
+          <div class="chapter-head"><h2>08 / AI 调用矩阵</h2><span class="chapter-no">INPUT / OUTPUT</span></div>
+          <p>每一次模型调用都不是同一个 Prompt。它们拿到的上下文不同，返回的结构不同，失败策略也不同。</p>
+          <div class="call-table">
+            <div class="call"><div class="call-name">QUERY REWRITE</div><div class="call-body"><div><span>输入</span>原始需求、教材摘要</div><div><span>输出</span>搜索关键词 / <code>web-search-query-rewrite</code></div></div></div>
+            <div class="call"><div class="call-name">OUTLINE</div><div class="call-body"><div><span>输入</span>需求、搜索结果、资料、教师上下文</div><div><span>输出</span>courseTitle、languageDirective、SceneOutline[]</div></div></div>
+            <div class="call"><div class="call-name">SCENE CONTENT</div><div class="call-body"><div><span>输入</span>单个 Outline、图片、角色、语言规则</div><div><span>输出</span>Slide / Quiz / Interactive / PBL JSON</div></div></div>
+            <div class="call"><div class="call-name">SCENE ACTIONS</div><div class="call-body"><div><span>输入</span>场景内容、前序讲解、整套标题</div><div><span>输出</span>speech、highlight、wait、互动动作</div></div></div>
+            <div class="call"><div class="call-name">CLASSROOM AGENT</div><div class="call-body"><div><span>输入</span>学生问题、当前 Scene、工具和历史</div><div><span>输出</span>角色回答、工具调用、继续/结束信号</div></div></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="scene-types">
+          <div class="chapter-head"><h2>09 / 大纲如何变成具体课件</h2><span class="chapter-no">SCENE TYPE → CONTENT → ACTIONS</span></div>
+          <p>Scene Outline 先决定场景类型，不同类型进入不同内容生成器；它们最后汇合到教学动作、完整 Scene 和课程文档。</p>
+          <div class="logic-figure" aria-label="Scene Outline 按类型分支并汇合成完整 Scene 的流程图">
+            <svg viewBox="0 0 1200 430" role="img" aria-labelledby="scene-branch-title">
+              <title id="scene-branch-title">Scene Outline 按 slide、quiz、interactive、pbl 分支生成内容，再汇合动作和校验</title>
+              <text class="figure-title" x="24" y="30">SCENE OUTLINE / TYPE BRANCH</text>
+              <rect class="box-accent" x="38" y="76" width="154" height="54" /><text class="box-label" x="115" y="99">Scene Outline</text><text class="box-meta" x="115" y="117">目标 / 类型 / 要点</text>
+              <polygon class="decision" points="286,76 334,103 286,130 238,103" /><text class="decision-label" x="286" y="107">type?</text>
+              <path class="line-accent" d="M192 103 H238" />
+              <g>
+                <rect class="box" x="388" y="48" width="172" height="48" /><text class="box-label" x="474" y="69">SLIDE</text><text class="box-meta" x="474" y="85">text / image / chart</text>
+                <rect class="box" x="388" y="108" width="172" height="48" /><text class="box-label" x="474" y="129">QUIZ</text><text class="box-meta" x="474" y="145">question / answer / feedback</text>
+                <rect class="box-accent" x="388" y="168" width="172" height="48" /><text class="box-label" x="474" y="189">INTERACTIVE</text><text class="box-meta" x="474" y="205">HTML / CSS / JavaScript</text>
+                <rect class="box" x="388" y="228" width="172" height="48" /><text class="box-label" x="474" y="249">PBL</text><text class="box-meta" x="474" y="265">project / task / rubric</text>
+                <path class="line" d="M334 103 H360 V72 H388 M334 103 H360 V132 H388 M334 103 H360 V192 H388 M334 103 H360 V252 H388" />
+              </g>
+              <g>
+                <rect class="box-muted" x="650" y="128" width="174" height="54" /><text class="box-label" x="737" y="151">教学动作</text><text class="box-meta" x="737" y="169">speech / highlight / wait</text>
+                <rect class="box-accent" x="886" y="128" width="174" height="54" /><text class="box-label" x="973" y="151">完整 Scene</text><text class="box-meta" x="973" y="169">content + actions + media</text>
+                <rect class="box" x="650" y="270" width="174" height="54" /><text class="box-label" x="737" y="293">Schema 校验</text><text class="box-meta" x="737" y="311">validateAppScene</text>
+                <rect class="box-accent" x="886" y="270" width="174" height="54" /><text class="box-label" x="973" y="293">Stage / Scene</text><text class="box-meta" x="973" y="311">写入课程文档</text>
+                <path class="line" d="M560 72 H610 V155 H650 M560 132 H650 M560 192 H610 V155 H650 M560 252 H610 V155 H650" />
+                <path class="line-accent" d="M824 155 H886 M973 182 V270 M824 297 H886" />
+                <path class="line-dashed" d="M737 270 V218 H474 V216" />
+                <text class="line-label" x="530" y="218">内容失败 → 当前分支重试</text>
+              </g>
+            </svg>
+          </div>
+          <div class="detail-grid" aria-label="大纲到具体课件的分支流程图">
+            <div class="detail-card"><strong>01 / SLIDE</strong><h3>普通讲解页</h3><p>GeneratedSlideContent → text、shape、image、chart/diagram</p></div>
+            <div class="detail-card"><strong>02 / QUIZ</strong><h3>测验互动页</h3><p>GeneratedQuizContent → 题目、选项、答案、解析和反馈</p></div>
+            <div class="detail-card"><strong>03 / INTERACTIVE</strong><h3>互动 HTML 页</h3><p>GeneratedInteractiveContent → HTML、CSS、JavaScript、内部状态</p></div>
+            <div class="detail-card"><strong>04 / PBL</strong><h3>项目式学习页</h3><p>PBL Project → 项目目标、任务步骤、角色和评估标准</p></div>
+            <div class="detail-card"><strong>05 / ACTIONS</strong><h3>教学动作汇合</h3><p>speech、highlight、spotlight、wait、quiz interaction</p></div>
+            <div class="detail-card"><strong>06 / ASSEMBLE</strong><h3>组装完整 Scene</h3><p><code>buildCompleteScene</code> 合并 content、actions、narration、media</p></div>
+            <div class="detail-card"><strong>07 / VALIDATE</strong><h3>结构校验</h3><p><code>validateAppScene</code> 检查类型、字段、引用和动作合法性</p></div>
+            <div class="detail-card"><strong>08 / STORE</strong><h3>写入课程文档</h3><p>通过校验后保存 Stage / Scene，并进入 Renderer 播放链路</p></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="routing">
+          <div class="chapter-head"><h2>10 / 模型能力与资料路由</h2><span class="chapter-no">CAPABILITY / PROVIDER / MATERIAL</span></div>
+          <p>系统不是固定调用一个模型。它先看当前能力槽位，再决定是否能搜索、是否能看图、是否能生成媒体，以及每一步该使用哪个 Provider。</p>
+          <div class="flowline">
+            <div class="node"><strong>01 / REQUEST</strong><b>需求 + 设置</b><small>interactive、taskEngine、learnerProfile、materials</small></div>
+            <div class="node"><strong>02 / CAPABILITY</strong><b>能力检查</b><small>outline、content、vision、tts、image、video</small></div>
+            <div class="node blue"><strong>03 / SLOT</strong><b>模型槽位</b><small>按阶段解析 model、Provider、Key、Base URL</small></div>
+            <div class="node"><strong>04 / FALLBACK</strong><b>降级策略</b><small>备用模型、纯文本模式、跳过不可用媒体</small></div>
+          </div>
+          <div class="trace" style="margin-top:18px">
+            <div class="trace-row"><span class="trace-label">MATERIAL</span><i class="trace-dot"></i><span class="trace-text">上传文件 → assetId → 提取文本 / 图片 / 转写 → 注入 outline 和 scene prompt。</span></div>
+            <div class="trace-row"><span class="trace-label">WEB SEARCH</span><i class="trace-dot"></i><span class="trace-text">Requirement → Query rewrite → 搜索 API → context + sources → 大纲 Prompt。</span></div>
+            <div class="trace-row"><span class="trace-label">VISION</span><i class="trace-dot"></i><span class="trace-text">检查 vision 能力 → 解析图片 asset → 按上限裁剪 → 图片和文字描述一起进入模型。</span></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="research">
+          <div class="chapter-head"><h2>11 / 联网搜索流程</h2><span class="chapter-no">QUERY → RESEARCH CONTEXT</span></div>
+          <p>搜索结果不会直接变成课件页面，它的作用是构建 researchContext，成为课程大纲生成的参考资料。</p>
+          <div class="pipeline-full" aria-label="联网搜索流程图">
+            <div class="pipeline-stage"><span>01 / QUERY</span><h3>原始课程需求</h3><p>用户 Query + 上传材料摘要</p></div>
+            <div class="pipeline-stage"><span>02 / LIMIT</span><h3>截取有限上下文</h3><p>避免把全部文件直接塞进模型</p></div>
+            <div class="pipeline-stage"><span>03 / REWRITE</span><h3>改写搜索 Query</h3><p>有改写模型则调用，没有则使用原始 Query</p></div>
+            <div class="pipeline-stage"><span>04 / SEARCH</span><h3>调用搜索服务</h3><p>豆包 / Web Search Provider</p></div>
+            <div class="pipeline-stage"><span>05 / RESULT</span><h3>返回搜索结果</h3><p>标题、摘要、URL、来源元数据</p></div>
+            <div class="pipeline-stage"><span>06 / CONTEXT</span><h3>格式化 researchContext</h3><p>整理摘要、来源和可引用证据</p></div>
+            <div class="pipeline-stage"><span>07 / PROMPT</span><h3>注入大纲 Prompt</h3><p>与材料上下文一起进入 outline model</p></div>
+            <div class="pipeline-stage"><span>08 / OUTLINE</span><h3>生成课程大纲</h3><p>搜索只提供知识上下文，不直接生成页面</p></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="assets">
+          <div class="chapter-head"><h2>12 / 资料与资源生命周期</h2><span class="chapter-no">UPLOAD → REFERENCE → CLEANUP</span></div>
+          <p>教材、图片、音频、视频和生成 HTML 都以 Asset 管理，不是散落在 Scene 里的字符串。</p>
+          <div class="flowline" aria-label="资料与资源生命周期流程图">
+            <div class="node"><strong>01 / UPLOAD</strong><b>上传资源</b><small>文件、教材、图片、音视频</small></div>
+            <div class="node"><strong>02 / ASSET</strong><b>分配 assetId</b><small>记录类型、来源、owner 和状态</small></div>
+            <div class="node blue"><strong>03 / PROCESS</strong><b>解析或生成</b><small>文本提取、关键帧、转写、媒体生成</small></div>
+            <div class="node"><strong>04 / REFERENCE</strong><b>Scene 引用</b><small>Media Refs、suggestedImageIds、audioId</small></div>
+            <div class="node"><strong>05 / CLEANUP</strong><b>引用对账</b><small>删除课程后清理未引用或失效资源</small></div>
+          </div>
+          <div class="detail-grid" style="margin-top:18px" aria-label="资料解析分支流程图">
+            <div class="detail-card"><strong>01 / TEXT</strong><h3>文本提取</h3><p>PDF / Word / PPT → 可搜索文本 → 材料摘要 → outline prompt。</p></div>
+            <div class="detail-card"><strong>02 / VISUAL</strong><h3>图片与关键帧</h3><p>文档图片或视频关键帧 → image asset → suggestedImageIds / vision context。</p></div>
+            <div class="detail-card"><strong>03 / AUDIO</strong><h3>音视频转写</h3><p>音频 / 视频 → transcript asset → 作为课程上下文或字幕候选。</p></div>
+            <div class="detail-card"><strong>04 / REFERENCE</strong><h3>引用与清理</h3><p>Scene 保存 assetId；版本替换后做资源对账，删除无引用资源。</p></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="media">
+          <div class="chapter-head"><h2>13 / 媒体辅助管线</h2><span class="chapter-no">TEXT / AUDIO / IMAGE / VIDEO</span></div>
+          <p>字幕、声音、图片和视频不完全阻塞主生成流程。大纲先提出需求，媒体编排器再异步生成资源、保存 assetId、替换占位符。</p>
+          <div class="logic-figure" aria-label="字幕、语音、图片和视频的独立媒体管线图">
+            <svg viewBox="0 0 1260 390" role="img" aria-labelledby="media-flow-title">
+              <title id="media-flow-title">字幕语音、图片和视频的媒体辅助管线</title>
+              <text class="figure-title" x="24" y="30">MEDIA / OPTIONAL ASYNC PIPELINES</text>
+              <text class="figure-note" x="1236" y="30" text-anchor="end">媒体失败可独立重试，不必回滚整堂课</text>
+              <text class="box-meta" x="24" y="82">SPEECH</text>
+              <rect class="box" x="110" y="56" width="172" height="50" /><text class="box-label" x="196" y="77">speech.text</text><text class="box-meta" x="196" y="95">Scene content</text>
+              <rect class="box-muted" x="340" y="56" width="172" height="50" /><text class="box-label" x="426" y="77">Browser TTS</text><text class="box-meta" x="426" y="95">启用 browser-native-tts</text>
+              <rect class="box" x="570" y="56" width="172" height="50" /><text class="box-label" x="656" y="77">Server TTS</text><text class="box-meta" x="656" y="95">audioId / asset</text>
+              <rect class="box-accent" x="800" y="56" width="172" height="50" /><text class="box-label" x="886" y="77">Timeline</text><text class="box-meta" x="886" y="95">字幕 + 播放动作</text>
+              <path class="line" d="M282 81 H340 M512 81 H570 M742 81 H800" />
+              <text class="box-meta" x="24" y="182">IMAGE</text>
+              <rect class="box" x="110" y="156" width="172" height="50" /><text class="box-label" x="196" y="177">教材图片</text><text class="box-meta" x="196" y="195">suggestedImageIds</text>
+              <rect class="box-muted" x="340" y="156" width="172" height="50" /><text class="box-label" x="426" y="177">SVG / CSS</text><text class="box-meta" x="426" y="195">低成本 fallback</text>
+              <rect class="box" x="570" y="156" width="172" height="50" /><text class="box-label" x="656" y="177">Image Provider</text><text class="box-meta" x="656" y="195">image request</text>
+              <rect class="box-accent" x="800" y="156" width="172" height="50" /><text class="box-label" x="886" y="177">Asset → Scene</text><text class="box-meta" x="886" y="195">替换 gen_img</text>
+              <path class="line" d="M282 181 H340 M512 181 H570 M742 181 H800" />
+              <text class="box-meta" x="24" y="282">VIDEO</text>
+              <rect class="box" x="110" y="256" width="172" height="50" /><text class="box-label" x="196" y="277">Video request</text><text class="box-meta" x="196" y="295">能力检查 / manifest</text>
+              <rect class="box-muted" x="340" y="256" width="172" height="50" /><text class="box-label" x="426" y="277">Async Provider</text><text class="box-meta" x="426" y="295">taskId</text>
+              <rect class="box-muted" x="570" y="256" width="172" height="50" /><text class="box-label" x="656" y="277">Poll</text><text class="box-meta" x="656" y="295">pending → done</text>
+              <rect class="box-accent" x="800" y="256" width="172" height="50" /><text class="box-label" x="886" y="277">Video Asset</text><text class="box-meta" x="886" y="295">插入 Scene</text>
+              <path class="line-dashed" d="M282 281 H340 M512 281 H570 M742 281 H800" />
+              <text class="figure-note" x="110" y="355">字幕可独立存在；没有 audioId 时只显示 speech.text，不代表浏览器一定发声。</text>
+            </svg>
+          </div>
+          <div class="branch-grid" aria-label="媒体辅助流程图">
+            <div class="branch"><strong>01 / SPEECH</strong><h3>字幕 → TTS</h3><p>speech.text → 已配置的服务端 TTS 或已启用的 browser-native-tts → 播放时间轴；未启用时按阅读时长推进。</p></div>
+            <div class="branch"><strong>02 / IMAGE</strong><h3>图片 → Scene</h3><p>教材图片优先；缺失时 image request → 生成 → assetId → 替换 gen_img。</p></div>
+            <div class="branch"><strong>03 / VIDEO</strong><h3>视频异步任务</h3><p>提交任务 → 轮询状态 → 保存媒体资源 → 插入目标 Scene。</p></div>
+          </div>
+          <div class="detail-grid" style="margin-top:18px" aria-label="字幕语音图片视频详细流程图">
+            <div class="detail-card"><strong>01 / SPEECH</strong><h3>生成 speech action</h3><p>Scene content → speech.text → 播放时间轴字幕</p></div>
+            <div class="detail-card"><strong>02 / SERVER TTS</strong><h3>服务端语音</h3><p>Runner → <code>/api/generate/tts</code> → 音频文件 → audioId</p></div>
+            <div class="detail-card"><strong>03 / BROWSER TTS</strong><h3>浏览器原生朗读</h3><p>没有预生成音频且用户选择并启用 <code>browser-native-tts</code> 时，PlaybackEngine → SpeechSynthesis → 朗读文本；否则按阅读时长继续。</p></div>
+            <div class="detail-card"><strong>04 / CAPTION</strong><h3>字幕显示</h3><p>speech.text 与动作时间轴同步；有字幕不代表一定有声音</p></div>
+            <div class="detail-card"><strong>05 / IMAGE</strong><h3>教材图片优先</h3><p>检查 suggestedImageIds → 提取教材图片 → Scene 引用</p></div>
+            <div class="detail-card"><strong>06 / IMAGE FALLBACK</strong><h3>SVG / CSS / 生图</h3><p>没有教材图 → SVG/CSS 或 image request → 保存图片 Asset</p></div>
+            <div class="detail-card"><strong>07 / VIDEO</strong><h3>创建视频任务</h3><p>判断能力 → media manifest → <code>/api/generate/video</code></p></div>
+            <div class="detail-card"><strong>08 / POLL</strong><h3>完成后插入 Scene</h3><p>异步生成 → 轮询 → asset → video element → 重新渲染</p></div>
+          </div>
+          <div class="media-list">
+            <div class="media-row"><div class="media-index">01</div><div class="media-title">字幕</div><div class="media-copy"><code>speech.text</code> 进入播放时间轴，跟随动作显示。字幕可以存在，但没有 TTS 音频时不会自动发声。</div></div>
+            <div class="media-row"><div class="media-index">02</div><div class="media-title">声音 / TTS</div><div class="media-copy">服务端 TTS 生成 audioId；没有预生成音频时，PlaybackEngine 只有在用户启用 <code>browser-native-tts</code> 后才会调用 SpeechSynthesis，否则只按阅读时长推进。音频作为资源被 speech action 引用。</div></div>
+            <div class="media-row"><div class="media-index">03</div><div class="media-title">图片</div><div class="media-copy">优先使用教材图片；不足时创建 image request，调用 <code>/api/generate/image</code>，生成后替换 <code>gen_img</code>。</div></div>
+            <div class="media-row"><div class="media-index">04</div><div class="media-title">视频</div><div class="media-copy">提交异步视频任务，轮询状态，完成后保存 asset，再插入指定 Scene。视频比文本生成多了一层任务生命周期。</div></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="agents">
+          <div class="chapter-head"><h2>14 / 课堂 Agent</h2><span class="chapter-no">DIRECTOR / TOOLS</span></div>
+          <p>初次生成是固定流水线；生成完成后，课堂问答由 Director Agent 动态决定读取哪个场景、调用哪个角色、是否执行工具。</p>
+          <div class="loop-diagram" aria-label="课堂 Agent 闭环流程图">
+            <div class="loop-node"><span>01 / INPUT</span><h3>学生提问</h3><p>消息 + 当前 Scene + 会话历史</p></div>
+            <div class="loop-node"><span>02 / DIRECTOR</span><h3>判断与取证</h3><p>决定 read_scene、角色和工具</p></div>
+            <div class="loop-node"><span>03 / ACTION</span><h3>回答与动作</h3><p>回答、高亮、白板或 iframe 控制</p></div>
+            <div class="loop-node"><span>04 / CONTINUE</span><h3>回到课堂</h3><p>SSE / postMessage 更新播放状态</p></div>
+          </div>
+          <div class="agent-flow">
+            <div class="agent-step"><span>01</span><h3>学生提问</h3><p>提交消息、当前场景和会话状态。</p></div>
+            <div class="agent-step"><span>02</span><h3>Director 判断</h3><p>识别问题，决定是否读场景和调用工具。</p></div>
+            <div class="agent-step"><span>03</span><h3>读取证据</h3><p><code>read_scene</code> 获取精确内容。</p></div>
+            <div class="agent-step"><span>04</span><h3>调用角色</h3><p>teacher、assistant 或 student Agent 回答。</p></div>
+            <div class="agent-step"><span>05</span><h3>执行动作</h3><p>高亮元素、操作白板、控制 iframe。</p></div>
+            <div class="agent-step"><span>06</span><h3>回到课程</h3><p>SSE / postMessage 让课堂继续。</p></div>
+          </div>
+          <div class="sequence" style="margin-top:18px" aria-label="课堂 Agent 问答与动作回调时序图">
+            <div class="sequence-grid">
+              <div class="head">STEP</div><div class="head">学生 / 浏览器</div><div class="head">Director Agent</div><div class="head">Scene / Tools</div><div class="head">回调</div>
+              <div class="actor">01 / ASK</div><div>提交问题 + 当前 Scene</div><div class="event">接收消息与历史</div><div>读取当前场景上下文</div><div class="arrow">→ agent_input</div>
+              <div class="actor">02 / DECIDE</div><div>等待回答</div><div class="arrow">判断是否需要工具</div><div>read_scene / search / role</div><div>记录 tool_call</div>
+              <div class="actor">03 / ANSWER</div><div>显示回答</div><div class="event">生成解释与下一步</div><div>teacher / assistant 输出</div><div class="arrow">SSE: message</div>
+              <div class="actor">04 / CONTROL</div><div>课堂继续播放</div><div class="arrow">发出教学动作</div><div>highlight / focus / control</div><div class="arrow">postMessage / action</div>
+              <div class="actor">05 / RESUME</div><div>看到状态变化</div><div class="event">结束或继续判断</div><div>更新 Scene / session</div><div>SSE + checkpoint</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="runtime">
+          <div class="chapter-head"><h2>15 / Scene 如何被运行</h2><span class="chapter-no">CONTENT → RENDERER → PLAYBACK</span></div>
+          <p>AI 输出的 JSON 不是最终画面。Renderer 根据 Scene 类型选择渲染器，PlaybackEngine 驱动动作时间轴，ActionEngine 执行具体的讲解、聚焦、白板和互动控制。</p>
+          <div class="render-grid">
+            <div class="render-step"><span>01 / DATA</span><h3>读取 Scene</h3><p>读取 type、content、actions、media refs 和当前播放位置。</p></div>
+            <div class="render-step"><span>02 / ROUTE</span><h3>选择 Renderer</h3><p>slide、quiz、interactive、pbl 分别进入不同渲染路径。</p></div>
+            <div class="render-step"><span>03 / PLAY</span><h3>执行 Actions</h3><p>speech、highlight、wait、quiz interaction 组成课堂节奏。</p></div>
+            <div class="render-step"><span>04 / BRIDGE</span><h3>控制 iframe</h3><p>React 通过 postMessage 控制互动 HTML，并接收 ready / error / state。</p></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="interactive-runtime">
+          <div class="chapter-head"><h2>16 / 互动 HTML 的运行逻辑</h2><span class="chapter-no">SCENE JSON / REACT / IFRAME / STUDENT</span></div>
+          <p>互动课件不是 React 每次点击都重新渲染一个按钮，而是由宿主页面装载一份受沙箱保护的 HTML；互动发生在 iframe 内部，状态和控制指令通过 postMessage 往返。</p>
+          <div class="sequence-figure" aria-label="互动 HTML 运行时序图">
+            <svg viewBox="0 0 1120 760" role="img" aria-labelledby="interactive-sequence-title">
+              <title id="interactive-sequence-title">Scene JSON、React 页面、InteractiveIframeHost、沙箱 iframe、学生之间的互动 HTML 运行时序</title>
+              <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#111" /></marker></defs>
+              <text class="title" x="36" y="42">互动 HTML 的运行逻辑</text>
+              <g>
+                <rect class="actor-box" x="42" y="78" width="150" height="54" rx="3" /><text class="actor-label" x="117" y="111">Scene JSON</text>
+                <rect class="actor-box" x="258" y="78" width="150" height="54" rx="3" /><text class="actor-label" x="333" y="111">React 页面</text>
+                <rect class="actor-box" x="474" y="78" width="190" height="54" rx="3" /><text class="actor-label" x="569" y="111">InteractiveIframeHost</text>
+                <rect class="actor-box" x="730" y="78" width="150" height="54" rx="3" /><text class="actor-label" x="805" y="111">沙箱 iframe</text>
+                <rect class="actor-box" x="946" y="78" width="132" height="54" rx="3" /><text class="actor-label" x="1012" y="111">学生</text>
+              </g>
+              <g class="lane"><line x1="117" y1="132" x2="117" y2="682" /><line x1="333" y1="132" x2="333" y2="682" /><line x1="569" y1="132" x2="569" y2="682" /><line x1="805" y1="132" x2="805" y2="682" /><line x1="1012" y1="132" x2="1012" y2="682" /></g>
+              <g>
+                <line class="msg" x1="117" y1="175" x2="333" y2="175" /><text class="msg-label" x="225" y="158">scene.type=interactive</text>
+                <line class="msg" x1="333" y1="225" x2="569" y2="225" /><text class="msg-label" x="451" y="208">传入 content.html</text>
+                <line class="msg" x1="569" y1="275" x2="805" y2="275" /><text class="msg-label" x="687" y="258">创建 sandbox iframe</text>
+                <path class="loop" d="M805 320 C860 320 860 354 805 354" /><text class="msg-label" x="910" y="330">执行 HTML/CSS/JavaScript</text>
+                <line class="reply" x1="805" y1="405" x2="569" y2="405" /><text class="msg-label" x="687" y="388">postMessage ready</text>
+                <line class="reply" x1="569" y1="455" x2="333" y2="455" /><text class="msg-label" x="451" y="438">iframe 已加载</text>
+                <line class="msg" x1="1012" y1="505" x2="805" y2="505" /><text class="msg-label" x="910" y="488">点击 / 拖拽 / 输入</text>
+                <path class="loop" d="M805 550 C860 550 860 584 805 584" /><text class="msg-label" x="910" y="560">更新内部互动状态</text>
+                <line class="reply" x1="805" y1="630" x2="569" y2="630" /><text class="msg-label" x="687" y="613">postMessage interaction event</text>
+                <line class="reply" x1="569" y1="680" x2="333" y2="680" /><text class="msg-label" x="451" y="663">同步状态或错误</text>
+              </g>
+              <g>
+                <line class="msg" x1="333" y1="720" x2="569" y2="720" /><text class="msg-label" x="451" y="705">发送 highlight / focus / control</text>
+                <line class="msg" x1="569" y1="742" x2="805" y2="742" /><text class="msg-label" x="687" y="737">postMessage 控制指令</text>
+              </g>
+            </svg>
+          </div>
+          <div class="sequence-explain"><strong>核心结论：</strong>React 负责装载和控制互动页面；沙箱 iframe 负责执行 HTML/CSS/JavaScript 和维护内部交互状态；学生事件通过 postMessage 返回宿主，宿主再把状态、错误和教学控制同步回课堂。</div>
+        </section>
+
+        <section class="chapter" id="recovery">
+          <div class="chapter-head"><h2>17 / 错误、重试与降级</h2><span class="chapter-no">FAILURE / RETRY / DEGRADE</span></div>
+          <p>系统不会把所有失败都当成同一种错误：模型失败可以重试，媒体失败可以延后，结构校验失败必须阻止写入。</p>
+          <div class="flowline" aria-label="错误恢复流程图">
+            <div class="node"><strong>01 / DETECT</strong><b>捕获错误</b><small>请求、Schema、媒体、Worker</small></div>
+            <div class="node"><strong>02 / CLASSIFY</strong><b>判断错误类型</b><small>可重试、可降级、必须暂停</small></div>
+            <div class="node blue"><strong>03 / RECOVER</strong><b>重试或切换</b><small>fallback、局部重跑、媒体异步补偿</small></div>
+            <div class="node"><strong>04 / CHECKPOINT</strong><b>恢复运行</b><small>保留已完成结果，从失败步骤继续</small></div>
+          </div>
+          <div class="fallback">
+            <div class="fallback-card"><strong>MODEL FAILURE</strong><h3>模型请求失败</h3><p>同一模型重试；连续失败后切换 fallback model；仍失败则暂停 Run，保留已完成 checkpoint。</p></div>
+            <div class="fallback-card"><strong>SCHEMA FAILURE</strong><h3>结构校验失败</h3><p>Scene 不符合 schema 时不会进入课程文档，当前 scene 重新生成，避免脏数据污染播放层。</p></div>
+            <div class="fallback-card"><strong>MEDIA FAILURE</strong><h3>图片 / 视频失败</h3><p>媒体可以独立重试，不必让整个课程回滚；占位符和资源引用保持可追踪。</p></div>
+            <div class="fallback-card"><strong>LEASE FAILURE</strong><h3>Worker 中断</h3><p>释放或丢失 lease 后，其他 Runner 可以继续领取任务，从最近 checkpoint 恢复执行。</p></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="iteration">
+          <div class="chapter-head"><h2>18 / 编辑、重生成与资源回收</h2><span class="chapter-no">EDIT / REGENERATE / RECONCILE</span></div>
+          <p>课程完成不是流程终点。用户可以只修改一个场景、一个动作或一条字幕，系统只重建受影响的部分。</p>
+          <div class="flowline">
+            <div class="node"><strong>01 / EDIT</strong><b>用户修改</b><small>文本、排序、动作、字幕、互动配置</small></div>
+            <div class="node"><strong>02 / SNAPSHOT</strong><b>保存旧版本</b><small>保留当前 Scene 和资源引用</small></div>
+            <div class="node blue"><strong>03 / REGENERATE</strong><b>局部调用 AI</b><small>只重生成目标场景或 actions</small></div>
+            <div class="node"><strong>04 / APPLY</strong><b>校验并替换</b><small>content validation → store update</small></div>
+            <div class="node"><strong>05 / RECONCILE</strong><b>资源对账</b><small>清理失效图片、音频、视频引用</small></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="security">
+          <div class="chapter-head"><h2>19 / 多租户与安全边界</h2><span class="chapter-no">OWNER / SANDBOX / ALLOWLIST</span></div>
+          <p>这是“多人正式使用”必须理解的一层：每个请求先确定 owner，再限制数据、资源和工具的可见范围。</p>
+          <div class="flowline" aria-label="多租户安全边界流程图">
+            <div class="node"><strong>01 / REQUEST</strong><b>请求进入</b><small>登录会话或匿名 owner</small></div>
+            <div class="node blue"><strong>02 / OWNER</strong><b>确定数据边界</b><small>ownerId 限制课程、素材、设置</small></div>
+            <div class="node"><strong>03 / TOOLS</strong><b>限制 Agent 能力</b><small>allowlist 只开放当前工具</small></div>
+            <div class="node"><strong>04 / SANDBOX</strong><b>隔离运行</b><small>iframe + postMessage + Schema</small></div>
+          </div>
+          <div class="trace">
+            <div class="trace-row"><span class="trace-label">OWNER</span><i class="trace-dot"></i><span class="trace-text">请求 → 登录用户或匿名 owner → 所有课程、素材、设置按 ownerId 隔离。</span></div>
+            <div class="trace-row"><span class="trace-label">TOOLS</span><i class="trace-dot"></i><span class="trace-text">Agent Runtime 使用 allowlist，只能调用当前会话声明过的工具。</span></div>
+            <div class="trace-row"><span class="trace-label">IFRAME</span><i class="trace-dot"></i><span class="trace-text">AI 生成 HTML 运行在 sandbox iframe，通过 postMessage 与宿主通信。</span></div>
+            <div class="trace-row"><span class="trace-label">VALIDATE</span><i class="trace-dot"></i><span class="trace-text">模型返回的 Scene 必须通过 schema 校验，未通过就不能写入课程。</span></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="objects">
+          <div class="chapter-head"><h2>20 / 核心对象关系</h2><span class="chapter-no">DATA MODEL</span></div>
+          <p>理解这些对象，就能理解大部分代码为什么这样组织。</p>
+          <div class="logic-figure" aria-label="Owner、GenerationRun、Stage、Scene、Asset 和 Agent 的对象关系图">
+            <svg viewBox="0 0 1240 440" role="img" aria-labelledby="object-map-title">
+              <title id="object-map-title">互动课件系统的核心数据对象关系</title>
+              <text class="figure-title" x="24" y="30">OBJECTS / DATA RELATIONSHIPS</text>
+              <rect class="box-accent" x="510" y="58" width="190" height="54" /><text class="box-label" x="605" y="80">Owner / Tenant</text><text class="box-meta" x="605" y="99">身份与数据边界</text>
+              <rect class="box" x="120" y="180" width="190" height="54" /><text class="box-label" x="215" y="202">GenerationRun</text><text class="box-meta" x="215" y="221">state / step / checkpoint</text>
+              <rect class="box-accent" x="390" y="180" width="190" height="54" /><text class="box-label" x="485" y="202">Stage / Course</text><text class="box-meta" x="485" y="221">最终课程文档</text>
+              <rect class="box" x="660" y="180" width="190" height="54" /><text class="box-label" x="755" y="202">Agent / Session</text><text class="box-meta" x="755" y="221">角色、工具、上下文</text>
+              <rect class="box" x="930" y="180" width="190" height="54" /><text class="box-label" x="1025" y="202">Asset</text><text class="box-meta" x="1025" y="221">教材、媒体、生成文件</text>
+              <rect class="box" x="390" y="320" width="190" height="54" /><text class="box-label" x="485" y="342">Outline[]</text><text class="box-meta" x="485" y="361">导航与生成计划</text>
+              <rect class="box-accent" x="660" y="320" width="190" height="54" /><text class="box-label" x="755" y="342">Scene[]</text><text class="box-meta" x="755" y="361">可播放页面</text>
+              <path class="line-accent" d="M605 112 V145 H215 V180 M605 112 V145 H485 V180 M605 112 V145 H755 V180 M605 112 V145 H1025 V180" />
+              <path class="line" d="M485 234 V320 M580 347 H660" />
+              <path class="line-dashed" d="M850 207 H930 M850 347 H1025 V234" />
+              <text class="line-label" x="310" y="137">owns</text><text class="line-label" x="680" y="137">scopes</text><text class="line-label" x="900" y="137">references</text><text class="line-label" x="620" y="339">contains</text><text class="line-label" x="900" y="248">media refs</text>
+            </svg>
+          </div>
+          <div class="object-tree"><div><span class="key">Owner</span> / 用户或租户隔离边界</div><div class="indent">├── <span class="key">GenerationRun</span> / 生成任务、状态、步骤、错误</div><div class="indent">├── <span class="key">Stage</span> / 最终课程文档</div><div class="indent-2">├── Outline[] / 课程导航和计划</div><div class="indent-2">└── Scene[] / 可播放页面</div><div class="indent-2">　　├── Content / slide、quiz、interactive、pbl</div><div class="indent-2">　　├── Actions / speech、highlight、wait</div><div class="indent-2">　　└── Media Refs / 图片、音频、视频</div><div class="indent">├── <span class="key">Agent</span> / 教师、助手、学生、Director</div><div class="indent">└── <span class="key">Asset</span> / 媒体和教材资源</div></div>
+        </section>
+
+        <section class="chapter" id="code-index">
+          <div class="chapter-head"><h2>21 / 代码阅读索引</h2><span class="chapter-no">READ BY CHAIN</span></div>
+          <p>不要从目录头到尾阅读，按一次真实生成链路阅读。</p>
+          <div class="code-index">
+            <div class="code-item">POST /api/generation-runs<span>任务入口</span></div>
+            <div class="code-item">lib/server/generation/run/engine.ts<span>任务执行器</span></div>
+            <div class="code-item">lib/server/generation/run/plan.ts<span>状态机</span></div>
+            <div class="code-item">lib/server/generation/steps/outline.ts<span>课程大纲</span></div>
+            <div class="code-item">lib/server/generation/steps/scene-content.ts<span>场景内容</span></div>
+            <div class="code-item">lib/server/generation/steps/scene-actions.ts<span>教学动作</span></div>
+            <div class="code-item">lib/media/media-orchestrator.ts<span>媒体编排</span></div>
+            <div class="code-item">lib/agent/runtime/build-agent.ts<span>Agent Runtime</span></div>
+            <div class="code-item">lib/server/identity<span>用户 / ownerId 识别</span></div>
+            <div class="code-item">lib/server/agent-runtime<span>工具边界与 Agent 会话</span></div>
+            <div class="code-item">lib/config/model-slots.ts<span>模型能力槽位</span></div>
+            <div class="code-item">lib/server/generation-capabilities.ts<span>能力检查与路由</span></div>
+            <div class="code-item">lib/ai/llm.ts<span>统一 LLM 调用</span></div>
+            <div class="code-item">lib/server/generation/run/runner.ts<span>Runner 执行循环</span></div>
+            <div class="code-item">lib/server/generation/run/store.ts<span>Run 持久化与 checkpoint</span></div>
+            <div class="code-item">lib/document/<span>材料解析与文档资源</span></div>
+            <div class="code-item">lib/media/<span>图片、音频、视频资源</span></div>
+            <div class="code-item">lib/server/store-generated-asset.ts<span>生成资源入库</span></div>
+            <div class="code-item">lib/agent/client/apply-regenerate.ts<span>局部重生成应用</span></div>
+            <div class="code-item">lib/edit/<span>课程编辑逻辑</span></div>
+            <div class="code-item">lib/chat/pi/tools/<span>课堂工具调用</span></div>
+            <div class="code-item">components/edit/PlaybackChromeRoot.tsx<span>播放外壳</span></div>
+            <div class="code-item">lib/playback/engine.ts<span>播放时间轴与浏览器 TTS 回退</span></div>
+            <div class="code-item">lib/action/engine.ts<span>动作执行器</span></div>
+            <div class="code-item">components/scene-renderers<span>Slide / Quiz / Interactive / PBL</span></div>
+            <div class="code-item">lib/chat/pi/director-loop.ts<span>课堂 Director</span></div>
+            <div class="code-item">lib/chat/pi/prompts.ts<span>Agent Prompt 与角色</span></div>
+          </div>
+        </section>
+      </div>
+      <footer class="footer"><span>ZHANG XINYU / NOTES</span><span>知识沉淀</span></footer>
+    </main>
+  </div>
+  <script>
+    const links = [...document.querySelectorAll('.rail-nav a')];
+    const sections = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+    let ticking = false;
+    const updateActiveSection = () => {
+      const marker = window.innerHeight * 0.42;
+      let current = sections[0];
+      sections.forEach(section => {
+        if (section.getBoundingClientRect().top <= marker) current = section;
+      });
+      links.forEach(link => {
+        const active = link.getAttribute('href') === '#' + current.id;
+        link.classList.toggle('active', active);
+        if (active) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+      ticking = false;
+    };
+    const requestActiveUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(updateActiveSection);
+    };
+    window.addEventListener('scroll', requestActiveUpdate, { passive: true });
+    window.addEventListener('resize', requestActiveUpdate);
+    window.addEventListener('hashchange', requestActiveUpdate);
+    updateActiveSection();
+  </script>
+</body>
+</html>

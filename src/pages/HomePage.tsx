@@ -209,8 +209,22 @@ export function HomePage() {
               </>
             ) : view.mode === "Notes" ? (
               <div className="mode-panel"><span className="eyebrow">NOTES & THINKING</span><Headline text="Thinking in progress." />
-                <p>知识沉淀 · 搭建中</p><div className="notes-empty"><strong>把经验，整理成方法。</strong>
-                  <p>这里将记录 AI 产品、生成质量评估、交互设计与工作流实践。内容准备好后陆续发布。</p><span>COMING SOON / 03</span></div>
+                <p>知识沉淀 · 个人项目逻辑</p>
+                <section className="notes-feature">
+                  <div className="notes-feature-head">
+                    <div>
+                      <span className="eyebrow">01 / 课映</span>
+                      <h2>AI PPT 系统原理地图</h2>
+                      <p>把个人项目“课映”的产品、AI、媒体与 Agent 调用链路整理成一张可交互的逻辑图。</p>
+                    </div>
+                    <a className="text-action cursor-target" href="/knowledge/courseware-system-map.html" target="_blank" rel="noreferrer">新窗口打开 ↗</a>
+                  </div>
+                  <iframe
+                    className="knowledge-map-frame"
+                    src="/knowledge/courseware-system-map.html"
+                    title="课映 AI PPT 系统原理地图"
+                  />
+                </section>
               </div>
             ) : <Contact />}
           </div>

@@ -388,7 +388,7 @@ export function Contact() {
         <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("zxi8861@gmail.com")}><span>EMAIL</span><strong>zxi8861@gmail.com</strong><span>复制 →</span></button><a href="mailto:zxi8861@gmail.com" aria-label="写邮件">写邮件 ↗</a></div>
         <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("zxi8861-elliot")}><span>GITHUB</span><strong>zxi8861-elliot</strong><span>复制 →</span></button><a href="https://github.com/zxi8861-elliot" target="_blank" rel="noreferrer" aria-label="打开 GitHub">打开 ↗</a></div>
         <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("13273355712")}><span>手机号</span><strong>132-7335-5712</strong><span>复制 →</span></button></div>
-        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("ZHANGXISSR")}><span>微信号</span><strong>ZHANGXISSR</strong><span>复制 →</span></button></div>
+        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("zhangxissr")}><span>微信号</span><strong>zhangxissr</strong><span>复制 →</span></button></div>
       </div>
       {notice ? <div className="system-toast" role="status" aria-live="polite"><span aria-hidden="true">✓</span>{notice}</div> : null}
     </div>

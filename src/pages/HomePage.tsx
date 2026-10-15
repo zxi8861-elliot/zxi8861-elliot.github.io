@@ -193,25 +193,11 @@ export function HomePage() {
                 <button className="back-link cursor-target" onClick={back}>← 返回{labels[view.mode]}</button>
                 <span className="eyebrow">CASE / {selected.status}</span>
                 <h1 className={hasMixedCjkLatin(selected.title) ? "mixed-script-title" : undefined}>{renderTitleText(selected.title)}</h1><p className="case-lede">{selected.short}</p>
-                {selected.category === "Work" ? (
-                  <div className="case-at-a-glance">
-                    <div><span>个人职责</span><p>{selected.role}</p></div>
-                    <div><span>代表成果</span><p>{selected.result}</p></div>
-                  </div>
-                ) : null}
-                {selected.cover ? <img className="case-image" src={selected.cover} alt={`${selected.title}项目画面`} /> : null}
-                {selected.gallery?.length ? <div className={`case-gallery${selected.id === "heara" ? " heara-gallery" : ""}`}>
-                  {selected.gallery.map((image) => <figure key={image.src}>
-                    <img src={image.src} alt={image.alt} />
-                    {image.label ? <figcaption>{image.label}</figcaption> : null}
-                  </figure>)}
-                </div> : null}
                 {selected.sections.map((section, index) => (
                   <section className="case-section" key={section.label}>
                     <span>0{index + 1} / {section.label}</span><p>{section.text}</p>
                   </section>
                 ))}
-                {selected.url ? <a className="action-link cursor-target" href={selected.url} target="_blank" rel="noreferrer">打开产品网站 ↗</a> : null}
               </article>
             ) : collection.length ? (
               <>
@@ -270,20 +256,28 @@ export function HomePage() {
               title="课映 AI PPT 系统原理地图"
             />
           </div>
-        </section> : view.mode === "Work" || view.mode === "Lab" ? <section className="preview-panel">
-          <div className="panel-toolbar"><span>// 项目预览</span><span>PORTFOLIO / 2026</span></div>
-          <div className="preview-canvas editorial-canvas" key={`${view.mode}-${selected.id}`}>
-            {selected.url ? <iframe
-              className="product-preview-frame"
-              src={selected.url}
-              title={`${selected.title}产品页面预览`}
-              loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-            /> : selected.gallery?.length ? <div className="project-preview-gallery">
-              {selected.cover ? <img src={selected.cover} alt={`${selected.title}项目标志`} /> : null}
-              {selected.gallery.map((image) => <img key={image.src} src={image.src} alt={image.alt} />)}
-            </div> : selected.cover ? <img className="product-preview-image" src={selected.cover} alt={`${selected.title}产品画面`} /> : null}
-          </div>
+        </section> : view.mode === "Work" || view.mode === "Lab" ? <section className={`preview-panel${view.detail ? " project-detail-panel" : ""}`}>
+          <div className="panel-toolbar"><span>// {view.detail ? "项目视觉" : "项目预览"}</span><span>PORTFOLIO / 2026</span></div>
+          {view.detail ? <div className="project-detail-showcase" key={`${view.mode}-${selected.id}`}>
+            {selected.gallery?.length ? <div className={`project-detail-gallery${selected.id === "heara" ? " heara-detail-gallery" : ""}`}>
+              {selected.gallery.map((image) => <figure key={image.src}>
+                <img src={image.src} alt={image.alt} />
+                {image.label ? <figcaption>{image.label}</figcaption> : null}
+              </figure>)}
+            </div> : selected.cover ? <img className="project-detail-cover" src={selected.cover} alt={`${selected.title}项目画面`} /> : <div className="project-visual-empty">尚无项目视觉素材</div>}
+            <div className="project-detail-facts">
+              <div><span>个人职责</span><p>{selected.role}</p></div>
+              <div><span>代表成果</span><p>{selected.result}</p></div>
+            </div>
+            {selected.url ? <a className="project-visit-button cursor-target" href={selected.url} target="_blank" rel="noreferrer">去访问 <span aria-hidden="true">↗</span></a> : null}
+          </div> : <>
+            <div className="preview-canvas editorial-canvas" key={`${view.mode}-${selected.id}`}>
+              {selected.gallery?.length ? <div className="project-preview-gallery">
+                {selected.gallery.slice(0, 3).map((image) => <img key={image.src} src={image.src} alt={image.alt} />)}
+              </div> : selected.cover ? <img className="product-preview-image" src={selected.cover} alt={`${selected.title}产品画面`} /> : <div className="project-visual-empty">尚无项目视觉素材</div>}
+            </div>
+            {selected.url ? <div className="project-preview-actions"><a className="project-visit-button cursor-target" href={selected.url} target="_blank" rel="noreferrer">去访问 <span aria-hidden="true">↗</span></a></div> : null}
+          </>}
         </section> : null}
 
       </main>

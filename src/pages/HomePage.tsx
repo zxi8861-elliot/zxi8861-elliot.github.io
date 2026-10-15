@@ -31,6 +31,18 @@ function renderTitleText(text: string) {
 
 export const projects: Project[] = [
   {
+    id: "muldo", title: "MULDO", short: "多人协作 Agent × 在线协同 × 项目管理",
+    category: "Lab", source: "personal", period: "2026", status: "进行中", role: "个人产品探索 / Agent 协作流程 / 项目管理体验",
+    result: "围绕多人、多 Agent 与项目协同持续验证产品形态",
+    tags: ["Multi-Agent", "在线协同", "项目管理"],
+    sections: [
+      { label: "项目概览", text: "MULDO 是一个探索多人协作 Agent、在线协同与项目管理如何结合的个人项目。" },
+      { label: "探索问题", text: "当 Agent 参与多人项目时，任务、上下文、进度与产出如何在团队成员之间保持可见并持续协同，是 MULDO 正在探索的核心问题。" },
+      { label: "产品方向", text: "围绕“多人 × 多 Agent × 项目”组织协作：让团队成员在线协同推进项目，并在同一工作上下文中协调 Agent 任务与项目进度。" },
+      { label: "当前阶段", text: "项目仍在推进中。当前作品集仅呈现已明确的产品方向；具体功能、交互方案、技术实现与验证结果将在完成实际设计和开发后补充。" },
+    ],
+  },
+  {
     id: "ai-ppt", title: "AI PPT", short: "觅知网线上产品｜从主题或文档生成演示文稿",
     category: "Work", source: "company", period: "2024", status: "线上运行", role: "产品规划 / 生成链路 / 编辑体验",
     result: "约 1.5 个月上线 / 项目累计营收千万级 / 注册充值率翻倍",
@@ -372,10 +384,11 @@ export function Contact() {
     <div className="mode-panel"><span className="eyebrow">CONTACT / 04</span><Headline text="Let’s talk products." />
       <p>可以聊 AI 产品、创意实验与工作流实践，也欢迎作品集反馈。</p>
       <div className="contact-directory">
+        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("ZHANG XINYU")}><span>姓名</span><strong>ZHANG XINYU</strong><span>复制 →</span></button></div>
         <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("zxi8861@gmail.com")}><span>EMAIL</span><strong>zxi8861@gmail.com</strong><span>复制 →</span></button><a href="mailto:zxi8861@gmail.com" aria-label="写邮件">写邮件 ↗</a></div>
         <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("zxi8861-elliot")}><span>GITHUB</span><strong>zxi8861-elliot</strong><span>复制 →</span></button><a href="https://github.com/zxi8861-elliot" target="_blank" rel="noreferrer" aria-label="打开 GitHub">打开 ↗</a></div>
-        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("132-***-*****")}><span>手机号</span><strong>132-***-*****</strong><span>复制 →</span></button></div>
-        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("********")}><span>微信号</span><strong>********</strong><span>复制 →</span></button></div>
+        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("132-73-557-12")}><span>手机号</span><strong>132-73-557-12</strong><span>复制 →</span></button></div>
+        <div className="contact-row"><button className="contact-copy cursor-target" onClick={() => copy("Z-H-A-N-G-X-I-S-S-2")}><span>微信号</span><strong>Z-H-A-N-G-X-I-S-S-2</strong><span>复制 →</span></button></div>
       </div>
       {notice ? <div className="system-toast" role="status" aria-live="polite"><span aria-hidden="true">✓</span>{notice}</div> : null}
     </div>

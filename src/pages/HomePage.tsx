@@ -86,6 +86,19 @@ const projects: Project[] = [
     ],
   },
   {
+    id: "heara", title: "Heara / 地球声音地图", short: "把世界各地的现场录音做成可探索的沉浸式地图",
+    category: "Lab", status: "持续开发", role: "产品设计 / 地图交互 / 声音内容",
+    result: "世界声音地图 / 现场录音 / 实时声音流",
+    tags: ["声音地图", "沉浸式体验", "独立项目"], cover: "/assets/heara-earth-voice-logo.png",
+    sections: [
+      { label: "项目概览", text: "Heara 是一个探索世界现场声音的沉浸式地图，把地点、环境录音和现场声音流组织成可漫游的声音体验。" },
+      { label: "探索动机", text: "声音不只是背景，也可以成为认识地点和建立空间感的入口。项目尝试把分散的环境录音整理成有地理关系、有叙事和可持续探索的内容系统。" },
+      { label: "核心设计", text: "以地球地图为入口，结合地点故事、推荐声音、实时声音流和筛选能力，让用户从空间移动到具体声音现场，再进入沉浸式播放与地点信息。" },
+      { label: "当前实现", text: "已完成地图、地点卡片、声音搜索、推荐与实时流、沉浸式场景和多语言界面的持续迭代，并围绕窄屏布局、筛选交互和声音内容数量做体验校验。" },
+      { label: "当前阶段", text: "个人持续开发中。后续将继续完善声音来源与授权说明、地点叙事、实时流稳定性以及地图和播放体验之间的衔接。" },
+    ],
+  },
+  {
     id: "baoda", title: "暴打老板", short: "敲键盘，出出气。一个 Mac 像素解压桌宠。",
     category: "Lab", status: "可体验", role: "产品构思与实现",
     result: "键盘触发 / 连击与暴击 / 本地运行",
@@ -170,7 +183,7 @@ export function HomePage() {
                     <div><span>代表成果</span><p>{selected.result}</p></div>
                   </div>
                 ) : null}
-                {selected.cover ? <img className="case-image" src={selected.cover} alt="来自暴打老板产品网站的像素办公室画面" /> : null}
+                {selected.cover ? <img className="case-image" src={selected.cover} alt={`${selected.title}项目画面`} /> : null}
                 {selected.sections.map((section, index) => (
                   <section className="case-section" key={section.label}>
                     <span>0{index + 1} / {section.label}</span><p>{section.text}</p>

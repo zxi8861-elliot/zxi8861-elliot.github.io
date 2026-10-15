@@ -6,10 +6,19 @@ type Mode = "Work" | "Lab" | "Notes" | "Contact";
 type Section = { label: string; text: string };
 type Project = {
   id: string; title: string; short: string; category: "Work" | "Lab"; status: string;
-  tags: string[]; role: string; result: string; sections: Section[]; cover?: string; url?: string;
+  tags: string[]; role: string; result: string; sections: Section[]; cover?: string;
+  gallery?: Array<{ src: string; alt: string }>; url?: string;
 };
 const modes: Mode[] = ["Work", "Lab", "Notes", "Contact"];
 const labels: Record<Mode, string> = { Work: "工作作品", Lab: "个人实验", Notes: "知识沉淀", Contact: "联系我" };
+const coursewareDirectory = [
+  ["overview", "总览"], ["diagram-index", "全部图谱"], ["beginner-guide", "新手入口"],
+  ["architecture", "总架构"], ["generation", "生成链路"], ["callbacks", "调用回调"],
+  ["sequence", "生成时序"], ["state", "状态机"], ["ai-calls", "AI 调用"], ["scene-types", "Scene 分支"],
+  ["routing", "能力路由"], ["research", "联网搜索"], ["assets", "资源生命周期"], ["media", "媒体管线"],
+  ["agents", "课堂 Agent"], ["runtime", "播放引擎"], ["interactive-runtime", "互动 HTML"],
+  ["recovery", "错误恢复"], ["iteration", "编辑重生成"], ["security", "安全边界"], ["objects", "对象关系"], ["code-index", "代码索引"],
+] as const;
 const hasMixedCjkLatin = (text: string) => /\p{Script=Han}/u.test(text) && /[A-Za-z]/.test(text);
 const isHanCharacter = (text: string) => /\p{Script=Han}/u.test(text);
 
@@ -90,6 +99,12 @@ const projects: Project[] = [
     category: "Lab", status: "持续开发", role: "产品设计 / 地图交互 / 声音内容",
     result: "世界声音地图 / 现场录音 / 实时声音流",
     tags: ["声音地图", "沉浸式体验", "独立项目"], cover: "/assets/heara-earth-voice-logo.png",
+    gallery: [
+      { src: "/assets/heara/earth-topology-v2.png", alt: "Heara 地球地图视觉" },
+      { src: "/assets/heara/alpine-valley-desktop.jpg", alt: "Heara 山谷声音场景" },
+      { src: "/assets/heara/chiang-mai-midnight-frogs.avif", alt: "Heara 清迈夜间蛙鸣声音现场" },
+      { src: "/assets/heara/live-forest.jpg", alt: "Heara 实时森林声音流" },
+    ],
     sections: [
       { label: "项目概览", text: "Heara 是一个探索世界现场声音的沉浸式地图，把地点、环境录音和现场声音流组织成可漫游的声音体验。" },
       { label: "探索动机", text: "声音不只是背景，也可以成为认识地点和建立空间感的入口。项目尝试把分散的环境录音整理成有地理关系、有叙事和可持续探索的内容系统。" },
@@ -184,6 +199,9 @@ export function HomePage() {
                   </div>
                 ) : null}
                 {selected.cover ? <img className="case-image" src={selected.cover} alt={`${selected.title}项目画面`} /> : null}
+                {selected.gallery?.length ? <div className="case-gallery">
+                  {selected.gallery.map((image) => <img key={image.src} src={image.src} alt={image.alt} />)}
+                </div> : null}
                 {selected.sections.map((section, index) => (
                   <section className="case-section" key={section.label}>
                     <span>0{index + 1} / {section.label}</span><p>{section.text}</p>
@@ -221,30 +239,34 @@ export function HomePage() {
                 </div>
               </>
             ) : view.mode === "Notes" ? (
-              <div className="mode-panel"><span className="eyebrow">NOTES & THINKING</span><Headline text="Thinking in progress." />
-                <p>知识沉淀 · 个人项目逻辑</p>
-                <section className="notes-feature">
-                  <div className="notes-feature-head">
-                    <div>
-                      <span className="eyebrow">01 / 课映</span>
-                      <h2>AI PPT 系统原理地图</h2>
-                      <p>把个人项目“课映”的产品、AI、媒体与 Agent 调用链路整理成一张可交互的逻辑图。</p>
-                    </div>
-                    <a className="text-action cursor-target" href="/knowledge/courseware-system-map.html" target="_blank" rel="noreferrer">新窗口打开 ↗</a>
-                  </div>
-                  <iframe
-                    className="knowledge-map-frame"
-                    src="/knowledge/courseware-system-map.html"
-                    title="课映 AI PPT 系统原理地图"
-                  />
-                </section>
+              <div className="mode-panel notes-directory-panel"><span className="eyebrow">NOTES & THINKING</span>
+                <div className="notes-directory-heading">
+                  <span className="eyebrow">01 / 课映</span>
+                  <h1>AI PPT 系统原理地图</h1>
+                  <p>左侧是阅读目录，右侧查看原理内容。点击目录项可跳转到对应章节。</p>
+                </div>
+                <nav className="notes-directory" aria-label="课映系统原理目录">
+                  {coursewareDirectory.map(([id, label], index) => <a key={id} href={`/knowledge/courseware-system-map.html#${id}`} target="courseware-map" className="cursor-target">
+                    <span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong><em>↗</em>
+                  </a>)}
+                </nav>
               </div>
             ) : <Contact />}
           </div>
           <div className="status-bar"><span>ZHANG XINYU / {view.mode.toUpperCase()}</span><span>{view.detail ? "案例档案" : labels[view.mode]}</span></div>
         </section>
 
-        {view.mode === "Work" || view.mode === "Lab" ? <section className="preview-panel">
+        {view.mode === "Notes" ? <section className="preview-panel notes-preview-panel">
+          <div className="panel-toolbar"><span>// 课映系统原理</span><span>NOTES / 03</span></div>
+          <div className="preview-canvas notes-preview-canvas">
+            <iframe
+              className="knowledge-map-frame"
+              name="courseware-map"
+              src="/knowledge/courseware-system-map.html"
+              title="课映 AI PPT 系统原理地图"
+            />
+          </div>
+        </section> : view.mode === "Work" || view.mode === "Lab" ? <section className="preview-panel">
           <div className="panel-toolbar"><span>// 项目预览</span><span>PORTFOLIO / 2026</span></div>
           <div className="preview-canvas editorial-canvas" key={`${view.mode}-${selected.id}`}>
             {selected.url ? <iframe
@@ -253,7 +275,10 @@ export function HomePage() {
               title={`${selected.title}产品页面预览`}
               loading="lazy"
               referrerPolicy="strict-origin-when-cross-origin"
-            /> : selected.cover ? <img className="product-preview-image" src={selected.cover} alt={`${selected.title}产品画面`} /> : null}
+            /> : selected.gallery?.length ? <div className="project-preview-gallery">
+              {selected.cover ? <img src={selected.cover} alt={`${selected.title}项目标志`} /> : null}
+              {selected.gallery.map((image) => <img key={image.src} src={image.src} alt={image.alt} />)}
+            </div> : selected.cover ? <img className="product-preview-image" src={selected.cover} alt={`${selected.title}产品画面`} /> : null}
           </div>
         </section> : null}
 

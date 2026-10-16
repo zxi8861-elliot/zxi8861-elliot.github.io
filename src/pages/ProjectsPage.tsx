@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import TargetCursor from "../components/Target_cursor";
 import LuckySnake from "../components/LuckySnake";
-import { Contact, coursewareDirectory, projects, type Project } from "./HomePage";
+import { KnowledgeDirectory, KnowledgeReader } from "../components/KnowledgeLibrary";
+import { Contact, projects, type Project } from "./HomePage";
 
 type Mode = "Projects" | "Notes" | "Contact";
 const modes: Mode[] = ["Projects", "Notes", "Contact"];
@@ -9,13 +10,28 @@ const labels: Record<Mode, string> = { Projects: "项目实践", Notes: "知识�
 const timelineOrder = ["muldo", "ai-ppt-lab", "ai-ppt", "ai-design", "meeting-workflow", "avora", "heara", "baoda"];
 const timelineProjects = timelineOrder.map((id) => projects.find((project) => project.id === id)).filter((project): project is Project => Boolean(project));
 
+function maxNotesDirectoryWidth() {
+  const rail = window.innerWidth <= 1180 ? 90 : 110;
+  const available = window.innerWidth - rail - 12;
+  return Math.max(260, Math.min(Math.round(available * 0.45), available - 320));
+}
+
+function initialNotesDirectoryWidth() {
+  const rail = window.innerWidth <= 1180 ? 90 : 110;
+  const available = window.innerWidth - rail - 12;
+  const saved = Number(localStorage.getItem("notes-directory-width"));
+  return Math.min(saved || Math.round(available * 0.35), maxNotesDirectoryWidth());
+}
+
 function readLocation() {
   const [route, query] = window.location.hash.slice(1).split("?");
   const [slug, routeProjectId] = route.split("/");
   const mode: Mode = slug === "notes" ? "Notes" : slug === "contact" ? "Contact" : "Projects";
   const selectedId = routeProjectId ?? new URLSearchParams(query).get("selected");
   const selected = timelineProjects.find((project) => project.id === selectedId);
-  return { mode, id: selected?.id ?? null };
+  const requestedKnowledgeId = new URLSearchParams(query).get("item") ?? "agent-edit-message";
+  const knowledgeId = requestedKnowledgeId === "uiux-location-audio" || requestedKnowledgeId === "uiux" || requestedKnowledgeId === "motion" ? "uiux-libraries" : requestedKnowledgeId;
+  return { mode, id: selected?.id ?? null, knowledgeId };
 }
 
 function titleText(project: Project) {
@@ -124,21 +140,43 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
 
 export function ProjectsPage() {
   const [view, setView] = useState(readLocation);
+  const [directoryWidth, setDirectoryWidth] = useState(initialNotesDirectoryWidth);
+  const resizeStart = useRef<{ x: number; width: number } | null>(null);
   useEffect(() => {
     const sync = () => setView(readLocation());
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
+  }, []);
+  useEffect(() => {
+    const fitDirectory = () => {
+      setDirectoryWidth((width) => Math.min(width, maxNotesDirectoryWidth()));
+    };
+    window.addEventListener("resize", fitDirectory);
+    return () => window.removeEventListener("resize", fitDirectory);
   }, []);
 
   const selected = timelineProjects.find((project) => project.id === view.id);
   const changeMode = (mode: Mode) => { window.location.hash = mode.toLowerCase(); };
   const openProject = (projectId: string) => { window.location.hash = `projects/${projectId}`; };
   const backToProjects = () => { window.location.hash = "projects"; };
+  const beginPanelResize = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    resizeStart.current = { x: event.clientX, width: directoryWidth };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+  const movePanelResize = (event: PointerEvent<HTMLDivElement>) => {
+    if (!resizeStart.current) return;
+    const width = Math.min(maxNotesDirectoryWidth(), Math.max(260, resizeStart.current.width + event.clientX - resizeStart.current.x));
+    setDirectoryWidth(width);
+    localStorage.setItem("notes-directory-width", String(width));
+  };
+  const endPanelResize = () => { resizeStart.current = null; };
 
   return (
     <>
       <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn hoverDuration={0.2} />
-      <main className={`portfolio-shell${view.mode === "Notes" ? " notes-layout" : ""}${view.mode === "Projects" ? selected ? " project-case-layout" : " project-overview-layout" : ""}`}>
+      <main className={`portfolio-shell${view.mode === "Notes" ? " notes-layout" : ""}${view.mode === "Projects" ? selected ? " project-case-layout" : " project-overview-layout" : ""}`} style={view.mode === "Notes" ? { "--notes-directory-width": `${directoryWidth}px` } as CSSProperties : undefined}>
         <aside className="nav-rail">
           <div className="brand-block">
             <button className="brand-mark cursor-target" onClick={() => changeMode("Projects")}>Hsin</button>
@@ -157,29 +195,22 @@ export function ProjectsPage() {
           <section className="content-panel">
             <div className="panel-toolbar"><span>// {labels[view.mode]}</span><span>0{modes.indexOf(view.mode) + 1} / INDEX</span></div>
             <div className="work-index">
-              {view.mode === "Notes" ? (
-                <div className="mode-panel notes-directory-panel"><span className="eyebrow">NOTES & THINKING</span>
-                  <div className="notes-directory-heading">
-                    <span className="eyebrow">01 / 课映</span>
-                    <h1>AI PPT 系统原理地图</h1>
-                    <p>左侧是阅读目录，右侧查看原理内容。点击目录项可跳转到对应章节。</p>
-                  </div>
-                  <nav className="notes-directory" aria-label="课映系统原理目录">
-                    {coursewareDirectory.map(([id, label], index) => <a key={id} href={`/knowledge/courseware-system-map.html#${id}`} target="courseware-map" className="cursor-target">
-                      <span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong><em>↗</em>
-                    </a>)}
-                  </nav>
-                </div>
-              ) : <Contact />}
+              {view.mode === "Notes" ? <KnowledgeDirectory
+                activeId={view.knowledgeId}
+                onSelect={(id) => { window.location.hash = `notes?item=${encodeURIComponent(id)}`; }}
+              /> : <Contact />}
             </div>
             <div className="status-bar"><span>ZHANG XINYU / {view.mode.toUpperCase()}</span><span>{labels[view.mode]}</span></div>
           </section>
-          {view.mode === "Notes" ? <section className="preview-panel notes-preview-panel">
-            <div className="panel-toolbar"><span>// 课映系统原理</span><span>NOTES / 02</span></div>
-            <div className="preview-canvas notes-preview-canvas">
-              <iframe className="knowledge-map-frame" name="courseware-map" src="/knowledge/courseware-system-map.html" title="课映 AI PPT 系统原理地图" />
-            </div>
-          </section> : <section className="preview-panel lucky-snake-panel">
+          {view.mode === "Notes" ? <>
+            <div className="notes-panel-resizer" role="separator" aria-label="拖动调整目录与阅读区宽度" aria-orientation="vertical" aria-valuemin={260} aria-valuemax={maxNotesDirectoryWidth()} aria-valuenow={directoryWidth} tabIndex={0}
+              onPointerDown={beginPanelResize} onPointerMove={movePanelResize} onPointerUp={endPanelResize} onPointerCancel={endPanelResize}
+              onKeyDown={(event) => { if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); setDirectoryWidth((width) => { const nextWidth = Math.max(260, Math.min(maxNotesDirectoryWidth(), width + (event.key === "ArrowRight" ? 24 : -24))); localStorage.setItem("notes-directory-width", String(nextWidth)); return nextWidth; }); } }} />
+            <section className={`preview-panel notes-preview-panel${view.knowledgeId.startsWith("ppt-") ? "" : " notes-article-panel"}`}>
+            <div className="panel-toolbar"><span>// {view.knowledgeId.startsWith("ppt-") ? "AI PPT 系统原理" : view.knowledgeId.startsWith("editor-") ? "编辑器产品与技术" : view.knowledgeId.startsWith("uiux-") || view.knowledgeId.startsWith("motion-") ? "UI/UX 与前端体验" : "AI Agent 实战难点"}</span><span>KNOWLEDGE / 02</span></div>
+            <KnowledgeReader activeId={view.knowledgeId} />
+            </section>
+          </> : <section className="preview-panel lucky-snake-panel">
             <div className="panel-toolbar"><span>// 好运游戏</span><span>PLAY / 01</span></div>
             <div className="lucky-snake-scroll"><LuckySnake /></div>
           </section>}

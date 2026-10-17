@@ -30,7 +30,15 @@ type AgentArticleData = {
   title: string;
   summary: string;
   tags: string[];
-  sections: Array<{ title: string; body: string; code?: string }>;
+  sections: Array<{
+    title: string;
+    body?: string;
+    problem?: string;
+    code?: string;
+    cards?: Array<{ label: string; body: string }>;
+    table?: { headers: string[]; rows: string[][] };
+    checks?: string[];
+  }>;
   sources: Array<{ label: string; href: string }>;
 };
 
@@ -120,8 +128,330 @@ const agentArticles: AgentArticleData[] = [
       { label: "OpenAI Developers · 从 transcript 选区启动 side chat", href: "https://developers.openai.com/blog/mastering-codex-remote-for-engineering" },
     ],
   },
+  {
+    id: "agent-memory",
+    title: "Agent 的短期记忆与长期记忆，应该如何分工？",
+    summary: "从上下文窗口、会话状态到跨会话记忆，梳理写入、检索、更新、删除与评估的完整链路。",
+    tags: ["短期记忆", "长期记忆", "Context Engineering", "隐私与评估"],
+    sections: [
+      { title: "先分清三个容易混在一起的东西", problem: "用户说“记住这件事”，系统究竟该把它留在当前对话、下次对话，还是只在本次模型调用中临时使用？把历史、上下文和记忆混成一个大 prompt，会造成成本上升、信息过期、找不到来源，也让删除与权限难以解释。", table: { headers: ["对象", "解决的问题", "生命周期", "典型机制"], rows: [
+        ["上下文窗口 / Context", "这一次推理能看到什么？", "单次模型调用；每轮重建", "系统指令、当前消息、工具结果、检索片段"],
+        ["短期记忆 / Working·Session Memory", "当前任务进行到哪？刚才做了什么？", "会话 / 任务周期，可中断后恢复", "对话状态、待办、工具调用、检查点、压缩摘要"],
+        ["长期记忆 / Long-term Memory", "跨会话仍值得保留什么？", "跨任务；需可更新、可撤回", "用户偏好、稳定事实、经历、工作规则"],
+        ["外部知识 / Knowledge Base", "世界或组织里有哪些可查证资料？", "按知识源版本维护", "文档、网页、向量 / 关键词索引、权限过滤"],
+      ] } },
+      { title: "通用架构：当前状态和持久记忆分开存", body: "LangGraph 把 thread 内状态放在 checkpointer，把跨 thread 的应用数据放在 store；这是一个清楚的参考模型，不是所有框架的唯一实现。短期状态适合连续对话、暂停恢复和人工审批；长期记忆则按用户、项目或组织 namespace 保存。模型的 context window 只是当次输入，不等于数据库，也不自动保证历史可恢复。", cards: [
+        { label: "当前任务状态", body: "messages、目标、已完成步骤、待办、工具结果、失败次数；每个 run 更新一个有版本的状态快照。" },
+        { label: "长期用户记忆", body: "有来源、时间和置信度的偏好 / 事实；按用户授权范围查询，不把所有历史直接拼进提示词。" },
+        { label: "外部知识", body: "可检索的事实材料与组织文档；保留文档版本、权限与引用片段，和“这个用户的偏好”分开。" },
+      ] },
+      { title: "记忆不是聊天记录：按用途组织", table: { headers: ["类型", "存什么", "例子", "常见表示"], rows: [
+        ["语义 Semantic", "相对稳定的事实与偏好", "用户常用中文；项目用 React", "结构化 profile / key-value / 可检索记忆"],
+        ["情节 Episodic", "某次事件、决策和结果", "上次选方案 B，因为发布窗口只有两周", "事件记录 + 时间、参与者、结果"],
+        ["程序 Procedural", "重复执行的做法或习惯", "先出结构稿，再按页面逐个验收", "规则、技能、可复用 workflow"],
+        ["工作记忆 Working", "眼前任务所需的临时状态", "当前正在改的文件、下一步测试", "会话状态 / checkpoint"],
+      ] } },
+      { title: "从对话到记忆：写入链路要有筛选和治理", problem: "如果每句话都存，会留下噪声、敏感信息和过期结论；如果完全依赖模型自由总结，又可能把一次性要求误当成长期偏好。", cards: [
+        { label: "① 候选提取", body: "识别明确的“请记住”、重复出现的偏好、跨任务有用事实；一次性变量默认只进入当前任务。" },
+        { label: "② 分类与授权", body: "标记 user / project / org scope、记忆类型、敏感级别、有效期；敏感内容默认不自动沉淀。" },
+        { label: "③ 合并与冲突", body: "与旧记忆比对：补充、更新、保留并列条件或发起澄清；不要简单采用“最新一句覆盖一切”。" },
+        { label: "④ 可追溯写入", body: "保存 source message / document、时间、置信度、抽取方式和版本；支持查看、修正、删除及审计。" },
+      ] },
+      { title: "检索与注入：找得到，还要恰当地用", body: "每轮不必搜全库，更不应把整份个人档案直接塞给模型。先根据身份、项目、任务类型、时间和权限过滤，再做关键词 / 语义混合召回；对候选按相关性、时效性、可信度和冲突排序，最后只注入少量带来源的记忆。检索结果应作为有出处的数据，不应覆盖系统安全规则或当前用户的明确指令。", cards: [
+        { label: "取回", body: "用户 / 项目 scope → ACL 过滤 → 混合检索 → 排序去重。" },
+        { label: "注入", body: "只放当前任务需要的 top-k；附来源、更新时间与置信度。" },
+        { label: "回写", body: "对话后提取候选；校验、合并、版本化后再持久化。" },
+      ] },
+      { title: "过期、矛盾、删除：记忆的难点在生命周期", table: { headers: ["问题", "容易出现的错误", "稳妥处理"], rows: [
+        ["偏好变化", "旧偏好永久覆盖新偏好", "记录时间与情境；明确新旧冲突时确认并更新"],
+        ["来源不明", "模型推测被当成用户事实", "区分用户明说、系统推断、外部来源；显示置信度和出处"],
+        ["错误记忆", "错误被重复检索，越用越确信", "用户纠正优先；保留修订痕迹，重新评估派生记忆"],
+        ["删除请求", "只删摘要，底层副本或向量仍可召回", "定义删除传播：主记录、索引、缓存、派生摘要与备份策略"],
+        ["跨用户泄漏", "共享索引未按租户 / 权限过滤", "检索前强制 scope 与 ACL；测试租户隔离和越权查询"],
+      ] } },
+      { title: "怎么证明记忆真的有用", body: "不能只看“回答听起来更个性化”。离线构造有 / 无记忆、记忆过期、互相矛盾、无关记忆、删除后再次提问等对照集；线上观察用户是否少重复说明、是否纠正错误记忆，以及检索是否增加延迟。记忆命中率高不代表好：关键是相关且正确地改变任务结果，同时不泄漏、不误导。", checks: ["有用性：加入记忆后任务成功率是否提升？", "精确率：召回的记忆里有多少真正相关？", "时效性：过期 / 矛盾信息是否能被识别？", "可控性：用户能否查看、修正、删除和暂停？", "成本：额外 token、检索延迟与存储成本是否可接受？"] },
+      { title: "面试常问：为什么不能把全部历史拼进 prompt？", body: "可以这样答：历史记录是原始材料，记忆是经过筛选、结构化和治理后，在合适任务中再次使用的信息。全量拼接会触及上下文长度、注意力稀释、延迟和费用，也会把无关或过期内容带入新任务；更关键的是，用户无法清楚管理“模型到底记住了什么”。所以我会把会话 checkpoint、长期记忆和知识库分开，按权限与当前任务召回少量内容，并为记忆提供来源、时效、纠错和删除机制。", cards: [
+        { label: "追问：什么时候写？", body: "明确记忆请求可即时写；隐式偏好可以先作为候选，重复确认或低风险时再后台整理；敏感、模糊、影响重大的信息先问用户。" },
+        { label: "追问：记忆和 RAG 有什么区别？", body: "RAG 主要找外部资料回答事实问题；个人记忆保存某个用户 / 项目的历史事实、偏好或做事方式。技术可以共享，但数据域、权限、更新和评估目标不同。" },
+        { label: "追问：如何落到 MULDO？", body: "按用户 / 项目分 scope；当前任务状态留在项目会话 checkpoint，稳定偏好和已确认决策进可编辑的长期记忆；任务产物保留在项目文档，并通过权限控制按需引用。" },
+      ] },
+    ],
+    sources: [
+      { label: "LangGraph · Persistence：checkpointer 与 store 的短期 / 长期分工", href: "https://langchain-ai.github.io/langgraph/concepts/durable_execution/" },
+      { label: "LangMem · 长期记忆类型、形成时机与检索", href: "https://langchain-ai.github.io/langmem/concepts/conceptual_guide/" },
+      { label: "Anthropic · Effective context engineering for AI agents", href: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" },
+      { label: "OpenAI Help · Memory in ChatGPT：可观察行为与用户控制", href: "https://help.openai.com/en/articles/8590148-memory-in-chatgpt" },
+      { label: "本机知识库：AI 产品经理知识库中的记忆 / 上下文摘录", href: "https://my.feishu.cn/wiki/OY4FwGXr8i2diPkxkvEcNVA7nhg#doxcn3QG2sqRMhhzAnhK641uvLg" },
+      { label: "本机知识库：AI 产品经理面试题中的外部记忆设计", href: "https://bcnbjw9b1hc8.feishu.cn/wiki/TiUrwSkuyiiAIRkzW3gcORdrnPh" },
+    ],
+  },
+  {
+    id: "agent-context-compaction",
+    title: "上下文压缩：什么时候压缩，压缩什么？",
+    summary: "从 token 预算与触发时机，到摘要保真、状态续接和压缩评测，拆开 Agent 长对话的上下文治理。",
+    tags: ["Context Window", "Compaction", "长任务", "状态恢复"],
+    sections: [
+      { title: "先回答：为什么要压缩？", problem: "Agent 每轮把新消息、工具调用和工具结果继续带入后续推理，上下文会持续增长。接近模型窗口上限时，后续请求可能放不下；即使尚未超限，冗长、重复的旧结果也会挤掉当前目标和关键约束。压缩要解决的是‘有限窗口里保留足够状态继续做事’，不是把历史变成一段越短越好的摘要。", cards: [
+        { label: "窗口限制", body: "一次模型请求有输入、输出和推理等 token 预算；上下文估算不能只数用户消息，还要计入工具 schema、工具结果与预留输出空间。" },
+        { label: "注意力稀释", body: "窗口能装下，不代表所有内容都同样有用。无关历史、重复检索和大段工具原文会降低高信号信息的可见度。" },
+        { label: "延续任务", body: "压缩后的状态要能支撑 Agent 继续执行，并保留恢复任务所需的决策、进度、产物位置和未完成事项。" },
+      ] },
+      { title: "压缩时机：不是等满了再处理", problem: "如果只在达到硬上限后才压缩，下一步工具结果或模型输出可能已经没有空间；如果每一轮都总结，又会增加延迟和成本，还会不断累积摘要误差。", table: { headers: ["触发信号", "何时执行", "注意点"], rows: [
+        ["预算阈值", "估算本轮完整输入后，超过应用设定的安全预算；在下一次模型调用前触发", "预留模型输出、推理、工具 schema 和可能的工具回合；阈值随模型与任务配置，不存在通用固定百分比"],
+        ["工具结果膨胀", "大型搜索结果、日志、网页或文件已消费大量 token 后", "先做可逆的工具结果裁剪 / 归档；原始结果保留引用，必要时可重新读取"],
+        ["任务检查点", "阶段完成、长任务暂停 / 移交、即将开启新工作阶段时", "把目标、完成项、未决项、产物和下一步结构化落盘，不要只写自然语言概述"],
+        ["语义失焦", "重复信息堆积、Agent 开始遗忘约束或反复检索相同内容时", "可以先清理重复和无用内容；若是目标或状态不明确，先修正状态，不要靠摘要掩盖"],
+      ] } },
+      { title: "实际判断：压缩前先算本轮预算", body: "通用做法是把系统指令、工具定义、有效对话、记忆 / RAG 片段和本轮新输入一起估算，再加上要保留的输出与后续工具调用空间。若总量将超过应用为该模型设置的 working budget，就在模型调用前启动压缩；若仍有充足空间且任务很短，则直接继续。OpenAI Responses API 公开支持通过 compact_threshold 做服务端触发，也支持显式调用 compact endpoint；具体阈值由应用配置，不应把某个示例数值当成所有 Agent 的标准。", cards: [
+        { label: "第 1 步 / 估算", body: "tokens(system + tools + history + retrieved context + current input)" },
+        { label: "第 2 步 / 留余量", body: "再预留 expected output、reasoning 和可能的 tool round；不要把窗口预算全部分给输入。" },
+        { label: "第 3 步 / 决策", body: "预计本轮完整请求会越过 working budget → 先清理 / 压缩；否则跳过，不为压缩而压缩。" },
+      ] },
+      { title: "压缩不是一种操作：先选损失等级", table: { headers: ["手段", "做法", "信息损失", "适用场景"], rows: [
+        ["裁剪 / Trim", "删除可重新获取的旧工具输出、重复片段或无关消息", "低；前提是原始内容仍可查", "工具响应很大、历史有重复时优先"],
+        ["选择性保留", "保留最近对话、系统约束、关键决策；旧历史归档到外部存储", "中低；有来源可回查", "多轮会话和具备稳定消息 ID 的 Agent"],
+        ["摘要 / Compact", "把历史蒸馏成较短的续接上下文，并与近期原文一起进入新窗口", "有损；摘要可能遗漏边缘细节", "长任务跨越多个上下文窗口"],
+        ["结构化笔记", "把目标、约束、决策、状态、待办、产物路径写入可持久化状态", "取决于字段设计；容易审计", "编码、研究、项目执行等多阶段任务"],
+      ] } },
+      { title: "摘要应保留什么：按‘继续执行’组织，而非按聊天顺序复述", code: `ContinuationState {
+  goal: current objective and success criteria
+  constraints: hard requirements, permissions, safety boundaries
+  decisions: confirmed choices + reasons + source message IDs
+  progress: completed / in-progress / blocked
+  artifacts: file, document, tool result IDs and versions
+  pending: next actions, unresolved questions, dependencies
+  toolState: outstanding calls, retries, idempotency keys
+  recent: last few verbatim turns for local conversational continuity
+}`, body: "最重要的是区分事实、用户明确要求、Agent 推断和未验证假设；给关键内容保留来源 ID 与版本。不要把未完成的工具调用压成‘已经完成’，不要丢掉用户禁止事项、权限边界、具体数字、文件路径或反例。结构化状态用于恢复任务，摘要用于压缩叙述，两者最好分开。" },
+      { title: "防止摘要把错误越滚越大", problem: "每次摘要都可能遗漏或改写；如果只保留上一次摘要、丢弃原始历史，错误会逐轮固化，之后无法判断是用户说过还是 Agent 推断出来的。", cards: [
+        { label: "原始记录不等于 prompt", body: "把完整 transcript / 工具原文留在可审计存储；压缩只改变下一次模型输入视图，不要默认删除原记录。" },
+        { label: "版本化压缩结果", body: "记录 summary revision、覆盖到的 message range、模型 / prompt 版本和生成时间；编辑旧消息时使覆盖范围内的摘要失效或重建。" },
+        { label: "近期原文 + 稳定状态", body: "新窗口通常同时带入结构化状态和最近几轮未压缩对话，避免摘要吞掉当前语气、指代或刚提出的修正。" },
+        { label: "可恢复而非盲目相信", body: "状态提到关键证据时保留链接 / 消息 ID；下游对高风险结论可按需重新读取原文核验。" },
+      ] },
+      { title: "怎么验收压缩质量", body: "用真实长任务轨迹做回放，不只看摘要是否通顺。比较压缩前后能否答出关键事实、遵循原始约束、指出未完成步骤、正确处理工具状态，并继续完成同一任务。也要测试编辑压缩覆盖范围内旧消息、工具失败后重试、权限改变和压缩失败等情况。压缩比只是效率指标，不能替代任务质量与状态保真。", checks: [
+        "关键约束保留率：禁止事项、范围和格式要求是否仍有效？",
+        "状态准确率：未完成、失败、待审批事项是否没有被写成已完成？",
+        "事实可追溯：重要结论能否追到来源消息 / 文档 / 工具结果？",
+        "继续任务成功率：压缩后完成同一任务的质量是否下降？",
+        "成本与延迟：压缩调用和后续少带 token 的总成本是否更优？",
+        "异常恢复：编辑旧消息或压缩中断后，是否能重建一致上下文？",
+      ] },
+      { title: "面试回答：Agent 何时触发上下文压缩？", body: "我会用‘预算驱动 + 阶段驱动’，而不是每轮固定总结，也不是等到窗口耗尽。每次调用前估算完整 prompt 和输出余量；预计超过模型对应的 working budget 时，优先裁掉可重取的冗余工具结果，再对旧历史做有来源的摘要，同时保留最近原文和结构化任务状态。长任务在阶段交接、暂停恢复时也做 checkpoint。阈值通过实际轨迹调优；以约束保留、任务续接成功、延迟和 token 成本评估，原始历史仍可审计和按需回查。", cards: [
+        { label: "追问 / 固定到 80% 就压吗？", body: "不应把某个百分比当通用标准。模型窗口、工具 schema、输出长度和任务形态都不同；应用要预留输出与后续调用空间，再用生产轨迹找安全阈值。" },
+        { label: "追问 / 压缩和长期记忆一样吗？", body: "不一样。压缩是当前长任务的上下文续接；长期记忆是跨任务保留的用户 / 项目信息；RAG 是从外部知识源检索证据。它们可以互相引用，但存储目的、生命周期和治理方式不同。" },
+      ] },
+    ],
+    sources: [
+      { label: "OpenAI API · Compaction：阈值触发、服务端与显式压缩", href: "https://developers.openai.com/api/docs/guides/compaction" },
+      { label: "OpenAI API · Conversation state：上下文窗口与 token 预算", href: "https://developers.openai.com/api/docs/guides/conversation-state" },
+      { label: "Anthropic Engineering · Effective context engineering：compaction、note-taking 与工具结果清理", href: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" },
+      { label: "Anthropic Engineering · Effective harnesses for long-running agents", href: "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents" },
+    ],
+  },
+  {
+    id: "agent-rag-retrieval",
+    title: "RAG 检索：Agent 怎样从知识库找到可用证据？",
+    summary: "从文档入库、切块建索引，到查询改写、混合召回、重排、引用和评估，拆解完整检索链路。",
+    tags: ["RAG", "Hybrid Search", "Reranking", "Grounding"],
+    sections: [
+      { title: "先明确 RAG 在做什么", problem: "模型参数里的知识可能过时，也不一定包含企业私有资料。RAG 在回答时从外部数据源找回相关片段，把证据连同问题交给模型生成；它不等于微调，也不保证只要接了向量库就会答对。", cards: [
+        { label: "Retrieve / 检索", body: "根据问题，从已授权的知识源找到可能相关的段落、记录或对象。" },
+        { label: "Augment / 增强", body: "把少量证据、来源元数据和问题一起组装进本轮上下文。" },
+        { label: "Generate / 生成", body: "要求模型基于证据回答、引用来源；证据不足时说明不知道或继续检索。" },
+      ] },
+      { title: "离线入库：先把资料变成可检索的证据单元", body: "入库不是简单把 PDF 切成固定长度。先连数据源并建立权限 / 租户边界，再抽取文本与结构（标题、表格、页码、代码块），清洗重复、保留元数据，按语义边界切块；随后生成向量索引，并通常保留 BM25 等词法索引。资料更新或删除时，需要同步更新索引和缓存，避免检索到旧版本。", cards: [
+        { label: "01 / 来源与权限", body: "记录 source_id、owner、ACL、租户、版本、时间和许可证；权限过滤要在检索时继续生效。" },
+        { label: "02 / 解析与切块", body: "按标题 / 段落 / 语义结构切分；表格、长文档可保留父子关系和页码，chunk 大小与 overlap 需按语料评估。" },
+        { label: "03 / 建双路索引", body: "Embedding 支持语义相近表达；BM25 / 倒排索引擅长专有名词、编号、错误码和精确短语。" },
+        { label: "04 / 更新与删除", body: "源文档变更要做增量重切块、重嵌入、失效旧版本；删除需覆盖向量、关键词索引、缓存和派生摘要。" },
+      ] },
+      { title: "在线检索：从用户问题到候选证据", code: `Question
+  → intent / scope / ACL filter
+  → query rewrite or decomposition (when needed)
+  → parallel retrieval: BM25 + vector (+ metadata / graph)
+  → merge, deduplicate, diversify
+  → rerank candidates
+  → pack top evidence within token budget
+  → generate answer with source citations
+  → verify grounding / abstain / retrieve again`, body: "不是每个查询都需要所有步骤。简单、术语明确的问题可以直接混合召回；多跳问题可先拆子问题；检索结果相互矛盾或证据不足时，可进行第二轮搜索。每步都保留 query、过滤条件、文档版本、chunk ID 和分数，便于解释‘为什么拿到这些资料’。" },
+      { title: "召回策略：为什么常用关键词 + 向量混合？", table: { headers: ["方法", "擅长", "容易漏掉", "产品 / 工程处理"], rows: [
+        ["BM25 / 关键词", "产品名、代码、日期、编号、稀有词精确匹配", "同义表达、语义相似但没有相同词", "查询标准化；专名与过滤字段保留原文"],
+        ["向量语义检索", "改写、口语问题、含义相近的段落", "精确编号、否定词、相似但不相干主题", "与关键词并行召回，不单独依赖 embedding 分数"],
+        ["混合召回", "兼顾字面线索与语义线索", "融合权重、候选数量配置不当会引入噪声", "用 RRF 或经验证的归一化分数合并候选"],
+        ["Reranker 重排", "在较大的候选集里挑出与完整问题最相关的片段", "候选阶段根本没召回到的证据无法补回", "先保证 recall，再评估重排对 precision / latency 的收益"],
+      ] } },
+      { title: "重排与上下文组装：召回多不等于都该塞进去", problem: "top-k 取太小会漏证据，取太大则把相似但无关的片段一起送给模型；同一来源的重复 chunk 会占满上下文。", cards: [
+        { label: "先召回，再重排", body: "第一阶段偏召回：并行取一批候选；第二阶段用 query-document 相关性重排，或通过 MMR 控制冗余和多样性。" },
+        { label: "合并相邻片段", body: "同一父文档里相邻 chunk 可合并并带上标题 / 页码，避免句子被切断，但需设置最大片段长度。" },
+        { label: "按预算装上下文", body: "结合相关性、来源可信度、版本新鲜度、覆盖子问题能力和 token 数选证据；预留回答 token，不让证据吃满窗口。" },
+        { label: "引用与拒答", body: "生成时让事实性主张对应 source/chunk；没有可靠证据、只有弱匹配或来源互相冲突时，澄清、说明不确定或再检索。" },
+      ] },
+      { title: "常见故障：看起来是模型幻觉，根因可能在检索", table: { headers: ["故障现象", "可能根因", "排查 / 修复"], rows: [
+        ["资料明明存在却搜不到", "解析丢表格 / OCR 错、chunk 切断语义、query 写法不匹配", "检查原文与 chunk；优化解析、语义切分、查询改写和 hybrid recall"],
+        ["搜到相似但答非所问", "只看向量近似、过滤太宽、缺 rerank", "加入 ACL / metadata filter；检查候选集并增加重排"],
+        ["引用有来源但不支持结论", "chunk 与引用映射错、模型超出证据推断", "逐 claim 对齐 source span；加 groundedness 检查和不足证据策略"],
+        ["答案引用旧政策", "索引更新延迟、缓存未失效、版本没有参与排序", "建立 freshness SLA、版本过滤和更新后缓存失效"],
+        ["不同用户搜到彼此资料", "权限过滤只在前端做，或跨租户缓存 key 不完整", "检索前强制 ACL；索引与缓存按 tenant / principal 隔离并做越权测试"],
+      ] } },
+      { title: "评估：把检索与生成分开量", body: "RAG 是一条链路，不能只靠‘最终答案看着不错’验收。先给检索准备带标准证据的 query 集，再单独看召回；之后测生成是否忠实使用证据，并看端到端任务表现。线上记录无结果率、用户改问、引用点击 / 纠错、延迟和成本。", checks: [
+        "检索：Recall@K / Hit Rate 是否找回标准证据？",
+        "排序：MRR / nDCG 或人工相关性判断，正确片段是否排得靠前？",
+        "生成：引用精确率、claim groundedness、冲突处理和拒答质量？",
+        "鲁棒性：同义问法、拼写错误、表格、长文档、多跳问题是否覆盖？",
+        "权限与新鲜度：越权资料是否绝不召回，更新 / 删除是否及时生效？",
+        "系统成本：检索、重排和模型总延迟、token 与费用是否符合场景？",
+      ] },
+      { title: "面试回答：如何设计 Agent 的 RAG 检索？", body: "我会先把数据源、权限和更新机制设计清楚，再做检索，不会从‘选哪个向量库’开始。离线按结构解析文档并保留来源、版本与 ACL，基于语义边界切块，同时构建向量和关键词索引。在线先识别意图并在权限范围内过滤，必要时改写 / 拆解 query，做 hybrid retrieval，合并去重后 rerank，再按 token 预算选证据给模型。答案需要保留引用和不足证据时的拒答能力。评估上把 Recall@K、排序、引用支撑、答案质量、权限泄漏、新鲜度、延迟和成本拆开看；召回不到时先查检索链路，不把所有问题归因于模型。", cards: [
+        { label: "追问 / RAG 与长期记忆区别？", body: "RAG 面向可更新的外部事实库，按问题取证；长期记忆面向用户或项目跨任务状态，按主体和生命周期治理。两者都能检索，但权限域和更新语义不同。" },
+        { label: "追问 / 只用向量搜索可以吗？", body: "若问题包含产品型号、条款编号、错误码或精确名称，向量召回可能不稳；通常用 BM25 + 向量混合，再用 reranker 提升候选排序，并通过数据集验证是否值得增加复杂度。" },
+      ] },
+    ],
+    sources: [
+      { label: "Google Cloud · What is RAG?：检索、混合搜索、重排与评估", href: "https://cloud.google.com/use-cases/retrieval-augmented-generation" },
+      { label: "Google Cloud Architecture · RAG 参考架构：离线索引与在线服务流", href: "https://docs.cloud.google.com/architecture/rag-genai-gemini-enterprise-vertexai" },
+      { label: "Anthropic Engineering · Contextual Retrieval：chunk 上下文、BM25、向量与重排", href: "https://www.anthropic.com/engineering/contextual-retrieval" },
+      { label: "Google Cloud · RAG glossary：Retrieve → Augment → Generate", href: "https://docs.cloud.google.com/docs/generative-ai/glossary" },
+    ],
+  },
+  {
+    id: "agent-personal-agent",
+    title: "Personal Agent：怎样才算真正“懂你”？",
+    summary: "拆开个性化、主动代理与个人数据权限，梳理从了解偏好到安全替你行动的完整闭环。",
+    tags: ["Personal Agent", "用户建模", "长期适配", "授权与信任"],
+    sections: [
+      { title: "“懂你”不是存得多，而是关键时刻用得对", problem: "Personal Agent 常被包装成“越用越懂你”，但记住更多并不自动等于更贴心：错误推断会造成冒犯，过度主动会越权，旧偏好可能不再成立。产品真正要解决的是：在具体任务里理解用户目标与约束，必要时澄清，得到授权后采取合适行动，并能被用户纠正。", cards: [
+        { label: "个性化助手", body: "会调整语气、推荐和默认选项；不一定能替用户执行外部动作。" },
+        { label: "Personal Agent", body: "除个性化外，还能在授权范围内跨工具规划、执行、检查结果并在必要时请求确认。" },
+        { label: "不是“数字分身”", body: "系统只拥有有限、可撤销的用户模型和委托权限；不应假设自己能代表用户做所有决定。" },
+      ] },
+      { title: "能力闭环：学习偏好 → 准备行动 → 反馈修正", body: "Meta 的 PAHF 研究提出持续个性化循环：行动前澄清歧义；执行时从 per-user memory 取回相关偏好；行动后使用反馈更新记忆，以适应偏好变化。重点不是“把用户画像训进模型”，而是让外部记忆与交互反馈形成可调整的闭环。", cards: [
+        { label: "01 / Observe", body: "读取用户明确表达、任务选择、修改和反馈；把观察与推断分开。" },
+        { label: "02 / Clarify", body: "偏好或任务不明确、行动影响较大时，先问具体问题，不凭空补全。" },
+        { label: "03 / Ground", body: "取回当前任务相关且有来源的偏好；例如格式、预算、禁忌、项目约束。" },
+        { label: "04 / Act + Learn", body: "在授权范围内执行；看用户接受、改写、撤销或纠正，再决定更新哪条记忆。" },
+      ] },
+      { title: "用户模型怎么组织：稳定偏好、情境偏好、行为规则", table: { headers: ["层次", "示例", "适用范围", "产品处理"], rows: [
+        ["稳定信息", "默认使用中文；不吃花生", "跨任务、长期", "显示并允许编辑；敏感内容谨慎写入"],
+        ["情境偏好", "这次出差优先选直飞", "某类任务或时间段", "绑定场景与有效期，避免泛化成永久偏好"],
+        ["工作方式", "先给选项，再由我确认后执行", "工作流 / 委托任务", "转成可解释规则；允许项目级覆盖"],
+        ["行为授权", "可整理日历，但不能发邀请", "特定工具与动作", "按动作、对象、额度和时间授权，默认最小权限"],
+      ] } },
+      { title: "难点一：从行为推断偏好，很容易误判", problem: "用户点过一次、接受过一次，可能只是当时方便；若系统直接推断为长期偏好，之后会把偶然行为当成规则。", cards: [
+        { label: "把事实与推断分层", body: "“你说过周会希望控制在 30 分钟”是明示；“你可能偏好短会议”是推断。存储中不要混成同一种确定事实。" },
+        { label: "把偏好绑定情境", body: "偏好附上适用任务、发生时间、来源与置信度；重复且一致的反馈才提升可信度。" },
+        { label: "用低风险默认值", body: "格式选择可静默采用并容易撤销；涉及对外发送、花钱或隐私的推断必须确认。" },
+      ] },
+      { title: "难点二：个性化权限不等于工具权限", body: "“知道你通常选周五下午”不等于“可以替你发送邀请”。把记忆读取授权、工具访问授权和具体动作审批分开。能力范围按工具、动作、数据对象、额度、有效时间和可撤回状态建模；执行前展示将使用哪些数据、代表谁、对谁产生影响。对发送、删除、付款、公开发布等不可轻易回滚动作，默认走确认或双重审批。", checks: ["用户看得见 Agent 正在代表谁做什么", "高影响动作展示具体对象和最终内容", "授权可按工具 / 动作撤销，不必清空全部体验", "失败或超时汇报真实状态，避免重复执行副作用"] },
+      { title: "产品信任：解释、纠正、边界都要能操作", body: "个人 Agent 的关键体验不是突然说出用户没想到它知道的事，而是让用户清楚为什么它这么建议、用到了哪条偏好，以及怎样纠正。ChatGPT 的公开 Memory 产品提供查看来源、修正、删除与关闭等控制；这是可观察的产品做法，不是完整内部架构披露。", cards: [
+        { label: "解释", body: "展示本次个性化引用了哪条偏好或来源；避免只能回答“模型觉得这样更好”。" },
+        { label: "纠正", body: "“这次例外”只修正当次情境；“以后都不要”才更新长期规则。" },
+        { label: "边界", body: "临时任务、敏感话题和共享项目提供不使用 / 不写入个人记忆的选择。" },
+      ] },
+      { title: "面试题：怎样评估 Agent 是否更懂用户？", body: "不要只用用户留存或对话长度代替“懂”。可以从任务表现、偏好适配、纠错成本、信任与安全五类评估：在留出用户任务中是否减少不必要澄清、遵循明确约束、减少修改轮次、错误记忆能否恢复、越权率是否下降。对新用户和偏好变化单独看，防止只在老用户身上看起来有效。", checks: ["偏好遵循率：明确约束是否被正确执行？", "澄清质量：该问时问，不该问时不打断？", "纠错成本：用户需要几步修正错误个性化？", "委托成功率：多步骤任务是否完成且可追溯？", "安全边界：误操作、越权与敏感信息暴露？"] },
+      { title: "MULDO 的产品映射：项目搭档，而不是万能代办", body: "基于你描述的 MULDO（多人协作 Agent、在线协同、项目管理），更可信的定位可以是“懂项目上下文的协作搭档”：记住项目目标、已确认决策、团队术语和成员角色；不把其他项目的个人偏好自动带入；在任务里引用信息并说明来源。替成员发消息、改任务状态或覆盖共享文档时，按项目权限与动作风险确认。这里是结合产品方向提出的设计映射；本机没有找到 MULDO 源码仓库，因此不是现有实现审计。" },
+    ],
+    sources: [
+      { label: "Meta AI Research · Learning Personalized Agents from Human Feedback (PAHF)", href: "https://ai.meta.com/research/publications/learning-personalized-agents-from-human-feedback/" },
+      { label: "OpenAI Help · Memory in ChatGPT：来源、纠错、删除与临时聊天", href: "https://help.openai.com/en/articles/8590148-memory-in-chatgpt" },
+      { label: "LangMem · 显式用户记忆与不同记忆类型", href: "https://langchain-ai.github.io/langmem/concepts/conceptual_guide/" },
+      { label: "本机知识库：AI 产品经理知识库中的用户记忆与上下文摘录", href: "https://my.feishu.cn/wiki/OY4FwGXr8i2diPkxkvEcNVA7nhg#doxcnrFqUH3LuWtAkF9q8E2VEde" },
+    ],
+  },
+  {
+    id: "agent-jit-context",
+    title: "JIT / JITT：Agent 为什么要按需加载上下文与工具？",
+    summary: "你提到的“JET / Jade”最接近 JIT Context；同时核对了 Jentic 提出的 JITT，避免把两个概念混为一谈。",
+    tags: ["Just-in-Time Context", "JITT", "上下文工程", "工具发现"],
+    sections: [
+      { title: "先核对名称：不是一个叫 Jade 的通用 Agent 技术", problem: "“JET / Jade”不是一手资料中能确认的统一技术名。结合近期 Agent 讨论，最接近的是 JIT（Just-In-Time）context：Agent 执行到需要时再加载资料；另有 Jentic 使用的 JITT（Just-In-Time Tooling），特指按需发现和加载工具能力。JIT 也常指编译器即时编译，语境不同。", table: { headers: ["术语", "指什么", "边界"], rows: [
+        ["JIT context / just-in-time context", "运行时按需取入相关文件、数据或上下文", "通用上下文工程模式"],
+        ["JITT / Just-In-Time Tooling", "按需发现、加载工具说明与调用能力", "Jentic 使用的术语，不是全行业唯一标准"],
+        ["JIT compiler", "程序运行时编译热点代码", "编译器技术，与 Agent 上下文无关"],
+      ] } },
+      { title: "它解决什么问题：不要一开始把所有东西塞给模型", body: "预先把所有历史、项目文件和工具 schema 放进上下文，容易占满有限 token、拉高成本与延迟、稀释关键线索；静态索引也可能过期。Anthropic 将 JIT 描述为保存轻量标识（路径、查询、链接等），Agent 运行时通过工具动态加载，再逐层探索。代价是多了工具调用和检索延迟，也要求权限、导航工具和停止条件可靠。" },
+      { title: "按需加载链路：先有索引，再逐步取证", cards: [
+        { label: "01 / 入口上下文", body: "先给目标、核心约束、项目目录或可用工具入口；不传所有原始资料。" },
+        { label: "02 / 定位", body: "模型判断缺什么，搜索目录、文档索引、工具目录或数据库元信息。" },
+        { label: "03 / 取片段", body: "按权限读取相关文件、段落、工具 schema；保留路径、版本、更新时间。" },
+        { label: "04 / 决策后续", body: "检查证据是否足够；必要时继续读取，完成后将重要状态写入结构化产物。" },
+      ] },
+      { title: "JIT、RAG、长上下文：各自解决不同层次", table: { headers: ["方式", "核心做法", "优势", "风险 / 边界"], rows: [
+        ["长上下文", "一次把更多文本放入模型窗口", "范围明确、规模可控时路径简单", "窗口大仍有注意力与成本问题；不自动解决权限与时效"],
+        ["RAG", "推理前检索相关文档片段", "知识库大时减少无关输入", "依赖索引、切块和召回；不一定能自主发现未知信息"],
+        ["JIT context", "Agent 在执行循环里用工具按需探索和读取", "渐进披露，能跟随任务发现线索", "更慢；需要控制工具选择、循环和读取范围"],
+        ["混合", "入口摘要 + RAG / 搜索 + JIT 深挖", "兼顾常用信息速度与长尾探索", "路由复杂；必须追踪每段上下文来源"],
+      ] } },
+      { title: "工程难点：按需不等于随便搜", problem: "Agent 如果可以无边界地搜和读，可能反复探索、越权访问、拿到旧版本，或者在多个工具之间循环。", cards: [
+        { label: "权限先于检索", body: "先按用户、项目、角色做 ACL 过滤；不能先召回越权文档再靠模型自觉忽略。" },
+        { label: "有界探索", body: "限制每步候选数、最大调用次数、token / 时间预算；设置停止与证据门槛。" },
+        { label: "版本与新鲜度", body: "读取带文档 ID、版本或更新时间；高风险任务提交前重新验证来源。" },
+        { label: "缓存要看权限和版本", body: "缓存 key 至少包含 scope、授权版本和数据版本，避免跨用户复用。" },
+      ] },
+      { title: "MULDO 可借鉴：项目上下文的渐进披露", body: "新任务启动时给 Agent 一个短的项目地图（目标、角色、核心文档链接、权限说明）；它再按任务查具体决策记录、任务卡、评论、代码或工具。不同 Agent 获得不同上下文视图：规划 Agent 读目标和约束，执行 Agent 读取负责的任务材料，审阅 Agent 读取变更与验收标准。跨 Agent 传交付物和来源，不把每个成员的完整历史广播给所有 Agent。此处是设计建议，不代表 JIT/JITT 是 MULDO 已采用的实现。" },
+      { title: "面试追问：JIT 与 RAG 怎么选？", body: "先看任务是否已知检索目标、资料是否稳定、是否需要探索。资料池明确、问题可检索、低延迟重要时，RAG 往往更合适；任务需要主动发现文件、工具或下一步证据时，JIT 更有价值。生产系统通常组合使用：先用索引缩小范围，再用工具按需取原文；关键结论保留来源和版本，评测召回质量、任务完成率、越权率、工具调用数、token 与端到端延迟。" },
+    ],
+    sources: [
+      { label: "Anthropic · Effective context engineering：JIT context 与渐进披露", href: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" },
+      { label: "Google Developers · Context-aware multi-agent production 架构", href: "https://developers.googleblog.com/architecting-efficient-context-aware-multi-agent-framework-for-production/" },
+      { label: "Jentic · Just-In-Time-Tooling (JITT)：作者对术语和模式的定义", href: "https://jentic.com/blog/just-in-time-tooling" },
+      { label: "Jentic · Announcing Jentic：动态加载工具的产品方向", href: "https://jentic.com/blog/announcing-jentic" },
+    ],
+  },
+  {
+    id: "agent-collaboration",
+    title: "协同 Agent：如何分工、共享上下文并把结果交接回来？",
+    summary: "从任务拆分到共享状态、权限隔离、并发冲突与验收，梳理多 Agent 协作的系统设计。",
+    tags: ["Multi-Agent", "任务编排", "共享上下文", "协作治理"],
+    sections: [
+      { title: "先判断是否真的需要多个 Agent", problem: "把一个任务拆成很多 Agent 看起来很先进，但会增加编排、上下文转交、并发、成本、失败恢复和结果整合。若步骤紧密依赖、一个 Agent 已能稳定完成，多 Agent 可能只增加不确定性。", table: { headers: ["任务结构", "适合模式", "信息流", "主要风险"], rows: [
+        ["步骤明确、前后依赖强", "流水线 / sequential", "前一阶段交结构化产物给下一阶段", "上游错误向后传递"],
+        ["子任务可独立并行", "并行分工 / map-reduce", "共用任务定义，独立产出后汇总去重", "重复工作、结果冲突"],
+        ["需要动态拆解与检查", "Supervisor / orchestrator", "主管分派、汇总、必要时重规划", "主管成为瓶颈或路由错误"],
+        ["能力分布在不同服务 / 团队", "Agent-to-Agent 协议", "通过标准化任务、状态和产物交互", "身份、信任和协议兼容"],
+      ] } },
+      { title: "共享任务事实，不共享所有私有思考", body: "Google ADK 的公开示例展示共享 session state 作为子 Agent 间的数据总线；A2A 用于不同 Agent 服务之间的互操作。通用设计不应简单把全部聊天历史广播给每个 Agent，而应区分项目共享事实、任务输入、Agent 私有上下文和最终交付物。每个 Agent 获得完成职责所需的最小上下文，并把结论、证据和状态写回共享任务记录。", cards: [
+        { label: "项目空间 / Shared", body: "目标、成员、权限、已确认决策、共享文件和项目术语；读取受项目 ACL 约束。" },
+        { label: "任务上下文 / Task", body: "任务描述、输入材料版本、负责人、依赖、验收标准、截止时间和当前状态。" },
+        { label: "Agent 私有上下文", body: "本次推理过程、工具中间结果、局部尝试；必要时转成可审查结论或产物。" },
+        { label: "交付包 / Handoff", body: "结构化结果、证据链接、未解决问题、建议下一步、版本号和执行状态。" },
+      ] },
+      { title: "交接契约：让下一个 Agent 知道接手的是什么", body: "交接不是把一大段聊天转发过去。至少要有 taskId、目标与验收条件、输入来源和版本、已完成工作、结果文件 / 引用、未解决风险、允许使用的工具与权限、下一步建议。接收方要能判断材料是否过期、是否缺证据；失败或超时需要有明确状态，不要把部分结果伪装为完成。", cards: [
+        { label: "任务身份", body: "taskId、from / to agent、状态、版本与委派时间。" },
+        { label: "可验证输入", body: "目标、验收标准、输入引用、来源版本和 permission scope。" },
+        { label: "产物与未决项", body: "artifact URI / checksum、结论、风险、开放问题和建议下一步。" },
+      ] },
+      { title: "并行写入：共享状态需要版本、所有权和合并策略", problem: "多个 Agent 同时编辑一个项目文档或任务状态时，最后写入覆盖前一个结果的风险很高；即使没有覆盖，也可能把互相矛盾的结论一起合并。", cards: [
+        { label: "先划分写入边界", body: "按任务、文件、文档区块或字段分配 owner；可并行读，不代表应该并行写同一资源。" },
+        { label: "版本检查与幂等", body: "更新带 baseVersion / expectedVersion；重试用 idempotency key，避免重复创建评论、任务或外部动作。" },
+        { label: "冲突可见化", body: "检测版本不匹配后进入合并 / 人工裁决，而不是 last-write-wins 静默覆盖。" },
+        { label: "协同编辑与 Agent 协作分开看", body: "CRDT / OT 处理共享文档并发编辑；Agent 编排处理任务分配、消息与产物交接。两者能组合，但不是同一层问题。" },
+      ] },
+      { title: "权限与安全：每个 Agent 都有身份", body: "不能因为任务由主管 Agent 创建，就让所有子 Agent 自动拥有主管的全部权限。委派时传递可解释的 capability / scope；工具调用检查 Agent 身份、项目角色、对象权限和动作风险。外部文档与用户提交内容当作数据，不当作更高优先级指令；审计记录谁委派、谁读取、谁写入。发送、删除、公开发布等副作用要求审批或可补偿流程。" },
+      { title: "故障与测试：先明确谁负责恢复", body: "Agent 超时、重复交付、工具报错、主管中断、共享上下文过期都需要状态机和恢复策略。重试限制次数并区分可重试错误；部分完成可恢复或补偿；人工介入后把决定记回任务。端到端测试覆盖多 Agent 同时更新、重复事件、乱序到达、超时后迟到结果、权限变化和冲突合并；再逐步增加并行度，核对质量、延迟、成本和恢复率。", checks: [
+        "多设备 / 多成员同时更新时，状态与权限是否一致？",
+        "角色是否清晰：谁规划、执行、审查、批准？",
+        "handoff 是否带任务目标、来源版本、产物和未决项？",
+        "并发写是否有 owner / 版本校验 / 合并策略？",
+        "失败重试是否幂等，迟到结果会不会覆盖新状态？",
+        "记录能否追溯到 Agent、工具、用户授权与数据来源？",
+      ] },
+      { title: "MULDO 的产品映射：围绕项目任务协作，而非 Agent 群聊", body: "结合你描述的 MULDO（多人协作 Agent + 在线协同 + 项目管理），可把核心对象设计为 Project → Task → Run → Artifact：人和 Agent 都是有身份的参与者；任务明确 owner、协作者、验收标准；每个 run 保留输入快照和工具日志；共享文档用版本 / 区块锁定或协作编辑协议处理；Agent 之间交接结构化产物，成员在项目活动流中看到进展并可接管。没有找到本机 MULDO 源码仓库，所以这些是产品与架构建议，不宣称为其已实现功能。" },
+      { title: "面试题：多 Agent 如何共享上下文？", body: "回答重点不是“把上下文共享到一个大 prompt”，而是定义共享状态边界与读写契约：项目事实和任务状态放在可版本化的共享存储；每个 Agent 通过权限过滤获得最小上下文；handoff 带来源、版本、结论、产物和未决项；并行写由 owner、乐观锁或合并策略处理；最终由验收者根据标准核对产物。再用覆盖并发更新、失败重试和权限变化的端到端测试证明协作可靠。", cards: [
+        { label: "追问：为何不让 Agent 直接互聊？", body: "自由对话不保证任务状态可恢复、结果可验证或权限一致。协议化 task / artifact / status 更容易追踪、重试和验收；讨论可以聊天，但不能只靠聊天承担系统状态。" },
+        { label: "追问：什么时候用 Supervisor？", body: "子任务依赖动态判断、需要汇总与重规划时适合；任务独立且结构固定时，流水线或并行 fan-out / fan-in 往往更简单可控。" },
+      ] },
+    ],
+    sources: [
+      { label: "Google Developers · ADK 与 A2A 跨语言多 Agent 示例 / shared state", href: "https://developers.googleblog.com/build-cross-language-multi-agent-team-with-google-agent-development-kit-and-a2a/" },
+      { label: "Google Developers · Context-aware multi-agent production framework", href: "https://developers.googleblog.com/architecting-efficient-context-aware-multi-agent-framework-for-production/" },
+      { label: "Google · Agent2Agent (A2A) protocol announcement", href: "https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/" },
+      { label: "Anthropic · How we built our multi-agent research system", href: "https://www.anthropic.com/engineering/multi-agent-research-system" },
+      { label: "本机知识库：AI 产品经理知识库中的多 Agent 协作与上下文摘录", href: "https://my.feishu.cn/wiki/OY4FwGXr8i2diPkxkvEcNVA7nhg" },
+    ],
+  },
 ];
-const agentArticleOrder = ["agent-edit-message", "agent-side-chat", "agent-add-to-chat", "agent-fork", "agent-annotation"];
+const agentArticleOrder = ["agent-edit-message", "agent-memory", "agent-context-compaction", "agent-rag-retrieval", "agent-personal-agent", "agent-jit-context", "agent-collaboration", "agent-side-chat", "agent-add-to-chat", "agent-fork", "agent-annotation"];
 
 const experienceArticles: Record<string, ExperienceArticleData> = {
   "uiux-libraries": {
@@ -872,11 +1202,14 @@ function AgentArticle({ article }: { article: AgentArticleData }) {
       {article.tags.length ? <div className="knowledge-article-tags">{article.tags.map((tag) => <span key={tag}>{tag}</span>)}</div> : null}
       </header>
       <div className="knowledge-article-content">
-        <div className="knowledge-article-note"><strong>阅读边界</strong><span>区分产品公开可观察的行为与通用架构推演。厂商通常不会公开完整后端实现；文中明确标注的设计建议是跨产品可复用的抽象，不等于对 Codex 或 MULDO 私有实现的断言。</span></div>
         {article.sections.map((section, index) => <section className="knowledge-article-section" key={section.title}>
           <span>{String(index + 1).padStart(2, "0")} / {section.title}</span>
-          <p>{section.body}</p>
+          {section.problem ? <div className="knowledge-problem"><strong>要解决的问题</strong><p>{section.problem}</p></div> : null}
+          {section.body ? <p>{section.body}</p> : null}
           {section.code ? <pre><code>{section.code}</code></pre> : null}
+          {section.cards?.length ? <div className="knowledge-insight-grid">{section.cards.map((card) => <article className="knowledge-insight-card" key={card.label}><strong>{card.label}</strong><p>{card.body}</p></article>)}</div> : null}
+          {section.table ? <KnowledgeTableScroller label={`${section.title}表格横向滚动条`}><table className="knowledge-section-table"><thead><tr>{section.table.headers.map((header) => <th key={header}>{header}</th>)}</tr></thead><tbody>{section.table.rows.map((row, rowIndex) => <tr key={`${section.title}-${rowIndex}`}>{row.map((cell, cellIndex) => cellIndex === 0 ? <th scope="row" key={`${rowIndex}-${cellIndex}`}>{cell}</th> : <td key={`${rowIndex}-${cellIndex}`}>{cell}</td>)}</tr>)}</tbody></table></KnowledgeTableScroller> : null}
+          {section.checks?.length ? <ul className="knowledge-check-grid">{section.checks.map((check) => <li key={check}>{check}</li>)}</ul> : null}
         </section>)}
         <section className="knowledge-article-section knowledge-sources">
           <span>参考资料 / SOURCE NOTES</span>

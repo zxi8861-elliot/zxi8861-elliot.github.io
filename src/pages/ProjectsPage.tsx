@@ -7,8 +7,9 @@ import { Contact, projects, type Project } from "./HomePage";
 type Mode = "Projects" | "Notes" | "Contact";
 const modes: Mode[] = ["Projects", "Notes", "Contact"];
 const labels: Record<Mode, string> = { Projects: "项目实践", Notes: "知识沉淀", Contact: "联系我" };
-const timelineOrder = ["muldo", "ai-ppt-lab", "ai-ppt", "ai-design", "meeting-workflow", "avora", "heara", "baoda"];
+const timelineOrder = ["muldo", "ai-ppt-lab", "ai-ppt", "ai-design", "meeting-workflow", "avora", "heara", "baoda", "lingua-float"];
 const timelineProjects = timelineOrder.map((id) => projects.find((project) => project.id === id)).filter((project): project is Project => Boolean(project));
+const timelineRows = Math.ceil(timelineProjects.length / 4);
 
 function maxNotesDirectoryWidth() {
   const rail = window.innerWidth <= 1180 ? 90 : 110;
@@ -50,23 +51,26 @@ function ProjectArtwork({ project, detail = false }: { project: Project; detail?
   return (
     <div className={`project-artwork project-artwork--${project.id}${detail ? " is-detail" : ""}`} aria-label={`${project.title}项目视觉封面`}>
       <span className="project-artwork-kicker">{project.source === "company" ? "COMPANY PROJECT" : "PERSONAL PROJECT"}</span>
-      <strong>{project.id === "avora" ? "AVORA" : project.id === "meeting-workflow" ? "MEETING → MAKING" : project.id === "muldo" ? "MULDO" : "PPT / REIMAGINED"}</strong>
-      <span className="project-artwork-caption">{project.id === "avora" ? "IMAGE · MUSIC · STORY" : project.id === "meeting-workflow" ? "AGENT SKILLS · CONTENT WORKFLOW" : project.id === "muldo" ? "PEOPLE · AGENTS · PROJECTS" : "A NEW GENERATION EXPERIENCE"}</span>
+      <strong>{project.id === "avora" ? "AVORA" : project.id === "meeting-workflow" ? "MEETING → MAKING" : project.id === "muldo" ? "MULDO" : project.id === "lingua-float" ? "LINGUA / FLOAT" : "PPT / REIMAGINED"}</strong>
+      <span className="project-artwork-caption">{project.id === "avora" ? "IMAGE · MUSIC · STORY" : project.id === "meeting-workflow" ? "AGENT SKILLS · CONTENT WORKFLOW" : project.id === "muldo" ? "PEOPLE · AGENTS · PROJECTS" : project.id === "lingua-float" ? "LOCAL AUDIO · LIVE CAPTIONS · TRANSLATION" : "A NEW GENERATION EXPERIENCE"}</span>
       <i aria-hidden="true" />
     </div>
   );
 }
 
 function ProjectTimeline({ onOpen }: { onOpen: (id: string) => void }) {
+  const trackPath = timelineRows === 2
+    ? "M 125 160 H 875 C 900 160 910 175 910 200 V 400 C 910 425 900 440 875 440 H 125"
+    : "M 125 150 H 875 C 900 150 910 165 910 190 V 410 C 910 435 900 450 875 450 H 125 C 100 450 90 465 90 490 V 710 C 90 735 100 750 125 750";
   return (
     <section className="project-overview-panel">
       <div className="panel-toolbar"><span>// 项目实践</span><span>{String(timelineProjects.length).padStart(2, "0")} PROJECTS / CURATED ORDER</span></div>
-      <div className="project-overview-scroll">
-        <div className="project-timeline-board">
-          <svg className="project-timeline-track" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M 125 160 H 875 C 900 160 910 175 910 200 V 400 C 910 425 900 440 875 440 H 125" />
+      <div className={`project-overview-scroll${timelineRows > 2 ? " has-extra-row" : ""}`}>
+        <div className={`project-timeline-board${timelineRows > 2 ? " has-extra-row" : ""}`}>
+          <svg className="project-timeline-track" viewBox={`0 0 1000 ${timelineRows * 300}`} preserveAspectRatio="none" aria-hidden="true">
+            <path d={trackPath} />
           </svg>
-          <div className="project-timeline-grid">
+          <div className={`project-timeline-grid${timelineRows > 2 ? " has-extra-row" : ""}`} style={{ "--timeline-rows": timelineRows } as CSSProperties}>
             {timelineProjects.map((project, index) => {
               const row = Math.floor(index / 4);
               const positionInRow = index % 4;
@@ -116,7 +120,12 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
             {project.sections.map((section, index) => (
               <section className="project-case-section" key={section.label}>
                 <span>{String(index + 1).padStart(2, "0")} / {section.label}</span>
-                <p>{section.text}</p>
+                {section.text && <p>{section.text}</p>}
+                {section.cards && <div className="project-case-cards">
+                  {section.cards.map((card) => <div className="project-case-card" key={card.title}>
+                    <strong>{card.title}</strong><p>{card.text}</p>
+                  </div>)}
+                </div>}
               </section>
             ))}
           </div>

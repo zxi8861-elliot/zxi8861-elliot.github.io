@@ -13,12 +13,13 @@ type ExperienceArticleData = {
     title: string;
     body?: string;
     problem?: string;
+    code?: string;
     demo?: "priority" | "noise" | "scope" | "viewport" | "transform";
     cards?: Array<{ label: string; body: string }>;
     table?: { headers: string[]; rows: string[][] };
     checks?: string[];
   }>;
-  illustration?: "smart-guides" | "history-stack" | "editor-blueprint";
+  illustration?: "smart-guides" | "history-stack" | "editor-blueprint" | "ppt-structured-output";
   glossary?: Array<{ term: string; visual: string; purpose: string; persistence: string }>;
   comparison?: Array<{ approach: string; model: string; strengths: string; tradeoffs: string }>;
   sources?: Array<{ label: string; href: string }>;
@@ -145,6 +146,17 @@ const agentArticles: AgentArticleData[] = [
         { label: "长期用户记忆", body: "有来源、时间和置信度的偏好 / 事实；按用户授权范围查询，不把所有历史直接拼进提示词。" },
         { label: "外部知识", body: "可检索的事实材料与组织文档；保留文档版本、权限与引用片段，和“这个用户的偏好”分开。" },
       ] },
+      { title: "多轮任务要记住的不只是聊天", table: { headers: ["状态层", "要追踪什么", "例子", "变化时怎么处理"], rows: [
+        ["对话上下文", "指代、刚确认的信息、当前话题", "“把刚才那单改成公司地址”中的“那单”", "保留近期原文；必要时回看消息来源"],
+        ["意图与槽位", "用户要做什么，执行所需参数还缺哪些", "改地址；订单 ID、目标地址", "补齐缺项；新信息覆盖相应槽位并记录来源"],
+        ["任务状态", "流程走到哪一步、已完成什么、是否待确认", "已定位订单，尚未提交地址修改", "用状态机 / checkpoint 推进，不靠模型猜进度"],
+        ["长期记忆", "跨会话仍有效的偏好或事实", "用户确认过的常用地址", "检查有效期；不确定时先问，不当成当前授权"],
+      ] }, body: "用户改意图或打断任务时，不要把整段历史都清空，也不要继续沿旧流程盲跑。先判断是补充当前槽位、暂停当前任务，还是切换到新意图；保存必要 checkpoint，重算待办与授权，再决定续跑或开启新任务。" },
+      { title: "短期记忆怎么留：窗口、预算和检查点", table: { headers: ["做法", "保留什么", "适合场景", "主要代价"], rows: [
+        ["最近消息窗口", "最近若干轮原文，必要时连同完整 tool call / tool result", "短对话、需要保留语气和指代", "旧约束可能被挤掉；轮数不是可靠的 token 预算"],
+        ["Token 预算裁剪", "在输入预算内保留高价值消息与完整交互单元", "消息长度差异大、工具结果多", "按 token 硬切可能截断语义；优先在消息或轮次边界裁剪"],
+        ["摘要 + 检查点", "目标、约束、决策、进度、待办、产物引用；近期原文另留", "长任务、中断恢复或跨阶段执行", "摘要有损；原始记录应可追溯，不能只剩摘要"],
+      ] }, body: "短期记忆不是固定保留‘最近 3–5 轮’的行业标准。实际窗口应按模型 token 预算、消息长度、工具调用完整性和任务风险动态确定；摘要或裁剪改变的是送入模型的视图，不等于删除原始会话记录。" },
       { title: "记忆不是聊天记录：按用途组织", table: { headers: ["类型", "存什么", "例子", "常见表示"], rows: [
         ["语义 Semantic", "相对稳定的事实与偏好", "用户常用中文；项目用 React", "结构化 profile / key-value / 可检索记忆"],
         ["情节 Episodic", "某次事件、决策和结果", "上次选方案 B，因为发布窗口只有两周", "事件记录 + 时间、参与者、结果"],
@@ -154,9 +166,9 @@ const agentArticles: AgentArticleData[] = [
       { title: "从对话到记忆：写入链路要有筛选和治理", problem: "如果每句话都存，会留下噪声、敏感信息和过期结论；如果完全依赖模型自由总结，又可能把一次性要求误当成长期偏好。", cards: [
         { label: "① 候选提取", body: "识别明确的“请记住”、重复出现的偏好、跨任务有用事实；一次性变量默认只进入当前任务。" },
         { label: "② 分类与授权", body: "标记 user / project / org scope、记忆类型、敏感级别、有效期；敏感内容默认不自动沉淀。" },
-        { label: "③ 合并与冲突", body: "与旧记忆比对：补充、更新、保留并列条件或发起澄清；不要简单采用“最新一句覆盖一切”。" },
+        { label: "③ 查重并判断变更", body: "为候选查找语义相近的旧记忆，再判断是新增、更新、删除还是不操作；相似不等于相同，先核对主体、情境、时间和来源。" },
         { label: "④ 可追溯写入", body: "保存 source message / document、时间、置信度、抽取方式和版本；支持查看、修正、删除及审计。" },
-      ] },
+      ], body: "一个可落地的写入循环是：从近期消息和已有摘要提出候选 → 检索相近记忆 → 决定 add / update / delete / no-op → 写入并保留版本与来源。每句话不自动变成记忆；一次性要求、推断和明确授权的长期偏好要分开处理。" },
       { title: "检索与注入：找得到，还要恰当地用", body: "每轮不必搜全库，更不应把整份个人档案直接塞给模型。先根据身份、项目、任务类型、时间和权限过滤，再做关键词 / 语义混合召回；对候选按相关性、时效性、可信度和冲突排序，最后只注入少量带来源的记忆。检索结果应作为有出处的数据，不应覆盖系统安全规则或当前用户的明确指令。", cards: [
         { label: "取回", body: "用户 / 项目 scope → ACL 过滤 → 混合检索 → 排序去重。" },
         { label: "注入", body: "只放当前任务需要的 top-k；附来源、更新时间与置信度。" },
@@ -172,6 +184,7 @@ const agentArticles: AgentArticleData[] = [
       { title: "怎么证明记忆真的有用", body: "不能只看“回答听起来更个性化”。离线构造有 / 无记忆、记忆过期、互相矛盾、无关记忆、删除后再次提问等对照集；线上观察用户是否少重复说明、是否纠正错误记忆，以及检索是否增加延迟。记忆命中率高不代表好：关键是相关且正确地改变任务结果，同时不泄漏、不误导。", checks: ["有用性：加入记忆后任务成功率是否提升？", "精确率：召回的记忆里有多少真正相关？", "时效性：过期 / 矛盾信息是否能被识别？", "可控性：用户能否查看、修正、删除和暂停？", "成本：额外 token、检索延迟与存储成本是否可接受？"] },
       { title: "面试常问：为什么不能把全部历史拼进 prompt？", body: "可以这样答：历史记录是原始材料，记忆是经过筛选、结构化和治理后，在合适任务中再次使用的信息。全量拼接会触及上下文长度、注意力稀释、延迟和费用，也会把无关或过期内容带入新任务；更关键的是，用户无法清楚管理“模型到底记住了什么”。所以我会把会话 checkpoint、长期记忆和知识库分开，按权限与当前任务召回少量内容，并为记忆提供来源、时效、纠错和删除机制。", cards: [
         { label: "追问：什么时候写？", body: "明确记忆请求可即时写；隐式偏好可以先作为候选，重复确认或低风险时再后台整理；敏感、模糊、影响重大的信息先问用户。" },
+        { label: "追问：新会话如何找回？", body: "先用本轮明确上下文；缺少必要信息时，优先读取有字段和有效期的结构化资料，再按语义检索相关历史。检查来源与更新时间；不确定或影响较大时向用户确认，不能把旧记录直接当成当前事实。" },
         { label: "追问：记忆和 RAG 有什么区别？", body: "RAG 主要找外部资料回答事实问题；个人记忆保存某个用户 / 项目的历史事实、偏好或做事方式。技术可以共享，但数据域、权限、更新和评估目标不同。" },
         { label: "追问：如何落到 MULDO？", body: "按用户 / 项目分 scope；当前任务状态留在项目会话 checkpoint，稳定偏好和已确认决策进可编辑的长期记忆；任务产物保留在项目文档，并通过权限控制按需引用。" },
       ] },
@@ -182,7 +195,9 @@ const agentArticles: AgentArticleData[] = [
       { label: "Anthropic · Effective context engineering for AI agents", href: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" },
       { label: "OpenAI Help · Memory in ChatGPT：可观察行为与用户控制", href: "https://help.openai.com/en/articles/8590148-memory-in-chatgpt" },
       { label: "本机知识库：AI 产品经理知识库中的记忆 / 上下文摘录", href: "https://my.feishu.cn/wiki/OY4FwGXr8i2diPkxkvEcNVA7nhg#doxcn3QG2sqRMhhzAnhK641uvLg" },
-      { label: "本机知识库：AI 产品经理面试题中的外部记忆设计", href: "https://bcnbjw9b1hc8.feishu.cn/wiki/TiUrwSkuyiiAIRkzW3gcORdrnPh" },
+      { label: "本机知识库：短期记忆与多轮对话历史", href: "https://my.feishu.cn/wiki/OY4FwGXr8i2diPkxkvEcNVA7nhg#doxcnsPdE76Xy58bPP14ohj2lEb" },
+      { label: "本机知识库：面试题中的短期 / 长期记忆设计", href: "https://bcnbjw9b1hc8.feishu.cn/wiki/TiUrwSkuyiiAIRkzW3gcORdrnPh#JQcUdEx5sofKaex7xT6ch33ynag" },
+      { label: "本机知识库：支持多轮对话的 Agent（意图、槽位、状态与中断）", href: "https://bcnbjw9b1hc8.feishu.cn/wiki/TiUrwSkuyiiAIRkzW3gcORdrnPh#IH4udjDtyoKRFSxkFgoc6tJqn5g" },
     ],
   },
   {
@@ -222,7 +237,12 @@ const agentArticles: AgentArticleData[] = [
   pending: next actions, unresolved questions, dependencies
   toolState: outstanding calls, retries, idempotency keys
   recent: last few verbatim turns for local conversational continuity
-}`, body: "最重要的是区分事实、用户明确要求、Agent 推断和未验证假设；给关键内容保留来源 ID 与版本。不要把未完成的工具调用压成‘已经完成’，不要丢掉用户禁止事项、权限边界、具体数字、文件路径或反例。结构化状态用于恢复任务，摘要用于压缩叙述，两者最好分开。" },
+      }`, body: "最重要的是区分事实、用户明确要求、Agent 推断和未验证假设；给关键内容保留来源 ID 与版本。不要把未完成的工具调用压成‘已经完成’，不要丢掉用户禁止事项、权限边界、具体数字、文件路径或反例。结构化状态用于恢复任务，摘要用于压缩叙述，两者最好分开。" },
+      { title: "MCP / 工具结果很多：压缩结果，不要丢掉可追溯性", problem: "长对话里最容易膨胀的往往不是用户消息，而是搜索结果、网页正文、日志和工具返回的重复字段。把原始结果逐轮塞回 prompt，会挤掉目标与约束；直接截断又可能把关键证据剪掉。", cards: [
+        { label: "模型上下文", body: "仅保留工具结论、关键字段、错误状态、来源 ID / URL、时间与下一步所需参数；明确标注省略或截断。" },
+        { label: "外部结果存储", body: "完整响应按 run / tool-call ID 保存，供审计或后续按需读取；prompt 里放引用，不复制整份结果。" },
+        { label: "续接检查", body: "压缩前后核对当前目标、用户限制、已确认参数、未完成动作和工具调用状态，尤其不能把失败或待审批改写成成功。" },
+      ] },
       { title: "防止摘要把错误越滚越大", problem: "每次摘要都可能遗漏或改写；如果只保留上一次摘要、丢弃原始历史，错误会逐轮固化，之后无法判断是用户说过还是 Agent 推断出来的。", cards: [
         { label: "原始记录不等于 prompt", body: "把完整 transcript / 工具原文留在可审计存储；压缩只改变下一次模型输入视图，不要默认删除原记录。" },
         { label: "版本化压缩结果", body: "记录 summary revision、覆盖到的 message range、模型 / prompt 版本和生成时间；编辑旧消息时使覆盖范围内的摘要失效或重建。" },
@@ -247,6 +267,8 @@ const agentArticles: AgentArticleData[] = [
       { label: "OpenAI API · Conversation state：上下文窗口与 token 预算", href: "https://developers.openai.com/api/docs/guides/conversation-state" },
       { label: "Anthropic Engineering · Effective context engineering：compaction、note-taking 与工具结果清理", href: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" },
       { label: "Anthropic Engineering · Effective harnesses for long-running agents", href: "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents" },
+      { label: "本机知识库：MCP 工具结果导致上下文过长的处理思路", href: "https://bcnbjw9b1hc8.feishu.cn/wiki/TiUrwSkuyiiAIRkzW3gcORdrnPh#O7tidk4JBoavmBxxnp7cyiSonae" },
+      { label: "本机知识库：长对话导致上下文脱节", href: "https://bcnbjw9b1hc8.feishu.cn/wiki/TiUrwSkuyiiAIRkzW3gcORdrnPh#TalLdeg7doNeBoxHYHvc0f9unYe" },
     ],
   },
   {
@@ -274,7 +296,12 @@ const agentArticles: AgentArticleData[] = [
   → rerank candidates
   → pack top evidence within token budget
   → generate answer with source citations
-  → verify grounding / abstain / retrieve again`, body: "不是每个查询都需要所有步骤。简单、术语明确的问题可以直接混合召回；多跳问题可先拆子问题；检索结果相互矛盾或证据不足时，可进行第二轮搜索。每步都保留 query、过滤条件、文档版本、chunk ID 和分数，便于解释‘为什么拿到这些资料’。" },
+      → verify grounding / abstain / retrieve again`, body: "不是每个查询都需要所有步骤。简单、术语明确的问题可以直接混合召回；多跳问题可先拆子问题；检索结果相互矛盾或证据不足时，可进行第二轮搜索。每步都保留 query、过滤条件、文档版本、chunk ID 和分数，便于解释‘为什么拿到这些资料’。" },
+      { title: "先改写还是先识别意图：看改写依赖什么", table: { headers: ["场景", "推荐顺序", "原因"], rows: [
+        ["多轮问答，当前 query 依赖前文指代", "上下文补全 / 轻改写 → 意图识别 → 检索改写", "先补齐“它 / 那个 / 刚才的方案”，再分类；检索前再按知识域优化表达"],
+        ["单轮、结构清楚的问题", "意图识别 → 按意图决定是否改写", "分类已能决定走 FAQ、数据查询还是操作流程，可省掉不必要的模型调用"],
+        ["问答与工具操作混合的 Agent", "先做轻量路由 → 分支内定制改写", "先分清查资料还是执行动作，避免把工具指令改成知识检索 query"],
+      ] }, body: "不存在对所有业务都正确的固定顺序。可以用低成本规则补全指代，再路由；进入具体分支后，才决定是否使用模型改写或拆解 query。", },
       { title: "召回策略：为什么常用关键词 + 向量混合？", table: { headers: ["方法", "擅长", "容易漏掉", "产品 / 工程处理"], rows: [
         ["BM25 / 关键词", "产品名、代码、日期、编号、稀有词精确匹配", "同义表达、语义相似但没有相同词", "查询标准化；专名与过滤字段保留原文"],
         ["向量语义检索", "改写、口语问题、含义相近的段落", "精确编号、否定词、相似但不相干主题", "与关键词并行召回，不单独依赖 embedding 分数"],
@@ -294,6 +321,18 @@ const agentArticles: AgentArticleData[] = [
         ["答案引用旧政策", "索引更新延迟、缓存未失效、版本没有参与排序", "建立 freshness SLA、版本过滤和更新后缓存失效"],
         ["不同用户搜到彼此资料", "权限过滤只在前端做，或跨租户缓存 key 不完整", "检索前强制 ACL；索引与缓存按 tenant / principal 隔离并做越权测试"],
       ] } },
+      { title: "Bad case 归因：先确认知识在不在，再定位链路哪一段", problem: "低置信度答案不等于知识库缺内容：可能是文档根本没入库，也可能相关片段存在但没召回、排在后面，或模型拿到证据后仍没有忠实回答。只看最终回答分数，容易把不同问题都归到“调 prompt”。", cards: [
+        { label: "① 覆盖度 / Corpus", body: "用人工标注的标准证据或受控检索检查知识源中是否存在答案；不存在则归为内容缺口，进入补数与审核流程。" },
+        { label: "② 召回 / Recall", body: "证据存在但候选集没有它：检查解析、chunk、ACL、query 补全、BM25 / vector 召回和过滤条件。" },
+        { label: "③ 排序 / Ranking", body: "证据在候选里却排得太后：检查融合、reranker、阈值与 top-k；用标注集看 Recall@K、MRR / nDCG。" },
+        { label: "④ 生成 / Grounding", body: "模型已拿到正确证据但回答错：检查证据组装、冲突、引用映射、指令和拒答；逐条 claim 对齐证据。" },
+      ], body: "每条 bad case 至少留原 query、改写 query、权限过滤、候选 chunk / 分数 / 排名、最终上下文、答案与人工归因。自动化规则可以给出“疑似召回问题 / 疑似覆盖缺口”等线索；涉及补知识、调权重或策略变更时，先由标注样本验证，不让一条低分结果自动改线上检索参数。" },
+      { title: "Query 改写有没有用：看下游增益，不考文案像不像", table: { headers: ["验证层", "怎么做", "回答什么问题"], rows: [
+        ["离线改写集", "从真实 query 抽样，人工写出可接受的补全版本；标出实体、时间、否定和意图等不可丢信息", "改写是否保留原意、补全是否有依据？"],
+        ["检索对照", "同一 query 分别走原文与改写，比较标准证据 Recall@K、MRR / nDCG", "改写是否让正确证据更容易被找回？"],
+        ["答案质量", "固定模型与生成条件，比较 groundedness、正确率、拒答与人工偏好", "检索提升是否传导到答案，而非只让 query 更通顺？"],
+        ["线上实验", "对可比流量做 A/B，观察任务成功、追问 / 改问、用户纠错、延迟与成本", "改写是否带来真实产品收益，收益能否覆盖额外调用？"],
+      ] }, body: "先用人工标准集发现错误类型，再用离线指标定位检索变化，最后用下游实验验证价值。不要把“改写与参考句相似度”当最终成绩；若用户原 query 已足够清晰，直接跳过改写也应是合法路径。" },
       { title: "评估：把检索与生成分开量", body: "RAG 是一条链路，不能只靠‘最终答案看着不错’验收。先给检索准备带标准证据的 query 集，再单独看召回；之后测生成是否忠实使用证据，并看端到端任务表现。线上记录无结果率、用户改问、引用点击 / 纠错、延迟和成本。", checks: [
         "检索：Recall@K / Hit Rate 是否找回标准证据？",
         "排序：MRR / nDCG 或人工相关性判断，正确片段是否排得靠前？",
@@ -312,6 +351,9 @@ const agentArticles: AgentArticleData[] = [
       { label: "Google Cloud Architecture · RAG 参考架构：离线索引与在线服务流", href: "https://docs.cloud.google.com/architecture/rag-genai-gemini-enterprise-vertexai" },
       { label: "Anthropic Engineering · Contextual Retrieval：chunk 上下文、BM25、向量与重排", href: "https://www.anthropic.com/engineering/contextual-retrieval" },
       { label: "Google Cloud · RAG glossary：Retrieve → Augment → Generate", href: "https://docs.cloud.google.com/docs/generative-ai/glossary" },
+      { label: "本机知识库：RAG bad case 归因（知识覆盖、召回与排序）", href: "https://bcnbjw9b1hc8.feishu.cn/wiki/TiUrwSkuyiiAIRkzW3gcORdrnPh#PEDhdUGiloX1E8xHQggcBhwwn3c" },
+      { label: "本机知识库：Query 改写的离线、人工与 A/B 评估", href: "https://bcnbjw9b1hc8.feishu.cn/wiki/TiUrwSkuyiiAIRkzW3gcORdrnPh#SO49dkiHsoTTAExGyE3cuCWqnze" },
+      { label: "本机知识库：意图识别与 Query 改写的顺序取舍", href: "https://bcnbjw9b1hc8.feishu.cn/wiki/TiUrwSkuyiiAIRkzW3gcORdrnPh#EmAOdfOuqoB2aRxKn8jcojrQnyc" },
     ],
   },
   {
@@ -421,13 +463,22 @@ const agentArticles: AgentArticleData[] = [
         { label: "可验证输入", body: "目标、验收标准、输入引用、来源版本和 permission scope。" },
         { label: "产物与未决项", body: "artifact URI / checksum、结论、风险、开放问题和建议下一步。" },
       ] },
+      { title: "谁来传话：编排器中转还是 Agent 直接通信？", problem: "子 Agent 直接把消息交给另一个子 Agent，路径一长就难以看清谁分派了任务、上下文从哪来、失败后从哪里恢复；但所有通信都经过一个中心，也可能带来瓶颈。", cards: [
+        { label: "编排器中转", body: "Orchestrator 负责拆解与路由、组装最小任务上下文、校验委派权限、追踪状态并接收结果；适合希望集中审计、重试和恢复的工作流。" },
+        { label: "Agent 直接协作", body: "在 Agent 属于不同服务或组织、需要跨平台互操作时，可通过明确协议直接委派与回传；仍需身份认证、任务状态、产物引用和权限边界，不能退化成无状态的自由聊天。" },
+        { label: "产品取舍", body: "中心编排换来可观测性与治理，也引入路由瓶颈；直接通信降低中心依赖，却提高协议、信任和故障追踪成本。可按协作范围分层：项目内任务由编排器协调，跨服务交互走标准化 Agent 协议。" },
+      ] },
       { title: "并行写入：共享状态需要版本、所有权和合并策略", problem: "多个 Agent 同时编辑一个项目文档或任务状态时，最后写入覆盖前一个结果的风险很高；即使没有覆盖，也可能把互相矛盾的结论一起合并。", cards: [
         { label: "先划分写入边界", body: "按任务、文件、文档区块或字段分配 owner；可并行读，不代表应该并行写同一资源。" },
         { label: "版本检查与幂等", body: "更新带 baseVersion / expectedVersion；重试用 idempotency key，避免重复创建评论、任务或外部动作。" },
         { label: "冲突可见化", body: "检测版本不匹配后进入合并 / 人工裁决，而不是 last-write-wins 静默覆盖。" },
         { label: "协同编辑与 Agent 协作分开看", body: "CRDT / OT 处理共享文档并发编辑；Agent 编排处理任务分配、消息与产物交接。两者能组合，但不是同一层问题。" },
       ] },
-      { title: "权限与安全：每个 Agent 都有身份", body: "不能因为任务由主管 Agent 创建，就让所有子 Agent 自动拥有主管的全部权限。委派时传递可解释的 capability / scope；工具调用检查 Agent 身份、项目角色、对象权限和动作风险。外部文档与用户提交内容当作数据，不当作更高优先级指令；审计记录谁委派、谁读取、谁写入。发送、删除、公开发布等副作用要求审批或可补偿流程。" },
+      { title: "权限与安全：每个 Agent 都有身份", body: "不能因为任务由主管 Agent 创建，就让所有子 Agent 自动拥有主管的全部权限。委派时传递可解释的 capability / scope；工具调用检查 Agent 身份、项目角色、对象权限和动作风险。外部文档与用户提交内容当作数据，不当作更高优先级指令；审计记录谁委派、谁读取、谁写入。发送、删除、公开发布等副作用要求审批或可补偿流程。", cards: [
+        { label: "先分流业务场景", body: "区分本人操作、代他人操作、客服协助和管理员审计；每种场景明确可见入口、角色与规则，不能只靠模型猜身份关系。" },
+        { label: "身份从可信会话注入", body: "模型可以选择“查订单”这个工具，但 user_id / tenant_id 等归属字段由认证后的服务端会话注入，并由后端对资源 owner 做强校验；不要信任模型生成的身份参数。" },
+        { label: "拒绝也要有可走的下一步", body: "越权时阻断工具调用并记录审计 / 风险信号；向用户解释当前账号可做什么、如何申请授权或转人工。对高频探测、注入等风险行为升级风控。" },
+      ] },
       { title: "故障与测试：先明确谁负责恢复", body: "Agent 超时、重复交付、工具报错、主管中断、共享上下文过期都需要状态机和恢复策略。重试限制次数并区分可重试错误；部分完成可恢复或补偿；人工介入后把决定记回任务。端到端测试覆盖多 Agent 同时更新、重复事件、乱序到达、超时后迟到结果、权限变化和冲突合并；再逐步增加并行度，核对质量、延迟、成本和恢复率。", checks: [
         "多设备 / 多成员同时更新时，状态与权限是否一致？",
         "角色是否清晰：谁规划、执行、审查、批准？",
@@ -447,13 +498,113 @@ const agentArticles: AgentArticleData[] = [
       { label: "Google Developers · Context-aware multi-agent production framework", href: "https://developers.googleblog.com/architecting-efficient-context-aware-multi-agent-framework-for-production/" },
       { label: "Google · Agent2Agent (A2A) protocol announcement", href: "https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/" },
       { label: "Anthropic · How we built our multi-agent research system", href: "https://www.anthropic.com/engineering/multi-agent-research-system" },
-      { label: "本机知识库：AI 产品经理知识库中的多 Agent 协作与上下文摘录", href: "https://my.feishu.cn/wiki/OY4FwGXr8i2diPkxkvEcNVA7nhg" },
+      { label: "本机知识库：子 Agent 间如何通讯", href: "https://my.feishu.cn/wiki/OY4FwGXr8i2diPkxkvEcNVA7nhg#EZ67dWjI0o0tI0xIwRIctchvnEg" },
+      { label: "本机知识库：工具调用的资源归属校验与越权拦截", href: "https://bcnbjw9b1hc8.feishu.cn/wiki/TiUrwSkuyiiAIRkzW3gcORdrnPh#OFzldExcpoXHpoxDHh5cB304nkh" },
     ],
   },
 ];
 const agentArticleOrder = ["agent-edit-message", "agent-memory", "agent-context-compaction", "agent-rag-retrieval", "agent-personal-agent", "agent-jit-context", "agent-collaboration", "agent-side-chat", "agent-add-to-chat", "agent-fork", "agent-annotation"];
 
 const experienceArticles: Record<string, ExperienceArticleData> = {
+  "ppt-structured-interactive": {
+    kicker: "AI PPT / INTERACTIVE GENERATION",
+    title: "互动课件如何从生成结果变成可操作的网页？",
+    summary: "拆开课件大纲、Widget 配置、HTML 页面与课堂动作：JSON 负责描述和约束，HTML/CSS/JavaScript 才负责真正运行交互。",
+    tags: ["结构化生成", "JSON Schema", "Widget", "HTML Runtime"],
+    illustration: "ppt-structured-output",
+    sections: [
+      { title: "先回答你的猜测：对了一半", problem: "“AI 返回结构化 JSON，所以页面就有互动”把两层事情合在了一起。结构化数据能告诉系统‘生成哪类场景、有哪些参数和目标’，但它本身不会执行按钮点击、滑块变化或动画。", cards: [
+        { label: "JSON / 场景合同", body: "描述页面类型、教学目标、Widget 类型、关键变量和场景大纲；程序据此选择生成策略并校验字段。" },
+        { label: "HTML + CSS + JavaScript / 可运行页面", body: "生成具体界面、控件、状态和事件逻辑；浏览器运行这些代码，交互才真正发生。" },
+        { label: "课堂 Action / 教学编排", body: "另用结构化动作描述讲解、聚焦控件、设置状态、标注或揭示内容，由宿主页面把动作发送给 Widget。" },
+      ] },
+      { title: "课映里的实际链路", body: "当前代码把生成拆成多个阶段，而不是要求模型一次返回一个包办所有事情的大 JSON。交互大纲先决定“要做什么”；按 Widget 类型生成独立 HTML；再根据页面里真实存在的控件生成课堂动作。", },
+      { title: "在项目代码里如何核对", cards: [
+        { label: "大纲合同", body: "`packages/@openmaic/generation/templates/requirements-to-outlines/` 定义模型输出的大纲格式；`src/outline-types.ts` 定义 SceneOutline 与 widgetOutline 类型；`src/outline-generator.ts` 解析 JSON 并补 ID、顺序与降级处理。" },
+        { label: "Widget 页面", body: "`packages/@openmaic/generation/templates/simulation-content/` 要求输出完整 HTML 和内嵌 widget-config；`src/scene-generator.ts` 按 widgetType 选 prompt、提取 HTML、检查脚本语法并读取配置。" },
+        { label: "课堂联动与运行", body: "`templates/interactive-actions/` 定义独立 JSON 动作；`components/scene-renderers/InteractiveIframeHost.tsx` 使用 srcDoc 与 sandbox 渲染交互页。它们对应的是动作协议与运行边界，不是同一份 JSON。" },
+      ] },
+      { title: "五段链路：从教学意图到学生操作", body: "", },
+      { title: "第一段：大纲用 JSON 描述‘要生成什么’", problem: "如果只给模型一个课题，让它直接写一整页 HTML，页面类型、教学目的和可控变量很容易混在一起；后续系统也很难稳定决定用模拟、流程图、代码还是游戏。", code: `{
+  "type": "interactive",
+  "title": "抛体运动：角度如何影响射程？",
+  "description": "让学生通过改变角度观察射程变化",
+  "keyPoints": ["比较不同发射角", "观察射程与高度"],
+  "widgetType": "simulation",
+  "widgetOutline": {
+    "concept": "projectile_motion",
+    "keyVariables": ["angle", "velocity"]
+  }
+}` },
+      { title: "这个 JSON 怎么被用起来", cards: [
+        { label: "1 / 选择类型", body: "SceneOutline.type 决定是 slide、quiz、interactive 还是 PBL；交互场景再由 widgetType 细分为 simulation、diagram、code、game、visualization3d 等。" },
+        { label: "2 / 准备生成参数", body: "widgetOutline 放各类型需要的最小领域信息，例如模拟变量、图表节点、编程语言或 3D 对象；生成器据此选择对应 prompt 模板。" },
+        { label: "3 / 让运行时有稳定入口", body: "数据模型将通用场景字段和 Widget 专属参数分开，避免每种互动都塞进一组含义不明的自由文本。" },
+      ] },
+      { title: "第二段：提示词告诉模型遵守合同，但不等于 API 强制模式", body: "课映的 outline prompt 明确要求返回 JSON 对象，并给出 SceneOutline 字段与交互场景约束；生成层调用 AICallFn 获取文本，再用 JSON 解析 / 修复逻辑读出结果。这个可核对的实现是“提示词规定格式 + 应用侧解析和兜底”。不能仅因输出长得像 JSON，就说这里一定启用了 OpenAI Structured Outputs 或严格 JSON Schema 解码。", cards: [
+        { label: "Prompt 约定", body: "明确顶层字段、字段类型、允许枚举和完整示例，降低模型随意组织答案的空间。" },
+        { label: "解析与归一化", body: "检查是否可解析，补 ID / 顺序等应用字段；缺少交互所需的 widgetType / widgetOutline 时走降级或失败路径。" },
+        { label: "严格结构化输出是另一层能力", body: "部分模型 API 可在请求里提交 JSON Schema 并约束输出形状；它比“提示模型输出 JSON”更强，但仍不能证明内容在教学上正确，也不能替代业务校验。" },
+      ] },
+      { title: "第三段：真正的交互主体是生成的 HTML", problem: "仅有 `widgetType: simulation` 和 `angle: 45` 这样的 JSON，页面上还没有滑块、轨迹图、计算公式或状态更新逻辑。", cards: [
+        { label: "生成器按类型选模板", body: "simulation、diagram、code、game、3D visualization 等类型分别拼装不同的生成提示词，不让一个泛化提示词承担所有交互。" },
+        { label: "模型输出完整 HTML 文档", body: "交互内容生成要求返回独立 HTML，包括控件、SVG/Canvas 视觉、JavaScript 事件与响应式布局；生成器提取 HTML，而不是把它当成 JSON 解析。" },
+        { label: "嵌入 JSON 配置作为页面元数据", body: "HTML 内可以包含 `<script type=\"application/json\" id=\"widget-config\">…</script>`。宿主提取这段 JSON，用来读取 Widget 类型和配置；页面交互仍由 HTML/JS 执行。" },
+      ] },
+      { title: "一个生成物里有两种语言：JSON 数据 + HTML 行为", code: `<!-- 数据：描述 Widget 类型与可识别的配置 -->
+<script type="application/json" id="widget-config">
+{
+  "type": "simulation",
+  "variables": [
+    { "name": "angle", "min": 0, "max": 90, "default": 45, "unit": "°" }
+  ]
+}
+</script>
+
+<!-- 行为：真正响应学生的操作 -->
+<input id="angle-slider" type="range" min="0" max="90" value="45">
+<svg id="trajectory"><!-- 由当前状态更新轨迹 --></svg>
+<script>
+  angleSlider.addEventListener("input", (event) => {
+    state.angle = Number(event.target.value);
+    updateTrajectory(state);
+  });
+</script>` },
+      { title: "第四段：宿主运行页面，模型产物不能直接当可信程序", body: "SceneBuilder 把 HTML 存进 interactive scene；前端通过带 sandbox 属性的 iframe 渲染。生成后还会做 HTML 提取、内联 JavaScript 语法检查、Widget 配置提取和后处理。语法检查只能挡住一部分损坏页面，不代表交互正确、安全或教学有效；高风险能力仍应由宿主校验、权限隔离和真实运行测试兜底。", },
+      { title: "第五段：课堂动作是独立 JSON，再通过 postMessage 驱动页面", code: `[
+  { "type": "text", "content": "拖动角度滑块，观察射程变化。" },
+  {
+    "type": "action",
+    "name": "widget_setState",
+    "params": { "state": { "angle": 30 } }
+  }
+]`, body: "动作生成阶段会读取 Widget HTML 的元素清单，并要求模型从真实 selector 中选择目标；iframe 内页面监听 SET_WIDGET_STATE、HIGHLIGHT_ELEMENT 等消息后更新自身状态。这样教学讲解和互动实现有明确通信契约，不必让老师动作直接改写页面代码。" },
+      { title: "常见故障：JSON 合法也可能生成坏课件", problem: "解析成功只说明结构能读，不等于字段语义正确、控件存在、状态会更新或学生能学会。错误可能出现在结构、代码、运行时和教学设计四个层面。", table: { headers: ["故障层", "典型问题", "应对方式"], rows: [
+        ["格式层", "JSON 被说明文字包住、字段缺失或类型错", "JSON Schema / 类型校验、解析修复、明确重试或降级；保留原始响应便于排查"],
+        ["语义层", "类型是 simulation，但 outline 没给变量或目标", "按 widgetType 做领域校验，必要字段缺失则补问、重新规划或回退普通讲解页"],
+        ["代码层", "HTML 有控件，但 JS 语法错误或事件没有绑定", "语法检查 + DOM/selector 检查；真实浏览器执行关键路径并验证输入能改变输出"],
+        ["教学层", "能拖动，但操作没有揭示目标知识关系", "检查学习目标—变量—可见反馈映射，设计学生操作后的观察与解释，不以‘页面可动’当成学习有效"],
+      ] } },
+      { title: "产品取舍：什么时候用 JSON Schema，什么时候用自由文本？", table: { headers: ["任务", "适合的输出", "理由"], rows: [
+        ["课程结构、大纲、题目、教学动作", "JSON / 类型化对象；重要边界可用 API Structured Outputs", "字段稳定，要被程序读取、校验、排序或路由"],
+        ["模拟参数、图表节点、课堂动作状态", "受限 JSON 配置", "数据需要落入明确的控件和运行时能力"],
+        ["交互页面布局与视觉呈现", "HTML / CSS / JavaScript（或组件 AST / DSL）", "需要表达布局、绘制、事件和状态变化；JSON 单独不执行"],
+        ["安全敏感或复杂编辑场景", "白名单组件 + JSON DSL，再由可信渲染器执行", "比直接运行任意生成代码更可控，但表达能力和组件维护成本更高"],
+      ] } },
+      { title: "复盘时怎么说清这项产品能力", body: "我不会说“提示词让 AI 直接吐出 JSON，所以课件就能互动”。更准确的说法是：先用结构化课程大纲决定哪些页面需要交互，并把交互类型和关键变量写进场景合同；再按 Widget 类型生成完整 HTML 页面，让页面内控件与 JavaScript 实现状态变化；宿主校验并在 iframe 运行它；最后独立生成课堂动作，通过 postMessage 与页面通信。结构化数据负责可控编排，HTML/JS 负责执行交互，运行时与校验负责把生成结果变成产品能力。", checks: [
+        "大纲字段是否决定了明确的页面类型与学习目标？",
+        "widgetType 与 widgetOutline 是否完整、类型正确？",
+        "学生能否操作控件，并观察到与知识点有关的变化？",
+        "课堂动作 target 是否对应页面里真实存在的元素？",
+        "坏 JSON、坏 HTML、执行报错和不安全内容是否有处理路径？",
+        "回答时是否区分了课映已实现机制、API 严格结构化输出与通用架构建议？",
+      ] },
+    ],
+    sources: [
+      { label: "OpenAI API · Structured Outputs：JSON mode 与 schema adherence 的区别", href: "https://developers.openai.com/api/docs/guides/structured-outputs" },
+      { label: "Google AI for Developers · Structured outputs：JSON Schema、解析与语义校验边界", href: "https://ai.google.dev/gemini-api/docs/structured-output" },
+    ],
+  },
   "uiux-libraries": {
     kicker: "UI / FRONTEND / COMPONENT LIBRARIES",
     title: "前端组件与效果参考库",
@@ -935,6 +1086,9 @@ export function KnowledgeDirectory({ activeId, onSelect }: { activeId: string; o
                       <span>{String(index + 1).padStart(2, "0")}</span>{label}
                     </button>)}
                   </div>
+                  <button className={`knowledge-entry cursor-target${activeId === "ppt-structured-interactive" ? " is-selected" : ""}`} onClick={() => onSelect("ppt-structured-interactive")}>
+                    <span>01</span><strong>互动网页：结构化数据到可运行页面</strong><em>↗</em>
+                  </button>
                 </> : null}
                 {folder.id === "editor" ? editorArticles.map((entry, index) => <button className={`knowledge-entry cursor-target${activeId === entry.id ? " is-selected" : ""}`} key={entry.id} onClick={() => onSelect(entry.id)}>
                   <span>{String(index + 1).padStart(2, "0")}</span><strong>{entry.title}</strong><em>↗</em>
@@ -981,9 +1135,11 @@ function ProjectExperienceArticle({ article }: { article: ExperienceArticleData 
         {article.illustration === "smart-guides" && section.title.startsWith("通用计算链") ? <><SmartGuidesDiagram /><SmartGuideCalculationDiagram /></> : null}
         {article.illustration === "history-stack" && section.title.startsWith("用一张图理解") ? <UndoRedoDiagram /> : null}
         {article.illustration === "editor-blueprint" && section.title.startsWith("架构图") ? <EditorBlueprintDiagram /> : null}
+        {article.illustration === "ppt-structured-output" && section.title.startsWith("五段链路") ? <PptGenerationPipeline /> : null}
         {section.problem ? <div className="knowledge-problem"><strong>问题</strong><p>{section.problem}</p></div> : null}
         {section.demo ? <SmartGuideDemo variant={section.demo} /> : null}
         {section.body ? <p>{section.body}</p> : null}
+        {section.code ? <pre><code>{section.code}</code></pre> : null}
         {section.cards?.length ? <div className="knowledge-insight-grid">{section.cards.map((card) => <article className="knowledge-insight-card" key={card.label}><strong>{card.label}</strong><p>{card.body}</p></article>)}</div> : null}
         {section.table ? <KnowledgeTableScroller label={`${section.title}表格横向滚动条`}><table className="knowledge-section-table"><thead><tr>{section.table.headers.map((header) => <th key={header}>{header}</th>)}</tr></thead><tbody>{section.table.rows.map((row, rowIndex) => <tr key={`${section.title}-${rowIndex}`}>{row.map((cell, cellIndex) => cellIndex === 0 ? <th scope="row" key={`${rowIndex}-${cellIndex}`}>{cell}</th> : <td key={`${rowIndex}-${cellIndex}`}>{cell}</td>)}</tr>)}</tbody></table></KnowledgeTableScroller> : null}
         {section.checks?.length ? <ul className="knowledge-check-grid">{section.checks.map((check) => <li key={check}>{check}</li>)}</ul> : null}
@@ -1190,6 +1346,47 @@ function EditorBlueprintDiagram() {
       <text x="694" y="325" textAnchor="middle" className="ed-box-sub">导入导出 / AI 工具</text>
     </svg>
     <figcaption>工具栏、快捷键、属性面板、自动化与 AI 都调用同一套命令/文档内核；渲染层只是同一文档的视图。</figcaption>
+  </figure>;
+}
+
+function PptGenerationPipeline() {
+  return <figure className="knowledge-diagram-figure ppt-generation-pipeline">
+    <svg viewBox="0 0 1000 430" role="img" aria-labelledby="ppt-pipeline-title ppt-pipeline-desc">
+      <title id="ppt-pipeline-title">课映互动课件从需求到运行时的生成链路</title>
+      <desc id="ppt-pipeline-desc">课程需求先变为结构化场景大纲，再生成 Widget HTML；宿主校验并通过 iframe 运行，独立的课堂动作通过 postMessage 控制页面。</desc>
+      <defs><marker id="ppt-pipeline-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#17202a" /></marker></defs>
+      <rect x="24" y="36" width="166" height="100" rx="4" className="ed-source" />
+      <text x="107" y="75" textAnchor="middle" className="ed-box-title">课程需求</text>
+      <text x="107" y="105" textAnchor="middle" className="ed-box-sub">目标 / 学段 / 内容</text>
+      <path d="M192 86H224" className="ed-arrow" markerEnd="url(#ppt-pipeline-arrow)" />
+      <rect x="232" y="36" width="190" height="100" rx="4" className="ed-command" />
+      <text x="327" y="75" textAnchor="middle" className="ed-box-title">Scene Outline</text>
+      <text x="327" y="105" textAnchor="middle" className="ed-box-sub">JSON / type + widgetOutline</text>
+      <path d="M424 86H456" className="ed-arrow" markerEnd="url(#ppt-pipeline-arrow)" />
+      <rect x="464" y="36" width="190" height="100" rx="4" className="ed-command" />
+      <text x="559" y="75" textAnchor="middle" className="ed-box-title">Widget Generator</text>
+      <text x="559" y="105" textAnchor="middle" className="ed-box-sub">按类型选专属提示词</text>
+      <path d="M656 86H688" className="ed-arrow" markerEnd="url(#ppt-pipeline-arrow)" />
+      <rect x="696" y="36" width="270" height="100" rx="4" className="ed-consumer" />
+      <text x="831" y="75" textAnchor="middle" className="ed-box-title">HTML / CSS / JavaScript</text>
+      <text x="831" y="105" textAnchor="middle" className="ed-box-sub">交互页面 + 内嵌 Widget JSON</text>
+
+      <path d="M831 142V202H657" className="ed-arrow" markerEnd="url(#ppt-pipeline-arrow)" />
+      <rect x="464" y="210" width="190" height="88" rx="4" className="ed-source" />
+      <text x="559" y="248" textAnchor="middle" className="ed-box-title">解析 / 校验</text>
+      <text x="559" y="276" textAnchor="middle" className="ed-box-sub">配置 / JS 语法 / DOM</text>
+      <path d="M462 254H410" className="ed-arrow" markerEnd="url(#ppt-pipeline-arrow)" />
+      <rect x="212" y="210" width="190" height="88" rx="4" className="ed-command" />
+      <text x="307" y="248" textAnchor="middle" className="ed-box-title">隔离 iframe</text>
+      <text x="307" y="276" textAnchor="middle" className="ed-box-sub">浏览器执行 HTML</text>
+
+      <rect x="24" y="336" width="278" height="66" rx="4" className="ed-consumer" />
+      <text x="163" y="365" textAnchor="middle" className="ed-box-title">课堂 Action JSON</text>
+      <text x="163" y="389" textAnchor="middle" className="ed-box-sub">讲解 / setState / highlight</text>
+      <path d="M306 370H500V310" className="ed-arrow" markerEnd="url(#ppt-pipeline-arrow)" />
+      <text x="586" y="365" textAnchor="middle" className="ed-box-sub">postMessage → 页面状态与课堂讲解联动</text>
+    </svg>
+    <figcaption>场景 JSON 负责规划，HTML/JS 负责交互，宿主运行时连接 Widget 与课堂动作；三者不是同一种输出。</figcaption>
   </figure>;
 }
 

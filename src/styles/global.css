@@ -1326,6 +1326,7 @@ h1 {
 .knowledge-diagram-figure figcaption { margin-top: 10px; color: var(--subtle); font-size: 12px; line-height: 1.7; }
 .knowledge-diagram-figure .ed-panel { fill: var(--bg); stroke: var(--border-soft); }
 .knowledge-diagram-figure .ed-task { fill: var(--muted-2); stroke: var(--border); }
+.knowledge-diagram-figure .ed-source { fill: color-mix(in srgb, var(--blue) 7%, var(--bg)); stroke: var(--border); }
 .knowledge-diagram-figure .ed-model { fill: color-mix(in srgb, var(--blue) 8%, var(--bg)); stroke: var(--blue); stroke-width: 1.5; }
 .knowledge-diagram-figure .ed-command { fill: var(--bg); stroke: var(--text); stroke-width: 1.5; }
 .knowledge-diagram-figure .ed-consumer { fill: var(--bg); stroke: var(--border); }

@@ -1587,6 +1587,8 @@ h1 {
 @keyframes project-card-breathe { 0%,100% { translate: 0 0; } 50% { translate: 0 -4px; } }
 .project-timeline-card-art { position: relative; display: block; flex: 0 0 auto; width: 100%; aspect-ratio: 16 / 9; min-width: 0; overflow: hidden; background: #0a1220; }
 .project-art-image { display: block; width: 100%; height: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.project-artwork-screenshots { display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; gap: clamp(8px, 1.2vw, 18px); overflow: hidden; background: linear-gradient(135deg, #f6f6fb, #ececf4); }
+.project-artwork-screenshots img { display: block; width: 23%; height: 88%; border: 1px solid rgba(35,38,53,.12); border-radius: 6px; background: white; box-shadow: 0 5px 15px rgba(24,27,44,.12); object-fit: contain; }
 .project-source-badge { position: absolute; top: 8px; left: 8px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 6px; border: 1px solid rgba(255,255,255,.55); background: rgba(12,16,24,.75); color: #fff; font-size: 9px; backdrop-filter: blur(8px); }
 .project-source-badge sup { color: #c4c0ff; font: 10px "Departure Mono", monospace; }
 .project-timeline-card-copy { display: flex; flex: 1 1 auto; flex-direction: column; justify-content: center; gap: 7px; min-width: 0; padding: 9px clamp(9px, 1vw, 14px) 12px; }

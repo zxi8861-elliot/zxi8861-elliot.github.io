@@ -46,6 +46,13 @@ function projectImage(project: Project) {
 }
 
 function ProjectArtwork({ project, detail = false }: { project: Project; detail?: boolean }) {
+  if (!detail && (project.id === "ai-speed" || project.id === "avora") && project.gallery?.length) {
+    return (
+      <div className={`project-artwork-screenshots project-artwork-screenshots--${project.id}`} aria-label={`${project.title}应用截图预览`}>
+        {project.gallery.slice(0, 3).map((image) => <img key={image.src} src={image.src} alt="" />)}
+      </div>
+    );
+  }
   const image = projectImage(project);
   if (image) return <img className="project-art-image" src={image} alt={`${project.title}项目展示`} />;
   return (

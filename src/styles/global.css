@@ -1038,6 +1038,9 @@ h1 {
 .case-lede {font-size:14px;line-height:1.8;color:var(--subtle);}
 .project-tags { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 24px; }
 .project-tags span { padding: 5px 9px; border: 1px solid var(--border); background: var(--muted-2); color: var(--subtle); font-size: 10px; line-height: 1.4; }
+.project-demo-link { display: flex; align-items: center; justify-content: space-between; gap: 14px; max-width: 440px; margin: 0 0 24px; padding: 12px 14px; border: 1px solid var(--border); background: var(--muted-2); color: var(--text); font-size: 12px; }
+.project-demo-link span { color: var(--subtle); font-size: 10px; }
+.project-demo-link:hover { border-color: var(--blue); color: var(--blue); }
 .case-section {padding:24px 0;border-top:1px solid var(--border-soft);}
 .case-section>span {font-size:11px;color:var(--blue);}
 .case-section p {font-size:14px;line-height:1.9;margin:12px 0 0;}

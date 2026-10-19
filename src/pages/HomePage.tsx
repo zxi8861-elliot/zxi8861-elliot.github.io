@@ -7,7 +7,7 @@ type Section = { label: string; text?: string; cards?: Array<{ title: string; te
 export type Project = {
   id: string; title: string; short: string; category: "Work" | "Lab"; source: "company" | "personal"; period: string; status: string;
   tags: string[]; role: string; result: string; sections: Section[]; cover?: string;
-  gallery?: Array<{ src: string; alt: string; label?: string }>; url?: string;
+  gallery?: Array<{ src: string; alt: string; label?: string }>; url?: string; demoUrl?: string;
 };
 const modes: Mode[] = ["Work", "Lab", "Notes", "Contact"];
 const labels: Record<Mode, string> = { Work: "工作作品", Lab: "个人实验", Notes: "知识沉淀", Contact: "联系我" };
@@ -65,11 +65,14 @@ export const projects: Project[] = [
     id: "ai-design", title: "觅知网 AI 素材创作与分发中台", short: "搭建 AI 素材生产中台，并将生成能力产品化为网站与 APP",
     category: "Work", source: "company", period: "2025", status: "线上运行", role: "产品经理 / 整体方案策划 / 中后台框架与流程设计",
     result: "搭建创作与分发中台：年节省供稿成本约 80 万元、存储及带宽成本约 200 万元；中台能力产品化至网站和 APP，前台实现百万级营收。",
-    url: "https://www.51miz.com/ai/image", tags: ["AI 素材中台", "AIGC 内容生成", "AI 生图", "人机协同审核与分发"],
+    url: "https://www.51miz.com/ai/image", demoUrl: "/demos/ai-content-platform-demo.html", tags: ["AI 素材中台", "AIGC 内容生成", "AI 生图", "人机协同审核与分发"],
     gallery: [
-      { src: "/assets/portfolio/ai-design/01-create.jpg", alt: "AI 一键生图创作界面与设计模板示例", label: "01 / 一句话描述，浏览多品类生成素材" },
-      { src: "/assets/portfolio/ai-design/02-poster.jpg", alt: "觅知 AI 海报设计与模板素材页面", label: "02 / AI 海报：灵感模板与按需生成" },
-      { src: "/assets/portfolio/ai-design/03-handcopy.jpg", alt: "觅知 AI 手抄报生成页面及彩稿线稿示例", label: "03 / AI 手抄报：彩稿与线稿输出" },
+      { src: "/assets/portfolio/ai-design/01-home.jpg", alt: "觅知网 AI 生图首页与素材创作入口", label: "01 / 官网首页：AI 生图入口与创作引导" },
+      { src: "/assets/portfolio/ai-design/02-tools.jpg", alt: "AI 图片处理工具入口与功能卡片", label: "02 / AI 图片处理：智能抠图、消除、变清晰与扩图" },
+      { src: "/assets/portfolio/ai-design/03-handcopy.jpg", alt: "AI 手抄报生图与自然语言编辑界面", label: "03 / AI 生图：生成结果与自然语言修改" },
+      { src: "/assets/portfolio/ai-design/04-poster.jpg", alt: "AI 海报设计与提示词编辑界面", label: "04 / AI 海报：主题生图与快速修改" },
+      { src: "/assets/portfolio/ai-design/05-editor.jpg", alt: "在线设计编辑器中的 AI 生成海报", label: "05 / 在线编辑：生成素材的二次设计" },
+      { src: "/assets/portfolio/ai-design/06-generation.jpg", alt: "AI 生成结果页面与重新编辑、再次生成操作", label: "06 / 生成结果：编辑、再生成与连续创作" },
     ],
     sections: [
       { label: "项目背景", text: "平台设计师用户的素材需求具有明显的定制化、长尾和高频特征。过去主要依赖外部素材供给方或设计师逐单制作，再经过多轮人工审核、打标，并手动在不同平台间流转；供给成本、格式治理、审核与重复存储逐渐成为规模化供给的瓶颈。项目从内部高频、重复的素材需求切入，规划建设 AI 创作与分发中台，并逐步将成熟能力开放为前台产品。" },
@@ -306,6 +309,7 @@ export function HomePage() {
                 <span className="eyebrow">CASE / {selected.status}</span>
                 <h1 className={hasMixedCjkLatin(selected.title) ? "mixed-script-title" : undefined}>{renderTitleText(selected.title)}</h1><p className="case-lede">{selected.short}</p>
                 <div className="project-tags" aria-label="项目标签">{selected.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+                {selected.demoUrl ? <a className="project-demo-link cursor-target" href={selected.demoUrl} target="_blank" rel="noreferrer">打开中后台流程 Demo <span>概念演示 ↗</span></a> : null}
                 {selected.sections.map((section, index) => (
                   <section className="case-section" key={section.label}>
                     <span>0{index + 1} / {section.label}</span><p>{section.text}</p>

@@ -48,9 +48,10 @@ function projectImage(project: Project) {
 
 function ProjectArtwork({ project, detail = false }: { project: Project; detail?: boolean }) {
   if (!detail && portraitGalleryIds.has(project.id) && project.gallery?.length) {
+    const previews = project.id === "meeting-workflow" ? project.gallery.slice(2, 5) : project.gallery.slice(0, 3);
     return (
       <div className={`project-artwork-screenshots project-artwork-screenshots--${project.id}`} aria-label={`${project.title}应用截图预览`}>
-        {project.gallery.slice(0, 3).map((image) => <img key={image.src} src={image.src} alt="" />)}
+        {previews.map((image) => <img key={image.src} src={image.src} alt="" />)}
       </div>
     );
   }
@@ -149,9 +150,9 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
           </div>
         </article>
         <aside className="project-case-visuals">
-          <div className={`project-case-gallery${portraitGalleryIds.has(project.id) ? " project-case-gallery--portrait" : ""}`}>
+          <div className={`project-case-gallery${project.id === "meeting-workflow" ? " project-case-gallery--mixed" : portraitGalleryIds.has(project.id) ? " project-case-gallery--portrait" : ""}`}>
             {project.gallery?.length ? project.gallery.map((image, index) => (
-              <figure key={image.src}>
+              <figure className={project.id === "meeting-workflow" ? `project-case-gallery-item--${index < 2 ? "landscape" : "portrait"}` : undefined} key={image.src}>
                 <img src={image.src} alt={image.alt} />
                 <figcaption><span>{image.label ?? `${String(index + 1).padStart(2, "0")} / PROJECT VIEW`}</span><span>{String(index + 1).padStart(2, "0")}</span></figcaption>
               </figure>

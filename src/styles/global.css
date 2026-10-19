@@ -1647,6 +1647,9 @@ h1 {
 .project-case-visuals { position: relative; display: flex; min-width: 0; min-height: 0; flex-direction: column; overflow: hidden; background: #fff; }
 .project-case-gallery { display: grid; flex: 1 1 auto; align-content: start; gap: 18px; min-height: 0; overflow: auto; padding: 20px; background: #fff; }
 .project-case-gallery--portrait { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 14px; }
+.project-case-gallery--mixed { grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: start; gap: 14px; }
+.project-case-gallery--mixed .project-case-gallery-item--landscape { grid-column: span 3; }
+.project-case-gallery--mixed .project-case-gallery-item--portrait { grid-column: span 2; }
 .project-case-gallery figure { min-width: 0; margin: 0; }
 .project-case-gallery img { display: block; width: 100%; height: auto; aspect-ratio: auto; border: 1px solid var(--border-soft); border-radius: 4px; background: #fff; object-fit: contain; }
 .project-case-gallery figcaption { display: flex; justify-content: space-between; gap: 12px; padding: 8px 2px 0; color: var(--subtle); font: 12px "Departure Mono", monospace; }
@@ -1753,6 +1756,7 @@ h1 {
   .project-case-visuals { overflow: visible; border-top: 1px solid var(--border); }
   .project-case-gallery { overflow: visible; padding: 14px; }
   .project-case-gallery--portrait { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .project-case-gallery--mixed { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
   .project-case-visit-dock { position: fixed; z-index: 20; right: 0; bottom: 0; left: 0; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: rgba(255,255,255,.96); backdrop-filter: blur(12px); }
   .project-case-link-note { padding-bottom: 90px; }
   .lucky-snake-panel { min-height: 680px; overflow: visible; }

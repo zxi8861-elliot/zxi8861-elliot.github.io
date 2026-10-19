@@ -137,11 +137,13 @@ export const projects: Project[] = [
     url: "https://apps.apple.com/cn/app/%E5%80%BE%E8%80%B3-ai%E4%BC%9A%E8%AE%AE%E7%BA%AA%E8%A6%81%E7%A5%9E%E5%99%A8-%E4%BC%9A%E8%AE%AE%E8%AE%B0%E5%BD%95%E5%8A%A9%E6%89%8B-%E5%BD%95%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97%E6%80%BB%E7%BB%93/id6759899164",
     tags: ["AI 会议", "后台工作台", "素材供给"],
     gallery: [
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/63/bd/c6/63bdc6b0-e25e-52ce-da3c-ef28d0da5ceb/1-_U5f55_U97f3_U5b9e_U65f6_U8f6c_U6587_U5b57-_U6d45_U8272AI-_U539f_U5c3a_U5bf8.png/1242x2208bb.jpg", alt: "倾耳应用录音实时转写截图", label: "01 / 录音与实时转写" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/03/42/e5/0342e530-5026-9b23-2398-002d0e2ac19b/68AEBA2A-EE2D-4D56-BFE1-94A977C072FF.png/1242x2208bb.jpg", alt: "倾耳应用会议内容处理截图", label: "02 / 会议内容处理" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/c0/22/40/c02240c6-520a-6752-9a88-80d6580d3946/3.png/1242x2208bb.jpg", alt: "倾耳应用 AI 会议纪要截图", label: "03 / AI 会议纪要" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/50/99/b7/5099b7a6-29df-c939-502f-de859bcfc276/4.png/1242x2208bb.jpg", alt: "倾耳应用会议总结截图", label: "04 / 会议总结" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/52/d9/80/52d9802e-2a35-03f6-de9c-6c1d07914e7a/5.png/1242x2208bb.jpg", alt: "倾耳应用会议内容导出截图", label: "05 / 内容导出" },
+      { src: "/images/portfolio/meeting-workflow-template-library-redacted.png", alt: "PPT 生产模板库后台截图，已遮挡账户名和模板 ID", label: "01 / PPT 生产模板库" },
+      { src: "/images/portfolio/meeting-workflow-explore-management-redacted.png", alt: "探索页资源管理后台截图，已遮挡账户名、资源 ID 和入库时间", label: "02 / 探索页资源管理" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/63/bd/c6/63bdc6b0-e25e-52ce-da3c-ef28d0da5ceb/1-_U5f55_U97f3_U5b9e_U65f6_U8f6c_U6587_U5b57-_U6d45_U8272AI-_U539f_U5c3a_U5bf8.png/1242x2208bb.jpg", alt: "倾耳应用录音实时转写截图", label: "03 / 录音与实时转写" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/03/42/e5/0342e530-5026-9b23-2398-002d0e2ac19b/68AEBA2A-EE2D-4D56-BFE1-94A977C072FF.png/1242x2208bb.jpg", alt: "倾耳应用会议内容处理截图", label: "04 / 会议内容处理" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/c0/22/40/c02240c6-520a-6752-9a88-80d6580d3946/3.png/1242x2208bb.jpg", alt: "倾耳应用 AI 会议纪要截图", label: "05 / AI 会议纪要" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/50/99/b7/5099b7a6-29df-c939-502f-de859bcfc276/4.png/1242x2208bb.jpg", alt: "倾耳应用会议总结截图", label: "06 / 会议总结" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/52/d9/80/52d9802e-2a35-03f6-de9c-6c1d07914e7a/5.png/1242x2208bb.jpg", alt: "倾耳应用会议内容导出截图", label: "07 / 内容导出" },
     ],
     sections: [
       { label: "项目概览", text: "围绕倾耳 AI 会议产品的后台内容供给开展工作，负责 SQL 生成与后台工作台搭建，支持会议内容素材的生产和业务使用。" },

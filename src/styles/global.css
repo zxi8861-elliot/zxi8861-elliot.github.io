@@ -1645,7 +1645,7 @@ h1 {
 .project-case-visuals { position: relative; display: flex; min-width: 0; min-height: 0; flex-direction: column; overflow: hidden; background: #fff; }
 .project-case-gallery { display: grid; flex: 1 1 auto; align-content: start; gap: 18px; min-height: 0; overflow: auto; padding: 20px; background: #fff; }
 .project-case-gallery figure { min-width: 0; margin: 0; }
-.project-case-gallery img { display: block; width: 100%; height: auto; aspect-ratio: auto; border: 0; background: #fff; object-fit: contain; }
+.project-case-gallery img { display: block; width: 100%; height: auto; aspect-ratio: auto; border: 1px solid var(--border-soft); border-radius: 4px; background: #fff; object-fit: contain; }
 .project-case-gallery figcaption { display: flex; justify-content: space-between; gap: 12px; padding: 8px 2px 0; color: var(--subtle); font: 12px "Departure Mono", monospace; }
 .project-case-art-fallback { min-height: 100%; }
 .project-case-link-note { flex: 0 0 auto; padding: 18px; border-top: 1px solid var(--border-soft); color: var(--subtle); font-size: 11px; }

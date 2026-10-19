@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { coursewareDirectory } from "../pages/HomePage";
 
 type FolderId = "agent" | "experience" | "ppt" | "editor";
 type KnowledgeSelection = string;
@@ -46,7 +45,7 @@ type AgentArticleData = {
 const folders: Array<{ id: FolderId; index: string; title: string }> = [
   { id: "agent", index: "01", title: "AI Agent 难点手记" },
   { id: "experience", index: "02", title: "UI/UX 与前端体验" },
-  { id: "ppt", index: "03", title: "AI PPT 自研版" },
+  { id: "ppt", index: "03", title: "搭建中" },
   { id: "editor", index: "04", title: "编辑器产品与技术" },
 ];
 
@@ -506,7 +505,7 @@ const agentArticles: AgentArticleData[] = [
 const agentArticleOrder = ["agent-edit-message", "agent-memory", "agent-context-compaction", "agent-rag-retrieval", "agent-personal-agent", "agent-jit-context", "agent-collaboration", "agent-side-chat", "agent-add-to-chat", "agent-fork", "agent-annotation"];
 
 const experienceArticles: Record<string, ExperienceArticleData> = {
-  "ppt-structured-interactive": {
+  ...(import.meta.env.DEV ? { "ppt-structured-interactive": {
     kicker: "AI PPT / INTERACTIVE GENERATION",
     title: "互动课件如何从生成结果变成可操作的网页？",
     summary: "拆开课件大纲、Widget 配置、HTML 页面与课堂动作：JSON 负责描述和约束，HTML/CSS/JavaScript 才负责真正运行交互。",
@@ -604,7 +603,7 @@ const experienceArticles: Record<string, ExperienceArticleData> = {
       { label: "OpenAI API · Structured Outputs：JSON mode 与 schema adherence 的区别", href: "https://developers.openai.com/api/docs/guides/structured-outputs" },
       { label: "Google AI for Developers · Structured outputs：JSON Schema、解析与语义校验边界", href: "https://ai.google.dev/gemini-api/docs/structured-output" },
     ],
-  },
+  } } : {}),
   "uiux-libraries": {
     kicker: "UI / FRONTEND / COMPONENT LIBRARIES",
     title: "前端组件与效果参考库",
@@ -1012,14 +1011,6 @@ function AgentExecutionFlow() {
   </div>;
 }
 
-function isPptSelection(selection: KnowledgeSelection) {
-  return selection === "ppt-map" || selection.startsWith("ppt-chapter:");
-}
-
-function getPptChapter(selection: KnowledgeSelection) {
-  return selection.startsWith("ppt-chapter:") ? selection.slice("ppt-chapter:".length) : "overview";
-}
-
 function folderForSelection(selection: KnowledgeSelection): FolderId {
   if (selection.startsWith("editor")) return "editor";
   if (selection.startsWith("ppt-")) return "ppt";
@@ -1041,7 +1032,7 @@ export function KnowledgeDirectory({ activeId, onSelect }: { activeId: string; o
       : [...current, folderId]);
     if (folderId === "experience") onSelect("uiux-libraries");
     if (folderId === "agent") onSelect("agent-edit-message");
-    if (folderId === "ppt") onSelect("ppt-map");
+    if (folderId === "ppt") onSelect("ppt-draft");
     if (folderId === "editor") onSelect("editor-canvas");
   };
 
@@ -1077,19 +1068,7 @@ export function KnowledgeDirectory({ activeId, onSelect }: { activeId: string; o
                     <span>03</span><strong>让声纹响应真实声音</strong><em>↗</em>
                   </button>
                 </> : null}
-                {folder.id === "ppt" ? <>
-                  <button className={`knowledge-entry cursor-target${activeId === "ppt-map" ? " is-selected" : ""}`} onClick={() => onSelect("ppt-map")}>
-                    <span>MAP</span><strong>AI PPT 系统原理地图</strong><em>↗</em>
-                  </button>
-                  <div className="knowledge-chapter-list" aria-label="AI PPT 原理地图章节">
-                    {coursewareDirectory.map(([id, label], index) => <button className={`knowledge-chapter cursor-target${activeId === `ppt-chapter:${id}` ? " is-selected" : ""}`} key={id} onClick={() => onSelect(`ppt-chapter:${id}`)}>
-                      <span>{String(index + 1).padStart(2, "0")}</span>{label}
-                    </button>)}
-                  </div>
-                  <button className={`knowledge-entry cursor-target${activeId === "ppt-structured-interactive" ? " is-selected" : ""}`} onClick={() => onSelect("ppt-structured-interactive")}>
-                    <span>01</span><strong>互动网页：结构化数据到可运行页面</strong><em>↗</em>
-                  </button>
-                </> : null}
+                {folder.id === "ppt" ? <div className="knowledge-folder-empty">内容暂不公开</div> : null}
                 {folder.id === "editor" ? editorArticles.map((entry, index) => <button className={`knowledge-entry cursor-target${activeId === entry.id ? " is-selected" : ""}`} key={entry.id} onClick={() => onSelect(entry.id)}>
                   <span>{String(index + 1).padStart(2, "0")}</span><strong>{entry.title}</strong><em>↗</em>
                 </button>) : null}
@@ -1447,6 +1426,10 @@ function AgentArticle({ article }: { article: AgentArticleData }) {
 }
 
 export function KnowledgeReader({ activeId }: { activeId: string }) {
+  if (activeId.startsWith("ppt-") && !(import.meta.env.DEV && activeId === "ppt-structured-interactive")) {
+    return <div className="knowledge-empty-reader"><span className="eyebrow">03 / DRAFT</span><h1>搭建中</h1><span className="knowledge-empty-mark" aria-hidden="true">＋</span></div>;
+  }
+
   const experienceArticle = experienceArticles[activeId];
   if (experienceArticle) return <ProjectExperienceArticle article={experienceArticle} />;
 
@@ -1456,13 +1439,6 @@ export function KnowledgeReader({ activeId }: { activeId: string }) {
   if (activeId === "experience" || activeId === "editor") {
     const folder = folders.find(({ id }) => id === activeId)!;
     return <div className="knowledge-empty-reader"><span className="eyebrow">{folder.index} / KNOWLEDGE FOLDER</span><h1>{folder.title}</h1><span className="knowledge-empty-mark" aria-hidden="true">＋</span></div>;
-  }
-
-  if (isPptSelection(activeId)) {
-    const chapter = getPptChapter(activeId);
-    return <div className="preview-canvas notes-preview-canvas knowledge-map-reader">
-      <iframe className="knowledge-map-frame" name="courseware-map" src={`/knowledge/courseware-system-map.html#${encodeURIComponent(chapter)}`} title="课映 AI PPT 系统原理地图" />
-    </div>;
   }
 
   const agentArticle = agentArticles.find(({ id }) => id === activeId) ?? agentArticles[0];

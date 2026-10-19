@@ -7,7 +7,7 @@ import { Contact, projects, type Project } from "./HomePage";
 type Mode = "Projects" | "Notes" | "Contact";
 const modes: Mode[] = ["Projects", "Notes", "Contact"];
 const labels: Record<Mode, string> = { Projects: "项目实践", Notes: "知识沉淀", Contact: "联系我" };
-const timelineOrder = ["muldo", "ai-ppt-lab", "ai-ppt", "ai-design", "meeting-workflow", "ai-speed", "avora", "heara", "baoda", "lingua-float"];
+const timelineOrder = ["meeting-workflow", "avora", "ai-speed", "ai-design", "ai-ppt", "ai-ppt-lab", "heara", "baoda", "lingua-float", "muldo"];
 const timelineProjects = timelineOrder.map((id) => projects.find((project) => project.id === id)).filter((project): project is Project => Boolean(project));
 const timelineRows = Math.ceil(timelineProjects.length / 4);
 const portraitGalleryIds = new Set(["ai-speed", "avora", "meeting-workflow"]);
@@ -285,7 +285,7 @@ export function ProjectsPage() {
               onPointerDown={beginPanelResize} onPointerMove={movePanelResize} onPointerUp={endPanelResize} onPointerCancel={endPanelResize}
               onKeyDown={(event) => { if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); setDirectoryWidth((width) => { const nextWidth = Math.max(260, Math.min(maxNotesDirectoryWidth(), width + (event.key === "ArrowRight" ? 24 : -24))); localStorage.setItem("notes-directory-width", String(nextWidth)); return nextWidth; }); } }} />
             <section className={`preview-panel notes-preview-panel${view.knowledgeId.startsWith("ppt-") ? "" : " notes-article-panel"}`}>
-            <div className="panel-toolbar"><span>// {view.knowledgeId.startsWith("ppt-") ? "AI PPT 系统原理" : view.knowledgeId.startsWith("editor-") ? "编辑器产品与技术" : view.knowledgeId.startsWith("uiux-") || view.knowledgeId.startsWith("motion-") ? "UI/UX 与前端体验" : "AI Agent 实战难点"}</span><span>KNOWLEDGE / 02</span></div>
+            <div className="panel-toolbar"><span>// {view.knowledgeId.startsWith("ppt-") ? "搭建中" : view.knowledgeId.startsWith("editor-") ? "编辑器产品与技术" : view.knowledgeId.startsWith("uiux-") || view.knowledgeId.startsWith("motion-") ? "UI/UX 与前端体验" : "AI Agent 实战难点"}</span><span>KNOWLEDGE / 02</span></div>
             <KnowledgeReader activeId={view.knowledgeId} />
             </section>
           </> : <section className="preview-panel lucky-snake-panel">

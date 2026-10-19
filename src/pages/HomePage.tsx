@@ -131,8 +131,8 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "meeting-workflow", title: "杭州百聆 / 倾耳 AI 会议产品", short: "负责后台素材供给、SQL 生成与工作台搭建",
-    category: "Work", source: "company", period: "2026", status: "工作项目", role: "后台素材供给 / SQL 生成 / 工作台搭建",
+    id: "meeting-workflow", title: "杭州百聆 / 倾耳 AI 会议产品", short: "负责 SQL 搭建、后台素材供给与工作台搭建",
+    category: "Work", source: "company", period: "2026", status: "工作项目", role: "SQL 搭建 / 后台素材供给 / 工作台搭建",
     result: "搭建后台工作台，支撑会议内容素材的生产与供给",
     url: "https://apps.apple.com/cn/app/%E5%80%BE%E8%80%B3-ai%E4%BC%9A%E8%AE%AE%E7%BA%AA%E8%A6%81%E7%A5%9E%E5%99%A8-%E4%BC%9A%E8%AE%AE%E8%AE%B0%E5%BD%95%E5%8A%A9%E6%89%8B-%E5%BD%95%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97%E6%80%BB%E7%BB%93/id6759899164",
     tags: ["AI 会议", "后台工作台", "素材供给"],
@@ -146,10 +146,10 @@ export const projects: Project[] = [
       { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/52/d9/80/52d9802e-2a35-03f6-de9c-6c1d07914e7a/5.png/1242x2208bb.jpg", alt: "倾耳应用会议内容导出截图", label: "07 / 内容导出" },
     ],
     sections: [
-      { label: "项目概览", text: "围绕倾耳 AI 会议产品的后台内容供给开展工作，负责 SQL 生成与后台工作台搭建，支持会议内容素材的生产和业务使用。" },
+      { label: "项目概览", text: "围绕倾耳 AI 会议产品开展后台建设，负责 SQL 搭建、素材供给与工作台搭建，支持后台内容管理和前台业务使用。" },
       { label: "业务背景", text: "倾耳面向会议录音、实时转写与 AI 纪要场景，并支持将总结整理为 HTML、信息图、PPT 等形式。相应的内容素材需要在后台完成组织与供给。" },
-      { label: "个人职责", text: "负责后台素材供给相关的 SQL 生成，并搭建后台工作台，支持素材内容在业务流程中的管理与使用。" },
-      { label: "项目边界", text: "本项目重点呈现本人负责的后台素材供给、SQL 与工作台工作；应用商店截图用于展示产品公开形态，不代表本人负责整个 App。" },
+      { label: "个人职责", text: "负责 SQL 搭建、后台素材供给与工作台搭建，支持素材内容在业务流程中的管理与使用。" },
+      { label: "项目边界", text: "本项目重点呈现本人负责的 SQL、后台素材供给与工作台工作；应用商店截图用于展示产品公开形态，不代表本人负责整个 App。" },
     ],
   },
   {

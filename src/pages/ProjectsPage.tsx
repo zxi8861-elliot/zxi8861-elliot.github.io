@@ -105,11 +105,21 @@ function ProjectTimeline({ onOpen }: { onOpen: (id: string) => void }) {
 function ProjectCase({ project, onBack }: { project: Project; onBack: () => void }) {
   return (
     <section className="project-case-page">
-      <div className="panel-toolbar"><button className="project-case-back cursor-target" onClick={onBack}>← 全部项目</button><span>{project.period} / {project.source === "company" ? "公司项目" : "个人项目"}</span></div>
+      <div className="panel-toolbar project-case-toolbar">
+        <div className="project-case-crumb">
+          <button className="project-case-back cursor-target" onClick={onBack}>← 全部项目</button>
+          <span>/</span>
+          <strong>{project.title}</strong>
+        </div>
+        <div className="project-case-meta">
+          <span>{project.period} / {project.source === "company" ? "公司项目" : "个人项目"}</span>
+          <span>/</span>
+          <span>ZHANG XINYU / PROJECTS</span>
+        </div>
+      </div>
       <div className="project-case-columns">
         <article className="project-case-story">
           <div className="project-case-story-scroll">
-            <span className="eyebrow">{project.source === "company" ? "COMPANY PROJECT" : "PERSONAL PROJECT"} / {project.period}</span>
             <h1>{titleText(project)}</h1>
             <p className="project-case-lede">{project.short}</p>
             <div className="project-case-tags">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
@@ -142,7 +152,6 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
           {project.url ? <div className="project-case-visit-dock"><a className="project-visit-button cursor-target" href={project.url} target="_blank" rel="noreferrer">去访问 <span aria-hidden="true">↗</span></a></div> : <div className="project-case-link-note">项目链接暂未公开</div>}
         </aside>
       </div>
-      <div className="status-bar"><span>ZHANG XINYU / PROJECTS</span><span>{project.title}</span></div>
     </section>
   );
 }

@@ -64,7 +64,7 @@ export const projects: Project[] = [
   {
     id: "ai-design", title: "觅知网 AI 素材创作与分发中台", short: "搭建 AI 素材生产中台，并将生成能力产品化为网站与 APP",
     category: "Work", source: "company", period: "2025", status: "线上运行", role: "产品经理 / 整体方案策划 / 中后台框架与流程设计",
-    result: "搭建创作与分发中台：年节省供稿成本约 80 万元、存储及带宽成本约 200 万元；中台能力产品化至网站和 APP，前台实现百万级营收。",
+    result: "1. 搭建创作与分发中台，年节省供稿成本约 80 万元、存储及带宽成本约 200 万元。\n2. 中台能力产品化至网站和 APP，前台实现百万级营收。",
     url: "https://www.51miz.com/ai/image", demoUrl: "/demos/ai-content-platform-demo.html", tags: ["AI 素材中台", "AIGC 内容生成", "AI 生图", "人机协同审核与分发"],
     gallery: [
       { src: "/assets/portfolio/ai-design/01-home.jpg", alt: "觅知网 AI 生图首页与素材创作入口", label: "01 / 官网首页：AI 生图入口与创作引导" },

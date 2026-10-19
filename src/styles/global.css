@@ -309,13 +309,15 @@ h1 {
 
 .project-title-group {
   display: grid;
+  min-width: 0;
   gap: 4px;
 }
 
 .project-title {
   font-family: "Departure Mono", "IBM Plex Sans SC", "Courier New", monospace;
   font-size: clamp(20px, 2vw, 28px);
-  line-height: 1;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
   text-transform: uppercase;
 }
 
@@ -1034,6 +1036,8 @@ h1 {
 .back-link {display:block;background:transparent;color:var(--blue);font-size:12px;margin-bottom:30px;padding:0;}
 .case-detail h1 {font-size:42px;line-height:1.15;overflow-wrap:anywhere;}
 .case-lede {font-size:14px;line-height:1.8;color:var(--subtle);}
+.project-tags { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 24px; }
+.project-tags span { padding: 5px 9px; border: 1px solid var(--border); background: var(--muted-2); color: var(--subtle); font-size: 10px; line-height: 1.4; }
 .case-section {padding:24px 0;border-top:1px solid var(--border-soft);}
 .case-section>span {font-size:11px;color:var(--blue);}
 .case-section p {font-size:14px;line-height:1.9;margin:12px 0 0;}

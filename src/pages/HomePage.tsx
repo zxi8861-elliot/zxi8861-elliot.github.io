@@ -62,22 +62,25 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "ai-design", title: "AI 设计图", short: "觅知网线上产品｜生成设计图与内容模板",
-    category: "Work", source: "company", period: "2024", status: "线上运行", role: "生成流程 / Prompt 约束 / 效果评估",
-    result: "百万级营收 / 节约供稿成本约 80 万元 / 作品中心年降存储及带宽成本约 200 万元",
-    url: "https://www.51miz.com/ai/image", tags: ["AI 设计图", "模板生产", "在线编辑"],
+    id: "ai-design", title: "觅知网 AI 素材创作与分发中台", short: "搭建 AI 素材生产中台，并将生成能力产品化为网站与 APP",
+    category: "Work", source: "company", period: "2025", status: "线上运行", role: "产品经理 / 整体方案策划 / 中后台框架与流程设计",
+    result: "搭建创作与分发中台：年节省供稿成本约 80 万元、存储及带宽成本约 200 万元；中台能力产品化至网站和 APP，前台实现百万级营收。",
+    url: "https://www.51miz.com/ai/image", tags: ["AI 素材中台", "AIGC 内容生成", "AI 生图", "人机协同审核与分发"],
     gallery: [
       { src: "/assets/portfolio/ai-design/01-create.jpg", alt: "AI 一键生图创作界面与设计模板示例", label: "01 / 一句话描述，浏览多品类生成素材" },
       { src: "/assets/portfolio/ai-design/02-poster.jpg", alt: "觅知 AI 海报设计与模板素材页面", label: "02 / AI 海报：灵感模板与按需生成" },
       { src: "/assets/portfolio/ai-design/03-handcopy.jpg", alt: "觅知 AI 手抄报生成页面及彩稿线稿示例", label: "03 / AI 手抄报：彩稿与线稿输出" },
     ],
     sections: [
-      { label: "项目概览", text: "觅知网 AI 设计图线上产品，面向有设计素材与内容模板需求的用户。" },
-      { label: "背景与问题", text: "传统素材更新依赖人工生产，内容更新速度和热点需求之间存在差距。" },
-      { label: "产品策略", text: "同时覆盖后台选题批量生产和前台用户按需生成，让 AI 生成服务内容供给与用户创作。" },
-      { label: "核心设计", text: "围绕设计品类与用途设置生成要求，并根据输出效果迭代 Prompt。手抄报方向明确黑白线稿、A4 版式、留白和文本框等约束；生成结果可继续在线编辑。" },
-      { label: "项目成果", text: "项目实现百万级营收。AI 素材生产节约供稿成本约 80 万元；统一作品中心每年降低存储及带宽成本约 200 万元。" },
-      { label: "复盘沉淀", text: "积累了面向不同设计场景拆解生成约束、用实际输出验证效果，并持续调整生成策略的实践经验。" },
+      { label: "项目背景", text: "平台设计师用户的素材需求具有明显的定制化、长尾和高频特征。过去主要依赖外部素材供给方或设计师逐单制作，再经过多轮人工审核、打标，并手动在不同平台间流转；供给成本、格式治理、审核与重复存储逐渐成为规模化供给的瓶颈。项目从内部高频、重复的素材需求切入，规划建设 AI 创作与分发中台，并逐步将成熟能力开放为前台产品。" },
+      { label: "个人职责", text: "担任产品经理，负责项目整体方案策划，规划中后台框架、核心业务流程与产品边界；梳理从需求进入、AI 生产和审核到素材分发的端到端链路，并推动中台能力向前台网站及 APP 延伸。" },
+      { label: "项目成果一｜搭建创作与分发中台", text: "策划并推动搭建面向 C 端业务的 AI 素材创作分发工作流，覆盖需求解析、模型调度、生图迭代、审核打标、素材入库与多平台调用。中台减少各平台重复存储和带宽开销，并降低设计师供稿及审核成本；按项目复盘口径，年节省供稿成本约 80 万元、存储及带宽成本约 200 万元。" },
+      { label: "项目成果二｜中台能力产品化", text: "将中台生图链路复用到前台，迭代用户可直接使用的 AI 生图网站和 APP，打通从内部生产能力到用户创作服务的产品化路径，前台产品实现百万级营收。" },
+      { label: "关键工作｜需求解析与模型路由", text: "将原始设计需求结构化，根据需求特征匹配适合的模型和生成流程，组合使用即梦、千问及 GPT、Gemini 等模型。" },
+      { label: "关键工作｜生成、审核与迭代", text: "编排多模型生图流程，引入 Agent 对结果进行质量判断、打回与迭代；记录生成链路数据，为后续模型路径和生成效果优化提供依据。" },
+      { label: "关键工作｜AI 打标与人工快筛", text: "根据原始需求为图片生成 SEO 标题、关键词及内部检索标签；建设人工预审平台，将逐张查看优化为一页约 50 张的批量快筛，审核通过后进入中台素材池。" },
+      { label: "关键工作｜素材加工与多平台分发", text: "审核通过的素材自动进行超清放大并入库，供下游业务平台统一调用；针对局部细节修改，提供自然语言驱动的局部编辑、智能高清、等比扩图、背景抠图、智能调色及在线二次编辑能力。" },
+      { label: "项目沉淀", text: "沉淀从需求结构化、模型编排、生成质检、人机协同审核到素材治理和多端分发的模块化工作流。中台既能承接内部重复供给需求，也能作为前台 AI 创作产品的可复用底座。" },
     ],
   },
   {
@@ -302,6 +305,7 @@ export function HomePage() {
                 <button className="back-link cursor-target" onClick={back}>← 返回{labels[view.mode]}</button>
                 <span className="eyebrow">CASE / {selected.status}</span>
                 <h1 className={hasMixedCjkLatin(selected.title) ? "mixed-script-title" : undefined}>{renderTitleText(selected.title)}</h1><p className="case-lede">{selected.short}</p>
+                <div className="project-tags" aria-label="项目标签">{selected.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
                 {selected.sections.map((section, index) => (
                   <section className="case-section" key={section.label}>
                     <span>0{index + 1} / {section.label}</span><p>{section.text}</p>

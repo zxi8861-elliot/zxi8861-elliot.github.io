@@ -11,6 +11,7 @@
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;min-width:1180px}
     button{font:inherit;color:inherit;cursor:pointer}a{color:inherit;text-decoration:none}.app{min-height:100vh}.topbar{height:68px;padding:0 30px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:17px}.logo{height:32px;width:32px;border-radius:10px;background:linear-gradient(135deg,#48d7a1,#7551f3);display:grid;place-items:center;color:white;font-size:15px;font-weight:800;box-shadow:0 5px 13px #7b64e438}.brand small{font-weight:500;color:#9aa0b2;font-size:11px;border-left:1px solid var(--line);padding-left:12px;margin-left:2px}.top-actions{display:flex;align-items:center;gap:18px;color:#7e8498}.demo-flag{background:#fff6e8;color:#bb7b16;border:1px solid #f6e5c5;padding:5px 9px;border-radius:7px;font-size:11px;font-weight:600}.credits{background:#f4f1ff;border-radius:18px;padding:8px 13px;color:#6552bb;font-size:12px}.avatar{width:32px;height:32px;border-radius:50%;background:#e5eaff;color:#636fd0;display:grid;place-items:center;font-weight:700}
     .layout{display:grid;grid-template-columns:224px minmax(0,1fr);min-height:calc(100vh - 68px)}.sidebar{background:#fff;border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column}.side-caption{padding:0 13px 12px;color:#b0b4c2;font-size:10px;letter-spacing:1.2px}.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;text-align:left;border-radius:9px;padding:11px 13px;color:#686e83;display:flex;align-items:center;gap:12px;font-size:13px}.nav button .ico{width:19px;height:19px;display:grid;place-items:center;color:#9197aa;font-size:17px}.nav button.active{background:var(--purple-weak);color:var(--purple);font-weight:650}.nav button.active .ico{color:var(--purple)}.nav .indent{padding-left:44px;font-size:12px}.side-bottom{margin-top:auto;padding:14px 12px 4px;color:#a4a9b7;font-size:11px;line-height:1.8;border-top:1px solid var(--line)}
+    .nav{gap:14px}.nav-section{display:grid;gap:3px}.nav-section-label{padding:0 13px 5px;color:#a4a9b7;font-size:9px;letter-spacing:.04em}.nav button.nav-item{min-height:45px;padding:7px 11px;gap:10px}.nav button.nav-item .ico{flex:0 0 19px}.nav-copy{display:grid;gap:2px;min-width:0}.nav-copy strong{font-size:11px;font-weight:550;line-height:1.25}.nav-copy small{color:#a0a5b4;font-size:8px;font-weight:400;line-height:1.25;white-space:nowrap}.nav button.active .nav-copy small{color:#8974d0}.nav button.nav-child{min-height:37px;padding:5px 10px 5px 40px;gap:8px}.nav button.nav-child .ico{width:14px;flex:0 0 14px;font-size:12px}.nav button.nav-child .nav-copy strong{font-size:10px}.nav button.nav-child .nav-copy small{font-size:8px}.nav-count{margin-left:auto;color:#8b73e6;font-size:10px;font-weight:650}
     iconify-icon{display:inline-block;width:1em;height:1em;vertical-align:-.14em}.ico iconify-icon{width:18px;height:18px}.kpi-icon iconify-icon{width:15px;height:15px}.flow-dot iconify-icon{width:14px;height:14px}
     main{padding:26px 30px 32px;max-width:1580px;width:100%;margin:auto}.crumbs{display:flex;align-items:center;gap:8px;color:#9ba0b0;font-size:11px;margin:0 0 18px}.crumbs b{font-weight:500;color:#5e647a}.page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}.page-head h1{font-size:23px;line-height:1.2;margin:0 0 7px;letter-spacing:-.4px}.page-head p{color:var(--muted);margin:0;font-size:12px}.head-controls{display:flex;gap:9px}.btn{background:white;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:11px;color:#646b80;box-shadow:0 2px 4px #25274a05}.btn.primary{background:var(--purple);border-color:var(--purple);color:#fff;padding-inline:15px}.btn:hover{border-color:#c5b9ff;color:var(--purple)}.btn.primary:hover{color:white;background:#623be1}
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:15px}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}.kpi{padding:16px 18px;min-height:105px}.kpi-top{display:flex;justify-content:space-between;color:#83899b;font-size:11px}.kpi-icon{width:26px;height:26px;border-radius:8px;background:#f2efff;color:var(--purple);display:grid;place-items:center;font-weight:700}.kpi-value{font-size:25px;font-weight:700;letter-spacing:-.7px;margin:8px 0 2px}.kpi-foot{color:#9da2b1;font-size:10px}.up{color:#22ad80;font-weight:600;margin-left:5px}
@@ -29,9 +30,28 @@
   <div class="layout">
     <aside class="sidebar">
       <nav class="nav">
-        <button><span class="ico"><iconify-icon icon="ant-design:home-outlined"></iconify-icon></span>工作台</button>
-        <button><span class="ico"><iconify-icon icon="ant-design:profile-outlined"></iconify-icon></span>需求管理</button>
-        <button class="active"><span class="ico"><iconify-icon icon="ant-design:appstore-outlined"></iconify-icon></span>AI 生成任务</button>
+        <section class="nav-section">
+          <div class="nav-section-label">项目运营</div>
+          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:home-outlined"></iconify-icon></span><span class="nav-copy"><strong>工作台</strong><small>生产概况与待办提醒</small></span></button>
+          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:appstore-outlined"></iconify-icon></span><span class="nav-copy"><strong>模型广场</strong><small>切换模型、生图测试与对话记录</small></span></button>
+          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:profile-outlined"></iconify-icon></span><span class="nav-copy"><strong>需求管理</strong><small>设计需求收集、拆解与分派</small></span></button>
+        </section>
+        <section class="nav-section">
+          <div class="nav-section-label">生产任务</div>
+          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:picture-outlined"></iconify-icon></span><span class="nav-copy"><strong>AI 生成任务</strong><small>查看各批次生成与处理进度</small></span></button>
+          <button class="nav-child"><span class="ico"><iconify-icon icon="ant-design:loading-outlined"></iconify-icon></span><span class="nav-copy"><strong>生成队列</strong><small>生成进度、失败重试</small></span></button>
+          <button class="nav-child active"><span class="ico"><iconify-icon icon="ant-design:check-square-outlined"></iconify-icon></span><span class="nav-copy"><strong>人工快筛</strong><small>批量审核 AI 生成结果</small></span><span class="nav-count">238</span></button>
+        </section>
+        <section class="nav-section">
+          <div class="nav-section-label">素材流转</div>
+          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:picture-outlined"></iconify-icon></span><span class="nav-copy"><strong>素材中心</strong><small>已审核素材、标签与检索</small></span></button>
+          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:cloud-upload-outlined"></iconify-icon></span><span class="nav-copy"><strong>分发管理</strong><small>多平台同步与分发状态</small></span></button>
+        </section>
+        <section class="nav-section">
+          <div class="nav-section-label">配置与分析</div>
+          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:setting-outlined"></iconify-icon></span><span class="nav-copy"><strong>流程配置</strong><small>模型路由、审核与打标规则</small></span></button>
+          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:bar-chart-outlined"></iconify-icon></span><span class="nav-copy"><strong>数据看板</strong><small>产量、效率与链路指标</small></span></button>
+        </section>
       </nav>
       <div class="side-bottom">当前空间<br /><strong style="color:#62687c;font-weight:600">设计素材 · 内容生产组</strong><br />工作流版本　v2.4.1</div>
     </aside>

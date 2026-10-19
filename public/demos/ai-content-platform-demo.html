@@ -4,12 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f7f8fc" />
-  <title>AI 素材创作与分发中台 · 流程演示</title>
+  <title>觅知 AI 创作中台</title>
+  <script src="https://code.iconify.design/iconify-icon/3.1.0/iconify-icon.min.js"></script>
   <style>
     :root{--ink:#20233b;--muted:#8e93a8;--line:#eceef4;--panel:#fff;--bg:#f6f7fb;--purple:#7048ed;--purple-weak:#f1edff;--green:#1bb887;--orange:#f3a83b;--shadow:0 12px 36px rgba(39,43,75,.055)}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;min-width:1180px}
     button{font:inherit;color:inherit;cursor:pointer}a{color:inherit;text-decoration:none}.app{min-height:100vh}.topbar{height:68px;padding:0 30px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:17px}.logo{height:32px;width:32px;border-radius:10px;background:linear-gradient(135deg,#48d7a1,#7551f3);display:grid;place-items:center;color:white;font-size:15px;font-weight:800;box-shadow:0 5px 13px #7b64e438}.brand small{font-weight:500;color:#9aa0b2;font-size:11px;border-left:1px solid var(--line);padding-left:12px;margin-left:2px}.top-actions{display:flex;align-items:center;gap:18px;color:#7e8498}.demo-flag{background:#fff6e8;color:#bb7b16;border:1px solid #f6e5c5;padding:5px 9px;border-radius:7px;font-size:11px;font-weight:600}.credits{background:#f4f1ff;border-radius:18px;padding:8px 13px;color:#6552bb;font-size:12px}.avatar{width:32px;height:32px;border-radius:50%;background:#e5eaff;color:#636fd0;display:grid;place-items:center;font-weight:700}
-    .layout{display:grid;grid-template-columns:224px minmax(0,1fr);min-height:calc(100vh - 68px)}.sidebar{background:#fff;border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column}.side-caption{padding:0 13px 12px;color:#b0b4c2;font-size:10px;letter-spacing:1.2px}.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;text-align:left;border-radius:9px;padding:11px 13px;color:#686e83;display:flex;align-items:center;gap:12px;font-size:13px}.nav button .ico{width:19px;height:19px;display:grid;place-items:center;color:#9197aa;font-size:15px}.nav button.active{background:var(--purple-weak);color:var(--purple);font-weight:650}.nav button.active .ico{color:var(--purple)}.nav .indent{padding-left:44px;font-size:12px}.side-bottom{margin-top:auto;padding:14px 12px 4px;color:#a4a9b7;font-size:11px;line-height:1.8;border-top:1px solid var(--line)}
+    .layout{display:grid;grid-template-columns:224px minmax(0,1fr);min-height:calc(100vh - 68px)}.sidebar{background:#fff;border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column}.side-caption{padding:0 13px 12px;color:#b0b4c2;font-size:10px;letter-spacing:1.2px}.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;text-align:left;border-radius:9px;padding:11px 13px;color:#686e83;display:flex;align-items:center;gap:12px;font-size:13px}.nav button .ico{width:19px;height:19px;display:grid;place-items:center;color:#9197aa;font-size:17px}.nav button.active{background:var(--purple-weak);color:var(--purple);font-weight:650}.nav button.active .ico{color:var(--purple)}.nav .indent{padding-left:44px;font-size:12px}.side-bottom{margin-top:auto;padding:14px 12px 4px;color:#a4a9b7;font-size:11px;line-height:1.8;border-top:1px solid var(--line)}
+    iconify-icon{display:inline-block;width:1em;height:1em;vertical-align:-.14em}.ico iconify-icon{width:18px;height:18px}.kpi-icon iconify-icon{width:15px;height:15px}.flow-dot iconify-icon{width:14px;height:14px}
     main{padding:26px 30px 32px;max-width:1580px;width:100%;margin:auto}.crumbs{display:flex;align-items:center;gap:8px;color:#9ba0b0;font-size:11px;margin:0 0 18px}.crumbs b{font-weight:500;color:#5e647a}.page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}.page-head h1{font-size:23px;line-height:1.2;margin:0 0 7px;letter-spacing:-.4px}.page-head p{color:var(--muted);margin:0;font-size:12px}.head-controls{display:flex;gap:9px}.btn{background:white;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:11px;color:#646b80;box-shadow:0 2px 4px #25274a05}.btn.primary{background:var(--purple);border-color:var(--purple);color:#fff;padding-inline:15px}.btn:hover{border-color:#c5b9ff;color:var(--purple)}.btn.primary:hover{color:white;background:#623be1}
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:15px}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}.kpi{padding:16px 18px;min-height:105px}.kpi-top{display:flex;justify-content:space-between;color:#83899b;font-size:11px}.kpi-icon{width:26px;height:26px;border-radius:8px;background:#f2efff;color:var(--purple);display:grid;place-items:center;font-weight:700}.kpi-value{font-size:25px;font-weight:700;letter-spacing:-.7px;margin:8px 0 2px}.kpi-foot{color:#9da2b1;font-size:10px}.up{color:#22ad80;font-weight:600;margin-left:5px}
     .flow-card{padding:16px 18px 18px;margin-bottom:15px}.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.card-head h2{font-size:13px;margin:0;font-weight:650}.card-head span{font-size:10px;color:#9da2b1}.flow{display:grid;grid-template-columns:repeat(8,1fr);gap:0;align-items:center}.flow-step{position:relative;text-align:center;padding:0 6px}.flow-step:not(:last-child):after{content:"";position:absolute;width:calc(100% - 40px);height:1px;background:#e8e5f3;left:calc(50% + 20px);top:16px}.flow-step.done:not(:last-child):after{background:#c9bbff}.flow-dot{position:relative;z-index:1;margin:0 auto 7px;width:32px;height:32px;border-radius:50%;background:#f2efff;color:#7959e5;display:grid;place-items:center;font-size:12px;font-weight:700;border:1px solid #e6e0ff}.flow-step.current .flow-dot{background:var(--purple);border-color:var(--purple);color:white;box-shadow:0 0 0 4px #f0ecff}.flow-label{font-size:10px;color:#687087;white-space:nowrap}.flow-count{font-size:9px;color:#a4a9b7;margin-top:3px}.flow-step.current .flow-label{color:var(--purple);font-weight:650}
@@ -21,22 +23,15 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><span class="logo">觅</span><span>觅知 AI 创作中台</span><small>素材生产工作台</small></div>
-    <div class="top-actions"><span class="demo-flag">流程概念演示 · 非真实后台截图</span><span class="credits">✦ 6,240 积分</span><span>帮助中心</span><span class="avatar">新</span></div>
+    <div class="brand"><span>觅知 AI 创作中台</span></div>
+    <div class="top-actions"><span>帮助中心</span><span class="avatar">U</span></div>
   </header>
   <div class="layout">
     <aside class="sidebar">
-      <div class="side-caption">WORKSPACE</div>
       <nav class="nav">
-        <button><span class="ico">⌂</span>工作台</button>
-        <button><span class="ico">⌕</span>需求管理</button>
-        <button><span class="ico">✧</span>AI 生产任务</button>
-        <button class="indent">生成队列</button>
-        <button class="indent active">人工快筛 <span style="margin-left:auto;color:#866be8">238</span></button>
-        <button><span class="ico">▧</span>素材中心</button>
-        <button><span class="ico">⇧</span>分发管理</button>
-        <button><span class="ico">⚙</span>流程配置</button>
-        <button><span class="ico">▥</span>数据看板</button>
+        <button><span class="ico"><iconify-icon icon="ant-design:home-outlined"></iconify-icon></span>工作台</button>
+        <button><span class="ico"><iconify-icon icon="ant-design:profile-outlined"></iconify-icon></span>需求管理</button>
+        <button class="active"><span class="ico"><iconify-icon icon="ant-design:appstore-outlined"></iconify-icon></span>AI 生成任务</button>
       </nav>
       <div class="side-bottom">当前空间<br /><strong style="color:#62687c;font-weight:600">设计素材 · 内容生产组</strong><br />工作流版本　v2.4.1</div>
     </aside>
@@ -44,22 +39,22 @@
       <div class="crumbs"><span>工作台</span><span>/</span><b>人工快筛</b><span>/</span><b>AI 生图审核</b></div>
       <div class="page-head">
         <div><h1>AI 生图审核工作台</h1><p>集中查看模型生成结果，完成快速筛选、打标校验与素材入库</p></div>
-        <div class="head-controls"><button class="btn">⌑ 今天　2025/06/18</button><button class="btn">导出记录 ↓</button><button class="btn primary">＋ 新建生产任务</button></div>
+        <div class="head-controls"><button class="btn"><iconify-icon icon="ant-design:calendar-outlined"></iconify-icon> 今天　2025/06/18</button><button class="btn">导出记录 <iconify-icon icon="ant-design:download-outlined"></iconify-icon></button><button class="btn primary"><iconify-icon icon="ant-design:plus-outlined"></iconify-icon> 新建生产任务</button></div>
       </div>
       <section class="kpis">
-        <article class="card kpi"><div class="kpi-top"><span>今日需求数</span><span class="kpi-icon">⌕</span></div><div class="kpi-value">1,286</div><div class="kpi-foot">较昨日 <span class="up">↑ 12.8%</span></div></article>
-        <article class="card kpi"><div class="kpi-top"><span>AI 素材产出</span><span class="kpi-icon">✧</span></div><div class="kpi-value">6,420 <small style="font-size:11px;color:#969bad;font-weight:500">张</small></div><div class="kpi-foot">模型生成与自动迭代 <span class="up">↑ 21.4%</span></div></article>
-        <article class="card kpi"><div class="kpi-top"><span>AI 初审通过率</span><span class="kpi-icon" style="background:#e9faf4;color:#20aa7c">✓</span></div><div class="kpi-value">82.6%</div><div class="kpi-foot">本周平均 <span class="up">↑ 3.2%</span></div></article>
-        <article class="card kpi"><div class="kpi-top"><span>待人工快筛</span><span class="kpi-icon" style="background:#fff5e8;color:#d39331">◷</span></div><div class="kpi-value">238 <small style="font-size:11px;color:#969bad;font-weight:500">张</small></div><div class="kpi-foot">来自 12 个批次 · 约 5 分钟/批</div></article>
+        <article class="card kpi"><div class="kpi-top"><span>今日需求数</span><span class="kpi-icon"><iconify-icon icon="ant-design:file-search-outlined"></iconify-icon></span></div><div class="kpi-value">1,286</div><div class="kpi-foot">较昨日 <span class="up">↑ 12.8%</span></div></article>
+        <article class="card kpi"><div class="kpi-top"><span>AI 素材产出</span><span class="kpi-icon"><iconify-icon icon="ant-design:picture-outlined"></iconify-icon></span></div><div class="kpi-value">6,420 <small style="font-size:11px;color:#969bad;font-weight:500">张</small></div><div class="kpi-foot">模型生成与自动迭代 <span class="up">↑ 21.4%</span></div></article>
+        <article class="card kpi"><div class="kpi-top"><span>AI 初审通过率</span><span class="kpi-icon" style="background:#e9faf4;color:#20aa7c"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></span></div><div class="kpi-value">82.6%</div><div class="kpi-foot">本周平均 <span class="up">↑ 3.2%</span></div></article>
+        <article class="card kpi"><div class="kpi-top"><span>待人工快筛</span><span class="kpi-icon" style="background:#fff5e8;color:#d39331"><iconify-icon icon="ant-design:clock-circle-outlined"></iconify-icon></span></div><div class="kpi-value">238 <small style="font-size:11px;color:#969bad;font-weight:500">张</small></div><div class="kpi-foot">来自 12 个批次 · 约 5 分钟/批</div></article>
       </section>
       <section class="card flow-card">
         <div class="card-head"><h2>内容生产工作流</h2><span>自动流转 · 人工节点可介入</span></div>
         <div class="flow">
-          <div class="flow-step done"><div class="flow-dot">✓</div><div class="flow-label">需求解析</div><div class="flow-count">1,286 条</div></div>
-          <div class="flow-step done"><div class="flow-dot">✓</div><div class="flow-label">模型调度</div><div class="flow-count">1,104 次</div></div>
-          <div class="flow-step done"><div class="flow-dot">✓</div><div class="flow-label">AI 生图</div><div class="flow-count">6,420 张</div></div>
-          <div class="flow-step done"><div class="flow-dot">✓</div><div class="flow-label">质量初审</div><div class="flow-count">82.6% 通过</div></div>
-          <div class="flow-step done"><div class="flow-dot">✓</div><div class="flow-label">AI 打标</div><div class="flow-count">5,306 组</div></div>
+          <div class="flow-step done"><div class="flow-dot"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></div><div class="flow-label">需求解析</div><div class="flow-count">1,286 条</div></div>
+          <div class="flow-step done"><div class="flow-dot"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></div><div class="flow-label">模型调度</div><div class="flow-count">1,104 次</div></div>
+          <div class="flow-step done"><div class="flow-dot"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></div><div class="flow-label">AI 生图</div><div class="flow-count">6,420 张</div></div>
+          <div class="flow-step done"><div class="flow-dot"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></div><div class="flow-label">质量初审</div><div class="flow-count">82.6% 通过</div></div>
+          <div class="flow-step done"><div class="flow-dot"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></div><div class="flow-label">AI 打标</div><div class="flow-count">5,306 组</div></div>
           <div class="flow-step current"><div class="flow-dot">6</div><div class="flow-label">人工快筛</div><div class="flow-count">238 张待审</div></div>
           <div class="flow-step"><div class="flow-dot">7</div><div class="flow-label">超清入库</div><div class="flow-count">待处理</div></div>
           <div class="flow-step"><div class="flow-dot">8</div><div class="flow-label">平台分发</div><div class="flow-count">多端调用</div></div>
@@ -67,16 +62,16 @@
       </section>
       <div class="content-grid">
         <section class="card queue">
-          <div class="card-head"><div class="queue-title"><h2>待处理素材</h2><span class="badge">第 06 批 · 50 张/页</span></div><span>批次号：AI-250618-006　⌄</span></div>
+          <div class="card-head"><div class="queue-title"><h2>待处理素材</h2><span class="badge">第 06 批 · 50 张/页</span></div><span>批次号：AI-250618-006　<iconify-icon icon="ant-design:down-outlined"></iconify-icon></span></div>
           <div class="filters"><button class="filter active">全部 <span class="count">50</span></button><button class="filter">AI 初审通过 <span class="count">42</span></button><button class="filter">需重点确认 <span class="count">8</span></button><button class="filter">已打标</button></div>
-          <div class="batch-line"><span>已选 <strong id="selectedCount">1</strong> 张　　来源需求：<strong>夏日海边主题插画素材</strong></span><div class="bulk"><button id="selectAll">全选本页</button><button id="approvePage">批量通过 ✓</button></div></div>
+          <div class="batch-line"><span>已选 <strong id="selectedCount">1</strong> 张　　来源需求：<strong>夏日海边主题插画素材</strong></span><div class="bulk"><button id="selectAll">全选本页</button><button id="approvePage">批量通过 <iconify-icon icon="ant-design:check-outlined"></iconify-icon></button></div></div>
           <div class="asset-grid" id="assetGrid">
             <article class="asset selected" data-title="夏日海边 · 清新插画风"><div class="thumb"><span class="thumb-mark">AI 初审通过</span><span class="quality">质量分 96</span></div><div class="asset-meta"><div class="asset-name">夏日海边 · 清新插画风</div><div class="asset-sub">即梦 v3.0 · 10:24:16</div><div class="asset-tags"><i>海边</i><i>夏日</i><i>插画</i></div></div></article>
             <article class="asset" data-title="海岛度假 · 扁平矢量风"><div class="thumb t2"><span class="thumb-mark">AI 初审通过</span><span class="quality">质量分 92</span></div><div class="asset-meta"><div class="asset-name">海岛度假 · 扁平矢量风</div><div class="asset-sub">GPT Image · 10:23:51</div><div class="asset-tags"><i>海岛</i><i>度假</i><i>矢量</i></div></div></article>
             <article class="asset" data-title="海边植物 · 治愈水彩风"><div class="thumb t3"><span class="thumb-mark">需重点确认</span><span class="quality">质量分 84</span></div><div class="asset-meta"><div class="asset-name">海边植物 · 治愈水彩风</div><div class="asset-sub">千问图像 · 10:23:22</div><div class="asset-tags"><i>植物</i><i>水彩</i><i>治愈</i></div></div></article>
             <article class="asset" data-title="夏日海报 · 明快装饰风"><div class="thumb t4"><span class="thumb-mark">AI 初审通过</span><span class="quality">质量分 91</span></div><div class="asset-meta"><div class="asset-name">夏日海报 · 明快装饰风</div><div class="asset-sub">Gemini · 10:22:47</div><div class="asset-tags"><i>海报</i><i>明快</i><i>装饰</i></div></div></article>
           </div>
-          <div class="review-footer"><span>展示 1–4 项，共 50 张　·　当前采用 50 张/页快速预审</span><div class="pager"><button>1</button><button>2</button><button>3</button><button>···</button><button>›</button></div></div>
+          <div class="review-footer"><span>展示 1–4 项，共 50 张　·　当前采用 50 张/页快速预审</span><div class="pager"><button>1</button><button>2</button><button>3</button><button>···</button><button aria-label="下一页"><iconify-icon icon="ant-design:right-outlined"></iconify-icon></button></div></div>
         </section>
         <aside class="card detail">
           <div class="detail-head"><h2>素材详情与审核</h2><span class="task-id">素材 ID：MZ-AI-0618-0241</span></div>
@@ -85,11 +80,10 @@
           <div class="prompt">需求摘要：清新治愈风格的夏日海边插画，适用于社交媒体配图；画面主体明确，预留标题排版空间。</div>
           <div class="data-grid"><div class="data-cell"><span>生成模型</span><b>即梦 v3.0</b></div><div class="data-cell"><span>质量评估</span><b style="color:#19a879">96 / 100 · 通过</b></div><div class="data-cell"><span>尺寸规格</span><b>1024 × 1024 px</b></div><div class="data-cell"><span>版权检测</span><b style="color:#19a879">未发现风险</b></div></div>
           <div class="tagline"><b>AI 建议标签</b><span>夏日 · 海边 · 插画 · 清新 · 社交媒体 · 蓝色系</span></div>
-          <div class="detail-actions"><button class="reject" id="reject">退回重生成</button><button class="pass" id="pass">通过并入库 ✓</button></div>
+          <div class="detail-actions"><button class="reject" id="reject">退回重生成</button><button class="pass" id="pass">通过并入库 <iconify-icon icon="ant-design:check-outlined"></iconify-icon></button></div>
           <div class="detail-note">通过后将自动执行超清放大、素材归档与标签写入，并按业务配置同步至下游平台。</div>
         </aside>
       </div>
-      <div class="footnote"><strong>界面说明：</strong>依据项目流程描述制作的概念演示，用于展示后台产品方案；数据、图片和操作为示意内容。</div>
     </main>
   </div>
 </div>

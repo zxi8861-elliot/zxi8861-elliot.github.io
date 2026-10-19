@@ -112,6 +112,16 @@ function ProjectTimeline({ onOpen }: { onOpen: (id: string) => void }) {
 }
 
 function ProjectCase({ project, onBack }: { project: Project; onBack: () => void }) {
+  const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string; label?: string } | null>(null);
+  useEffect(() => {
+    if (!lightboxImage) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setLightboxImage(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxImage]);
+
   return (
     <section className="project-case-page">
       <div className="panel-toolbar project-case-toolbar">
@@ -153,7 +163,10 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
           <div className={`project-case-gallery${project.id === "meeting-workflow" ? " project-case-gallery--mixed" : portraitGalleryIds.has(project.id) ? " project-case-gallery--portrait" : ""}`}>
             {project.gallery?.length ? project.gallery.map((image, index) => (
               <figure className={project.id === "meeting-workflow" ? `project-case-gallery-item--${index < 2 ? "landscape" : "portrait"}` : undefined} key={image.src}>
-                <img src={image.src} alt={image.alt} />
+                <button className="project-case-image-open" type="button" onClick={() => setLightboxImage(image)} aria-label={`放大查看${image.label ?? image.alt}`}>
+                  <img src={image.src} alt={image.alt} />
+                  <span>点击查看大图</span>
+                </button>
                 <figcaption><span>{image.label ?? `${String(index + 1).padStart(2, "0")} / PROJECT VIEW`}</span><span>{String(index + 1).padStart(2, "0")}</span></figcaption>
               </figure>
             )) : <div className="project-case-art-fallback"><ProjectArtwork project={project} detail /></div>}
@@ -161,6 +174,13 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
           {project.url ? <div className="project-case-visit-dock"><a className="project-visit-button cursor-target" href={project.url} target="_blank" rel="noreferrer">去访问 <span aria-hidden="true">↗</span></a></div> : <div className="project-case-link-note">项目链接暂未公开</div>}
         </aside>
       </div>
+      {lightboxImage && <div className="project-image-lightbox" role="dialog" aria-modal="true" aria-label={lightboxImage.label ?? "项目图片大图"} onClick={() => setLightboxImage(null)}>
+        <button className="project-image-lightbox-close" type="button" aria-label="关闭大图" onClick={() => setLightboxImage(null)}>×</button>
+        <figure onClick={(event) => event.stopPropagation()}>
+          <img src={lightboxImage.src} alt={lightboxImage.alt} />
+          {lightboxImage.label && <figcaption>{lightboxImage.label}</figcaption>}
+        </figure>
+      </div>}
     </section>
   );
 }

@@ -1750,7 +1750,7 @@ h1 {
   .project-case-cards { grid-template-columns: 1fr; }
   .project-case-visuals { overflow: visible; border-top: 1px solid var(--border); }
   .project-case-gallery { overflow: visible; padding: 14px; }
-  .project-case-gallery--portrait { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .project-case-gallery--portrait { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .project-case-visit-dock { position: fixed; z-index: 20; right: 0; bottom: 0; left: 0; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: rgba(255,255,255,.96); backdrop-filter: blur(12px); }
   .project-case-link-note { padding-bottom: 90px; }
   .lucky-snake-panel { min-height: 680px; overflow: visible; }

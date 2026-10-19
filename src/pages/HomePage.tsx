@@ -31,19 +31,19 @@ function renderTitleText(text: string) {
 
 export const projects: Project[] = [
   {
-    id: "muldo", title: "MULDO", short: "多人协作 Agent × 在线协同 × 项目管理",
-    category: "Lab", source: "personal", period: "2026", status: "进行中", role: "个人产品探索 / Agent 协作流程 / 项目管理体验",
+    id: "muldo", title: "MulDo / 协作与项目管理 Agent", short: "多角色项目管理 × Agent Runtime × Function Calling × 多人协同 Agent",
+    category: "Lab", source: "personal", period: "2026", status: "搭建中", role: "个人产品探索 / Agent 协作流程 / 项目管理体验",
     result: "围绕多人、多 Agent 与项目协同持续验证产品形态",
-    tags: ["Multi-Agent", "在线协同", "项目管理"],
+    tags: ["多角色项目管理", "Agent Runtime", "Function Calling", "多人协同 Agent"],
     sections: [
-      { label: "项目概览", text: "MULDO 是一个探索多人协作 Agent、在线协同与项目管理如何结合的个人项目。" },
-      { label: "探索问题", text: "当 Agent 参与多人项目时，任务、上下文、进度与产出如何在团队成员之间保持可见并持续协同，是 MULDO 正在探索的核心问题。" },
+      { label: "项目概览", text: "MulDo 是一个探索多人协作 Agent、在线协同与项目管理如何结合的个人项目。" },
+      { label: "探索问题", text: "当 Agent 参与多人项目时，任务、上下文、进度与产出如何在团队成员之间保持可见并持续协同，是 MulDo 正在探索的核心问题。" },
       { label: "产品方向", text: "围绕“多人 × 多 Agent × 项目”组织协作：让团队成员在线协同推进项目，并在同一工作上下文中协调 Agent 任务与项目进度。" },
       { label: "当前阶段", text: "项目仍在推进中。当前作品集仅呈现已明确的产品方向；具体功能、交互方案、技术实现与验证结果将在完成实际设计和开发后补充。" },
     ],
   },
   {
-    id: "ai-ppt", title: "觅知网 AI PPT｜生成、编辑与商业化闭环", short: "项目负责人 / AI 产品经理｜把生成能力接入觅知网 PPT 业务",
+    id: "ai-ppt", title: "觅知网 AI PPT", short: "项目负责人 / AI 产品经理｜把生成能力接入觅知网 PPT 业务",
     category: "Work", source: "company", period: "2024.03–2024.12", status: "线上运行", role: "项目负责人 / AI 产品经理",
     result: "约 1.5 个月完成功能上线；累计实现千万级营收；推动注册充值率翻倍提升",
     resultPoints: [
@@ -76,7 +76,7 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "ai-design", title: "觅知网 AI 素材创作与分发｜中台与前台产品", short: "从 AI 素材创作分发中台，到 Web、APP 与编辑器端产品",
+    id: "ai-design", title: "觅知网 AI 素材生成中台与前台", short: "从 AI 素材创作分发中台，到 Web、APP 与编辑器端产品",
     category: "Work", source: "company", period: "2025", status: "线上运行", role: "产品经理 / 项目负责人",
     result: "中台累计节约外部设计师相关存储及带宽成本约 200 万元；前台产品累计实现百万级营收",
     resultPoints: [
@@ -113,7 +113,7 @@ export const projects: Project[] = [
     id: "ai-speed", title: "AI Speed", short: "面向海外与国内用户的 AI 视频创作功能",
     category: "Work", source: "company", period: "2026", status: "工作项目", role: "复合型产品中的 AI 视频生成模块负责人",
     result: "负责多个 AI 视频生成场景的功能规划与落地", url: "https://apps.apple.com/us/app/ai-speed-%E5%8A%A0%E9%80%9F%E5%88%9B%E4%BD%9C-%E7%88%86%E5%8F%91%E7%81%B5%E6%84%9F/id6744090915",
-    tags: ["AI 视频生成", "AI 带货", "短视频创作"],
+    tags: ["AI生成视频", "AI带货视频", "说唱带货视频", "出海"],
     gallery: [
       { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/73/16/1a/73161af1-a194-9acf-52ce-0195a726f98a/_U9996_U9875.png/1242x2688bb.jpg", alt: "AI Speed 应用商店产品介绍截图", label: "01 / AI Speed 产品入口" },
       { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/f8/28/50/f8285003-840e-8339-d140-b0b98c7f9dd2/2688-3@1x.png/1242x2688bb.jpg", alt: "AI Speed 视频创作功能截图", label: "02 / AI 视频创作" },
@@ -133,19 +133,19 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "avora", title: "声映 Arora", short: "从零到一打造 AI 写歌与音乐 MV 创作产品",
+    id: "avora", title: "声映 Avora", short: "从零到一打造 AI 写歌与音乐 MV 创作产品",
     category: "Work", source: "company", period: "2026", status: "工作项目", role: "0 到 1 产品负责人 / 整体功能规划 / AI 写歌与音乐 MV",
     result: "负责产品整体功能与核心创作闭环；视频生成 RTF 从 42 降至 8", url: "https://apps.apple.com/cn/app/%E5%A3%B0%E6%98%A0-ai%E5%86%99%E6%AD%8C-ai%E9%9F%B3%E4%B9%90mv%E5%88%9B%E4%BD%9C-ai%E4%BD%9C%E6%9B%B2-%E5%8E%9F%E5%88%9B%E7%BC%96%E6%9B%B2%E4%BC%B4%E5%A5%8F/id6780820901",
-    tags: ["0 到 1", "AI 写歌", "AI 音乐 MV"],
+    tags: ["AI写歌", "AI音乐MV"],
     gallery: [
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/d7/7f/84/d77f84aa-349e-bbb3-0c2b-f9a75c5f8bf4/1242_2688_U2014_U201401.png/1242x2688bb.jpg", alt: "声映 Arora 应用商店产品介绍截图", label: "01 / 声映 Arora 产品入口" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/82/aa/91/82aa9119-be32-7407-731c-86d5969c8c60/1242_2688_U2014_U201402.png/1242x2688bb.jpg", alt: "声映 Arora AI 音乐创作截图", label: "02 / AI 音乐创作" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/3f/ec/8a/3fec8a50-d176-8d9a-f217-547879f8a6cf/1242_2688_U2014_U201403.png/1242x2688bb.jpg", alt: "声映 Arora AI 写歌功能截图", label: "03 / AI 写歌" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/32/a2/87/32a28738-a0fe-7ba1-15b3-f1f672a07c36/1242_2688_U2014_U201404.png/1242x2688bb.jpg", alt: "声映 Arora 音乐 MV 生成功能截图", label: "04 / AI 音乐 MV" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/13/a8/59/13a85963-2125-35d9-3442-9a94680be77b/1242_2688_U2014_U201405.png/1242x2688bb.jpg", alt: "声映 Arora 创作结果截图", label: "05 / 创作与结果预览" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/d7/7f/84/d77f84aa-349e-bbb3-0c2b-f9a75c5f8bf4/1242_2688_U2014_U201401.png/1242x2688bb.jpg", alt: "声映 Avora 应用商店产品介绍截图", label: "01 / 声映 Avora 产品入口" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/82/aa/91/82aa9119-be32-7407-731c-86d5969c8c60/1242_2688_U2014_U201402.png/1242x2688bb.jpg", alt: "声映 Avora AI 音乐创作截图", label: "02 / AI 音乐创作" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/3f/ec/8a/3fec8a50-d176-8d9a-f217-547879f8a6cf/1242_2688_U2014_U201403.png/1242x2688bb.jpg", alt: "声映 Avora AI 写歌功能截图", label: "03 / AI 写歌" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/32/a2/87/32a28738-a0fe-7ba1-15b3-f1f672a07c36/1242_2688_U2014_U201404.png/1242x2688bb.jpg", alt: "声映 Avora 音乐 MV 生成功能截图", label: "04 / AI 音乐 MV" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/13/a8/59/13a85963-2125-35d9-3442-9a94680be77b/1242_2688_U2014_U201405.png/1242x2688bb.jpg", alt: "声映 Avora 创作结果截图", label: "05 / 创作与结果预览" },
     ],
     sections: [
-      { label: "项目概览", text: "声映 Arora 是一款从零到一建设的 AI 音乐创作产品，覆盖 AI 写歌与 AI 音乐 MV 生成。与 AI Speed 的单模块职责不同，我在该项目负责整体产品功能规划与核心体验。" },
+      { label: "项目概览", text: "声映 Avora 是一款从零到一建设的 AI 音乐创作产品，覆盖 AI 写歌与 AI 音乐 MV 生成。与 AI Speed 的单模块职责不同，我在该项目负责整体产品功能规划与核心体验。" },
       { label: "个人职责", text: "作为产品负责人，负责产品整体功能定义、创作流程与体验方案，推动 AI 写歌和 AI 生成视频 MV 两项核心能力从需求梳理到产品交付，并协同算法、设计和研发团队落地。" },
       { label: "AI 写歌", text: "围绕用户创作意图设计歌曲生成入口与流程，让用户能从主题或想法进入歌曲创作，并获得可试听、可继续使用的音乐结果。" },
       { label: "AI 音乐 MV", text: "规划从形象、歌曲到视频生成结果的创作链路，降低用户组织音乐视频素材和理解生成步骤的成本；协同算法优化视频生成工作流，项目记录的 RTF 从 42 降至 8，具体统计口径待补充。" },
@@ -154,11 +154,11 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "meeting-workflow", title: "杭州百聆 / 倾耳 AI 会议产品", short: "负责 SQL 搭建、后台素材供给与工作台搭建",
+    id: "meeting-workflow", title: "倾耳 / AI 会议记录产品", short: "负责 SQL 搭建、后台素材供给与工作台搭建",
     category: "Work", source: "company", period: "2026", status: "工作项目", role: "SQL 搭建 / 后台素材供给 / 工作台搭建",
     result: "搭建后台工作台，支撑会议内容素材的生产与供给",
     url: "https://apps.apple.com/cn/app/%E5%80%BE%E8%80%B3-ai%E4%BC%9A%E8%AE%AE%E7%BA%AA%E8%A6%81%E7%A5%9E%E5%99%A8-%E4%BC%9A%E8%AE%AE%E8%AE%B0%E5%BD%95%E5%8A%A9%E6%89%8B-%E5%BD%95%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97%E6%80%BB%E7%BB%93/id6759899164",
-    tags: ["AI 会议", "后台工作台", "素材供给"],
+    tags: ["SQL工作流", "管理后台搭建", "会议转PPT", "信息图", "H5"],
     gallery: [
       { src: "/images/portfolio/meeting-workflow-template-library-redacted.png", alt: "PPT 生产模板库后台截图，已遮挡账户名和模板 ID", label: "01 / PPT 生产模板库" },
       { src: "/images/portfolio/meeting-workflow-explore-management-redacted.png", alt: "探索页资源管理后台截图，已遮挡账户名、资源 ID 和入库时间", label: "02 / 探索页资源管理" },
@@ -179,7 +179,7 @@ export const projects: Project[] = [
     id: "ai-ppt-lab", title: "课映 / AI互动教学课件", short: "面向教辅场景，把课件从“生成页面”推进到可互动的教学体验",
     category: "Lab", source: "personal", period: "2026", status: "持续迭代", role: "AI Native 产品主导 / 教学生成策略 / Agent 工作流设计",
     result: "已形成大纲到多类型课件的生成链路，并实现互动课件与可恢复 Agent 工作台",
-    url: "https://keying.vercel.app", tags: ["AI 课件", "教辅行业", "PBL", "互动生成", "Agent Runtime"],
+    url: "https://keying.vercel.app", tags: ["教学行业", "AI课件", "HTML转PPT"],
     gallery: [
       { src: "/images/portfolio/ai-ppt-lab/01-course-builder-entry-redacted.png", alt: "课映 AI 课件生成首页：课程需求输入与课件入口，账户邮箱已隐藏", label: "01 / 课程需求输入与生成入口" },
       { src: "/images/portfolio/ai-ppt-lab/02-requirement-analysis.png", alt: "课映 AI 正在分析课程需求的生成准备界面", label: "02 / Agent 分析课程需求" },
@@ -222,7 +222,7 @@ export const projects: Project[] = [
     id: "heara", title: "Heara / 地球声音地图", short: "从地图上的一个地点出发，听见真实世界正在发生的声音。",
     category: "Lab", source: "personal", period: "2026", status: "已完成", role: "AI Native 产品主导 / 体验架构 / AI 协作交付",
     result: "21 条来源可核验录音 / 7 大洲 / 中英日完整体验",
-    tags: ["地点驱动探索", "真实现场录音", "地图 × 音频交互", "AI 协作构建"],
+    tags: ["地点驱动探索", "真实现场录音", "地图 × 音频交互", "AI 协作构建", "Three.js", "ASMR"],
     url: "https://heara-earth.vercel.app/",
     gallery: [
       { src: "/assets/heara/screens/heara-map-16x9.jpg", alt: "Heara 地球地图与卡伦堡海浪地点播放界面", label: "01 / 地球探索与地点聆听" },
@@ -242,7 +242,7 @@ export const projects: Project[] = [
     id: "baoda", title: "暴打老板", short: "把工作里的烦闷，变成桌面上一记像素反馈。",
     category: "Lab", source: "personal", period: "2026", status: "可体验", role: "独立产品定义 / 交互设计 / AI 协作交付",
     result: "macOS 可下载体验 / 键盘与鼠标交互 / 本地优先",
-    tags: ["像素桌宠", "macOS", "情绪价值"], cover: "/assets/baoda-office.webp",
+    tags: ["像素桌宠", "客户端", "多平台客户端"], cover: "/assets/baoda-office.webp",
     url: "https://baoda-boss-website.vercel.app/",
     gallery: [
       { src: "/assets/portfolio/baoda/01-home.jpg", alt: "暴打老板像素桌宠产品介绍首页", label: "01 / 产品定位与桌面陪伴" },
@@ -262,7 +262,7 @@ export const projects: Project[] = [
     id: "lingua-float", title: "LinguaFloat / 本地实时字幕", short: "把 Mac 系统音频转成可阅读、可回看的双语悬浮字幕",
     category: "Lab", source: "personal", period: "2026", status: "macOS 本机版本", role: "个人产品定义 / 交互与流程改造 / AI 协作开发",
     result: "实现本地识别、翻译与悬浮字幕链路；端到端延迟和离线稳定性待专项实测",
-    tags: ["本地 AI", "实时字幕", "Whisper", "macOS"],
+    tags: ["实时字幕", "本地模型", "客户端"],
     sections: [
       { label: "S / 背景与问题", text: "看外语视频、参加跨语言会议时，用户往往要在原声、翻译工具和字幕窗口之间来回切换。我的目标是让系统正在播放的声音直接变成屏幕上的原文与中文译文，同时尽量不把音频和字幕内容送到云端。" },
       { label: "T / 我的职责", text: "我负责产品目标、使用流程和交互方案，并与 AI coding agent 协作完成 macOS 应用改造、安装与运行验证。需要说明的是：LinguaFloat 基于 KazKozDev/live-translation 的 MIT 开源项目二次开发，不是从零编写；上游许可与来源声明保留在项目仓库中。" },

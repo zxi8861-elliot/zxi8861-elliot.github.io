@@ -62,7 +62,7 @@ function ProjectArtwork({ project, detail = false }: { project: Project; detail?
   return (
     <div className={`project-artwork project-artwork--${project.id}${detail ? " is-detail" : ""}`} aria-label={`${project.title}项目视觉封面`}>
       <span className="project-artwork-kicker">{project.source === "company" ? "COMPANY PROJECT" : "PERSONAL PROJECT"}</span>
-      <strong>{project.id === "avora" ? "ARORA" : project.id === "meeting-workflow" ? "MEETING → MAKING" : project.id === "muldo" ? "MULDO" : project.id === "lingua-float" ? "LINGUA / FLOAT" : "PPT / REIMAGINED"}</strong>
+      <strong>{project.id === "avora" ? "AVORA" : project.id === "meeting-workflow" ? "MEETING → MAKING" : project.id === "muldo" ? "MulDo" : project.id === "lingua-float" ? "LINGUA / FLOAT" : "PPT / REIMAGINED"}</strong>
       <span className="project-artwork-caption">{project.id === "avora" ? "IMAGE · MUSIC · STORY" : project.id === "meeting-workflow" ? "AGENT SKILLS · CONTENT WORKFLOW" : project.id === "muldo" ? "PEOPLE · AGENTS · PROJECTS" : project.id === "lingua-float" ? "LOCAL AUDIO · LIVE CAPTIONS · TRANSLATION" : "A NEW GENERATION EXPERIENCE"}</span>
       <i aria-hidden="true" />
     </div>
@@ -96,11 +96,11 @@ function ProjectTimeline({ onOpen }: { onOpen: (id: string) => void }) {
                 >
                   <span className="project-timeline-card-art">
                     <ProjectArtwork project={project} />
-                    <span className="project-source-badge">{project.source === "company" ? "公司项目" : "个人项目"}</span>
+                    <span className="project-source-badge">{project.source === "company" ? "公司项目" : project.status === "搭建中" ? "个人项目 · 搭建中" : "个人项目"}</span>
                   </span>
                   <span className="project-timeline-card-copy">
                     <span className="project-timeline-card-heading"><strong>{titleText(project)}</strong><time>{project.period}</time></span>
-                    <span className="project-timeline-tags">{project.tags.slice(0, 2).map((tag) => <em key={tag}>{tag}</em>)}</span>
+                    <span className="project-timeline-tags">{project.tags.map((tag) => <em key={tag}>{tag}</em>)}</span>
                   </span>
                 </button>
               );

@@ -160,9 +160,30 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
                     <strong>{step}</strong>{stepIndex < section.flow!.length - 1 && <span aria-hidden="true">→</span>}
                   </div>)}
                 </div>}
+                {section.rows && <div className="project-case-table-scroll" role="region" aria-label="教学方式与课件表达" tabIndex={0}>
+                  <table className="project-case-method-table">
+                    <thead><tr><th>教学方式</th><th>学习目标</th><th>课件表达</th></tr></thead>
+                    <tbody>{section.rows.map((row) => <tr key={row.method}><th scope="row">{row.method}</th><td>{row.goal}</td><td>{row.presentation}</td></tr>)}</tbody>
+                  </table>
+                </div>}
+                {section.process && <ol className="project-case-process">
+                  {section.process.map((step, stepIndex) => <li key={step.title}>
+                    <span className="project-case-process-index">{String(stepIndex + 1).padStart(2, "0")}</span>
+                    <div><strong>{step.title}</strong><p>{step.detail}</p></div>
+                  </li>)}
+                </ol>}
+                {section.mappings && <div className="project-case-mappings">
+                  {section.mappings.map((mapping) => <article className="project-case-mapping" key={mapping.title}>
+                    <h3>{mapping.title}</h3><div><span>生成输入</span><p>{mapping.input}</p></div><div><span>页面呈现</span><p>{mapping.output}</p></div>
+                  </article>)}
+                </div>}
                 {section.cards && <div className="project-case-cards">
                   {section.cards.map((card) => <div className="project-case-card" key={card.title}>
-                    <strong>{card.title}</strong><p>{card.text}</p>
+                    <strong>{card.title}</strong>
+                    {card.problem && <div className="project-case-challenge-part"><span>问题</span><p>{card.problem}</p></div>}
+                    {card.solution && <div className="project-case-challenge-part"><span>处理方式</span><p>{card.solution}</p></div>}
+                    {card.check && <div className="project-case-challenge-part"><span>检查点</span><p>{card.check}</p></div>}
+                    {card.text && <p>{card.text}</p>}
                   </div>)}
                 </div>}
               </section>

@@ -7,7 +7,7 @@ import { Contact, projects, type Project } from "./HomePage";
 type Mode = "Projects" | "Notes" | "Contact";
 const modes: Mode[] = ["Projects", "Notes", "Contact"];
 const labels: Record<Mode, string> = { Projects: "项目实践", Notes: "知识沉淀", Contact: "联系我" };
-const timelineOrder = ["muldo", "ai-ppt-lab", "ai-ppt", "ai-design", "meeting-workflow", "asb", "avora", "heara", "baoda", "lingua-float"];
+const timelineOrder = ["muldo", "ai-ppt-lab", "ai-ppt", "ai-design", "meeting-workflow", "ai-speed", "avora", "heara", "baoda", "lingua-float"];
 const timelineProjects = timelineOrder.map((id) => projects.find((project) => project.id === id)).filter((project): project is Project => Boolean(project));
 const timelineRows = Math.ceil(timelineProjects.length / 4);
 
@@ -51,7 +51,7 @@ function ProjectArtwork({ project, detail = false }: { project: Project; detail?
   return (
     <div className={`project-artwork project-artwork--${project.id}${detail ? " is-detail" : ""}`} aria-label={`${project.title}项目视觉封面`}>
       <span className="project-artwork-kicker">{project.source === "company" ? "COMPANY PROJECT" : "PERSONAL PROJECT"}</span>
-      <strong>{project.id === "avora" ? "AVORA" : project.id === "meeting-workflow" ? "MEETING → MAKING" : project.id === "muldo" ? "MULDO" : project.id === "lingua-float" ? "LINGUA / FLOAT" : "PPT / REIMAGINED"}</strong>
+      <strong>{project.id === "avora" ? "ARORA" : project.id === "meeting-workflow" ? "MEETING → MAKING" : project.id === "muldo" ? "MULDO" : project.id === "lingua-float" ? "LINGUA / FLOAT" : "PPT / REIMAGINED"}</strong>
       <span className="project-artwork-caption">{project.id === "avora" ? "IMAGE · MUSIC · STORY" : project.id === "meeting-workflow" ? "AGENT SKILLS · CONTENT WORKFLOW" : project.id === "muldo" ? "PEOPLE · AGENTS · PROJECTS" : project.id === "lingua-float" ? "LOCAL AUDIO · LIVE CAPTIONS · TRANSLATION" : "A NEW GENERATION EXPERIENCE"}</span>
       <i aria-hidden="true" />
     </div>

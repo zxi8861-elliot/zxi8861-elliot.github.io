@@ -87,7 +87,7 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "asb", title: "AI Speed / ASB", short: "面向海外与国内用户的 AI 视频创作功能",
+    id: "ai-speed", title: "AI Speed", short: "面向海外与国内用户的 AI 视频创作功能",
     category: "Work", source: "company", period: "2026", status: "工作项目", role: "复合型产品中的 AI 视频生成模块负责人",
     result: "负责多个 AI 视频生成场景的功能规划与落地", url: "https://apps.apple.com/us/app/ai-speed-%E5%8A%A0%E9%80%9F%E5%88%9B%E4%BD%9C-%E7%88%86%E5%8F%91%E7%81%B5%E6%84%9F/id6744090915",
     tags: ["AI 视频生成", "AI 带货", "短视频创作"],
@@ -99,7 +99,7 @@ export const projects: Project[] = [
       { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c4/09/26/c4092606-dae5-c22f-eb89-e23a1854e038/2688-6@1x.png/1242x2688bb.jpg", alt: "AI Speed 应用界面截图", label: "05 / 应用体验" },
     ],
     sections: [
-      { label: "项目概览", text: "AI Speed（ASB）是面向海外与国内市场的复合型 AI 创作产品。本案例聚焦我负责的 AI 视频生成模块，不代表我负责整款产品。" },
+      { label: "项目概览", text: "AI Speed 是面向海外与国内市场的复合型 AI 创作产品。本案例聚焦我负责的 AI 视频生成模块，不代表我负责整款产品。" },
       { label: "个人职责", text: "负责 AI 视频生成相关应用功能的需求梳理、产品方案与功能落地，围绕不同用户创作场景设计产品流程，并协同设计、算法和研发团队推进交付。" },
       { label: "负责的功能场景", cards: [
         { title: "AI 带货与短剧带货", text: "围绕商品推广内容，规划 AI 口播带货与短剧情境化带货视频功能，支持用户将商品信息转成可发布的视频内容。" },
@@ -110,19 +110,19 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "avora", title: "声映 Aurora", short: "从零到一打造 AI 写歌与音乐 MV 创作产品",
+    id: "avora", title: "声映 Arora", short: "从零到一打造 AI 写歌与音乐 MV 创作产品",
     category: "Work", source: "company", period: "2026", status: "工作项目", role: "0 到 1 产品负责人 / 整体功能规划 / AI 写歌与音乐 MV",
     result: "负责产品整体功能与核心创作闭环；视频生成 RTF 从 42 降至 8", url: "https://apps.apple.com/cn/app/%E5%A3%B0%E6%98%A0-ai%E5%86%99%E6%AD%8C-ai%E9%9F%B3%E4%B9%90mv%E5%88%9B%E4%BD%9C-ai%E4%BD%9C%E6%9B%B2-%E5%8E%9F%E5%88%9B%E7%BC%96%E6%9B%B2%E4%BC%B4%E5%A5%8F/id6780820901",
     tags: ["0 到 1", "AI 写歌", "AI 音乐 MV"],
     gallery: [
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/d7/7f/84/d77f84aa-349e-bbb3-0c2b-f9a75c5f8bf4/1242_2688_U2014_U201401.png/1242x2688bb.jpg", alt: "声映 Aurora 应用商店产品介绍截图", label: "01 / 声映 Aurora 产品入口" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/82/aa/91/82aa9119-be32-7407-731c-86d5969c8c60/1242_2688_U2014_U201402.png/1242x2688bb.jpg", alt: "声映 Aurora AI 音乐创作截图", label: "02 / AI 音乐创作" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/3f/ec/8a/3fec8a50-d176-8d9a-f217-547879f8a6cf/1242_2688_U2014_U201403.png/1242x2688bb.jpg", alt: "声映 Aurora AI 写歌功能截图", label: "03 / AI 写歌" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/32/a2/87/32a28738-a0fe-7ba1-15b3-f1f672a07c36/1242_2688_U2014_U201404.png/1242x2688bb.jpg", alt: "声映 Aurora 音乐 MV 生成功能截图", label: "04 / AI 音乐 MV" },
-      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/13/a8/59/13a85963-2125-35d9-3442-9a94680be77b/1242_2688_U2014_U201405.png/1242x2688bb.jpg", alt: "声映 Aurora 创作结果截图", label: "05 / 创作与结果预览" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/d7/7f/84/d77f84aa-349e-bbb3-0c2b-f9a75c5f8bf4/1242_2688_U2014_U201401.png/1242x2688bb.jpg", alt: "声映 Arora 应用商店产品介绍截图", label: "01 / 声映 Arora 产品入口" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/82/aa/91/82aa9119-be32-7407-731c-86d5969c8c60/1242_2688_U2014_U201402.png/1242x2688bb.jpg", alt: "声映 Arora AI 音乐创作截图", label: "02 / AI 音乐创作" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/3f/ec/8a/3fec8a50-d176-8d9a-f217-547879f8a6cf/1242_2688_U2014_U201403.png/1242x2688bb.jpg", alt: "声映 Arora AI 写歌功能截图", label: "03 / AI 写歌" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/32/a2/87/32a28738-a0fe-7ba1-15b3-f1f672a07c36/1242_2688_U2014_U201404.png/1242x2688bb.jpg", alt: "声映 Arora 音乐 MV 生成功能截图", label: "04 / AI 音乐 MV" },
+      { src: "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/13/a8/59/13a85963-2125-35d9-3442-9a94680be77b/1242_2688_U2014_U201405.png/1242x2688bb.jpg", alt: "声映 Arora 创作结果截图", label: "05 / 创作与结果预览" },
     ],
     sections: [
-      { label: "项目概览", text: "声映 Aurora 是一款从零到一建设的 AI 音乐创作产品，覆盖 AI 写歌与 AI 音乐 MV 生成。与 ASB 的单模块职责不同，我在该项目负责整体产品功能规划与核心体验。" },
+      { label: "项目概览", text: "声映 Arora 是一款从零到一建设的 AI 音乐创作产品，覆盖 AI 写歌与 AI 音乐 MV 生成。与 AI Speed 的单模块职责不同，我在该项目负责整体产品功能规划与核心体验。" },
       { label: "个人职责", text: "作为产品负责人，负责产品整体功能定义、创作流程与体验方案，推动 AI 写歌和 AI 生成视频 MV 两项核心能力从需求梳理到产品交付，并协同算法、设计和研发团队落地。" },
       { label: "AI 写歌", text: "围绕用户创作意图设计歌曲生成入口与流程，让用户能从主题或想法进入歌曲创作，并获得可试听、可继续使用的音乐结果。" },
       { label: "AI 音乐 MV", text: "规划从形象、歌曲到视频生成结果的创作链路，降低用户组织音乐视频素材和理解生成步骤的成本；协同算法优化视频生成工作流，项目记录的 RTF 从 42 降至 8，具体统计口径待补充。" },

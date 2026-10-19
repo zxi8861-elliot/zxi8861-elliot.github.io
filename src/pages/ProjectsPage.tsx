@@ -141,7 +141,7 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
           </div>
         </article>
         <aside className="project-case-visuals">
-          <div className="project-case-gallery">
+          <div className={`project-case-gallery${project.id === "ai-speed" || project.id === "avora" ? " project-case-gallery--portrait" : ""}`}>
             {project.gallery?.length ? project.gallery.map((image, index) => (
               <figure key={image.src}>
                 <img src={image.src} alt={image.alt} />

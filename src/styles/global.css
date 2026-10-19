@@ -1644,9 +1644,11 @@ h1 {
 .project-case-card p { margin: 7px 0 0; color: var(--subtle); font-size: 14px; line-height: 1.7; }
 .project-case-visuals { position: relative; display: flex; min-width: 0; min-height: 0; flex-direction: column; overflow: hidden; background: #fff; }
 .project-case-gallery { display: grid; flex: 1 1 auto; align-content: start; gap: 18px; min-height: 0; overflow: auto; padding: 20px; background: #fff; }
+.project-case-gallery--portrait { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 14px; }
 .project-case-gallery figure { min-width: 0; margin: 0; }
 .project-case-gallery img { display: block; width: 100%; height: auto; aspect-ratio: auto; border: 1px solid var(--border-soft); border-radius: 4px; background: #fff; object-fit: contain; }
 .project-case-gallery figcaption { display: flex; justify-content: space-between; gap: 12px; padding: 8px 2px 0; color: var(--subtle); font: 12px "Departure Mono", monospace; }
+.project-case-gallery--portrait figcaption { gap: 4px; font-size: 9px; }
 .project-case-art-fallback { min-height: 100%; }
 .project-case-link-note { flex: 0 0 auto; padding: 18px; border-top: 1px solid var(--border-soft); color: var(--subtle); font-size: 11px; }
 .project-case-visit-dock { flex: 0 0 auto; padding: 12px 20px; border-top: 1px solid var(--border); background: var(--muted); box-shadow: 0 -8px 20px rgba(0,0,0,.06); }
@@ -1748,6 +1750,7 @@ h1 {
   .project-case-cards { grid-template-columns: 1fr; }
   .project-case-visuals { overflow: visible; border-top: 1px solid var(--border); }
   .project-case-gallery { overflow: visible; padding: 14px; }
+  .project-case-gallery--portrait { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .project-case-visit-dock { position: fixed; z-index: 20; right: 0; bottom: 0; left: 0; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: rgba(255,255,255,.96); backdrop-filter: blur(12px); }
   .project-case-link-note { padding-bottom: 90px; }
   .lucky-snake-panel { min-height: 680px; overflow: visible; }

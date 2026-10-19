@@ -10,6 +10,7 @@ const labels: Record<Mode, string> = { Projects: "项目实践", Notes: "知识�
 const timelineOrder = ["muldo", "ai-ppt-lab", "ai-ppt", "ai-design", "meeting-workflow", "ai-speed", "avora", "heara", "baoda", "lingua-float"];
 const timelineProjects = timelineOrder.map((id) => projects.find((project) => project.id === id)).filter((project): project is Project => Boolean(project));
 const timelineRows = Math.ceil(timelineProjects.length / 4);
+const portraitGalleryIds = new Set(["ai-speed", "avora", "meeting-workflow"]);
 
 function maxNotesDirectoryWidth() {
   const rail = window.innerWidth <= 1180 ? 90 : 110;
@@ -46,7 +47,7 @@ function projectImage(project: Project) {
 }
 
 function ProjectArtwork({ project, detail = false }: { project: Project; detail?: boolean }) {
-  if (!detail && (project.id === "ai-speed" || project.id === "avora") && project.gallery?.length) {
+  if (!detail && portraitGalleryIds.has(project.id) && project.gallery?.length) {
     return (
       <div className={`project-artwork-screenshots project-artwork-screenshots--${project.id}`} aria-label={`${project.title}应用截图预览`}>
         {project.gallery.slice(0, 3).map((image) => <img key={image.src} src={image.src} alt="" />)}
@@ -148,7 +149,7 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
           </div>
         </article>
         <aside className="project-case-visuals">
-          <div className={`project-case-gallery${project.id === "ai-speed" || project.id === "avora" ? " project-case-gallery--portrait" : ""}`}>
+          <div className={`project-case-gallery${portraitGalleryIds.has(project.id) ? " project-case-gallery--portrait" : ""}`}>
             {project.gallery?.length ? project.gallery.map((image, index) => (
               <figure key={image.src}>
                 <img src={image.src} alt={image.alt} />

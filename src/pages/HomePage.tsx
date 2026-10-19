@@ -131,7 +131,7 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "meeting-workflow", title: "杭州百零 / 倾耳 AI 会议产品", short: "负责后台素材供给、SQL 生成与工作台搭建",
+    id: "meeting-workflow", title: "杭州百聆 / 倾耳 AI 会议产品", short: "负责后台素材供给、SQL 生成与工作台搭建",
     category: "Work", source: "company", period: "2026", status: "工作项目", role: "后台素材供给 / SQL 生成 / 工作台搭建",
     result: "搭建后台工作台，支撑会议内容素材的生产与供给",
     url: "https://apps.apple.com/cn/app/%E5%80%BE%E8%80%B3-ai%E4%BC%9A%E8%AE%AE%E7%BA%AA%E8%A6%81%E7%A5%9E%E5%99%A8-%E4%BC%9A%E8%AE%AE%E8%AE%B0%E5%BD%95%E5%8A%A9%E6%89%8B-%E5%BD%95%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97%E6%80%BB%E7%BB%93/id6759899164",

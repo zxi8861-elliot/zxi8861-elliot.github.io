@@ -11,7 +11,8 @@
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;min-width:1180px}
     button{font:inherit;color:inherit;cursor:pointer}a{color:inherit;text-decoration:none}.app{min-height:100vh}.topbar{height:68px;padding:0 30px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:17px}.logo{height:32px;width:32px;border-radius:10px;background:linear-gradient(135deg,#48d7a1,#7551f3);display:grid;place-items:center;color:white;font-size:15px;font-weight:800;box-shadow:0 5px 13px #7b64e438}.brand small{font-weight:500;color:#9aa0b2;font-size:11px;border-left:1px solid var(--line);padding-left:12px;margin-left:2px}.top-actions{display:flex;align-items:center;gap:18px;color:#7e8498}.demo-flag{background:#fff6e8;color:#bb7b16;border:1px solid #f6e5c5;padding:5px 9px;border-radius:7px;font-size:11px;font-weight:600}.credits{background:#f4f1ff;border-radius:18px;padding:8px 13px;color:#6552bb;font-size:12px}.avatar{width:32px;height:32px;border-radius:50%;background:#e5eaff;color:#636fd0;display:grid;place-items:center;font-weight:700}
     .layout{display:grid;grid-template-columns:224px minmax(0,1fr);min-height:calc(100vh - 68px)}.sidebar{background:#fff;border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column}.side-caption{padding:0 13px 12px;color:#b0b4c2;font-size:10px;letter-spacing:1.2px}.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;text-align:left;border-radius:9px;padding:11px 13px;color:#686e83;display:flex;align-items:center;gap:12px;font-size:13px}.nav button .ico{width:19px;height:19px;display:grid;place-items:center;color:#9197aa;font-size:17px}.nav button.active{background:var(--purple-weak);color:var(--purple);font-weight:650}.nav button.active .ico{color:var(--purple)}.nav .indent{padding-left:44px;font-size:12px}.side-bottom{margin-top:auto;padding:14px 12px 4px;color:#a4a9b7;font-size:11px;line-height:1.8;border-top:1px solid var(--line)}
-    .nav{gap:14px}.nav-section{display:grid;gap:3px}.nav-section-label{padding:0 13px 5px;color:#a4a9b7;font-size:9px;letter-spacing:.04em}.nav button.nav-item{min-height:45px;padding:7px 11px;gap:10px}.nav button.nav-item .ico{flex:0 0 19px}.nav-copy{display:grid;gap:2px;min-width:0}.nav-copy strong{font-size:11px;font-weight:550;line-height:1.25}.nav-copy small{color:#a0a5b4;font-size:8px;font-weight:400;line-height:1.25;white-space:nowrap}.nav button.active .nav-copy small{color:#8974d0}.nav button.nav-child{min-height:37px;padding:5px 10px 5px 40px;gap:8px}.nav button.nav-child .ico{width:14px;flex:0 0 14px;font-size:12px}.nav button.nav-child .nav-copy strong{font-size:10px}.nav button.nav-child .nav-copy small{font-size:8px}.nav-count{margin-left:auto;color:#8b73e6;font-size:10px;font-weight:650}
+    .nav{gap:14px}.nav-section{display:grid;gap:3px}.nav-section-label{padding:0 13px 5px;color:#a4a9b7;font-size:9px;letter-spacing:.04em}.nav button.nav-item{min-height:42px;padding:8px 11px;gap:10px}.nav button.nav-item .ico{flex:0 0 19px}.nav button.nav-child{min-height:36px;padding:6px 10px 6px 40px;gap:8px;font-size:11px}.nav button.nav-child .ico{width:14px;flex:0 0 14px;font-size:12px}.nav-count{margin-left:auto;color:#8b73e6;font-size:10px;font-weight:650}.nav button.active{font-weight:650}
+    .screen[hidden]{display:none!important}.screen{min-width:0}.view-breadcrumb{display:flex;gap:8px;color:#9ba0b0;font-size:11px;margin:0 0 16px}.view-title{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}.view-title h1{font-size:23px;line-height:1.2;margin:0 0 6px;letter-spacing:-.4px}.view-title p{color:var(--muted);margin:0;font-size:12px}.view-actions{display:flex;gap:8px}.view-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:15px}.view-kpi{padding:16px 18px;min-height:104px}.view-kpi span{font-size:11px;color:#83899b}.view-kpi strong{display:block;font-size:24px;margin:7px 0 1px}.view-kpi small{font-size:10px;color:#9da2b1}.view-columns{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:14px}.view-card{padding:16px 18px;margin-bottom:14px}.view-card h2{font-size:13px;margin:0 0 12px}.todo-list,.exception-list{display:grid;gap:8px}.todo-row,.exception-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px}.todo-row span,.exception-row span{color:#8b90a1}.status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:5px;background:#f5f3ff;color:#7050db;font-size:9px;white-space:nowrap}.status-pill.good{background:#e9faf4;color:#159c70}.status-pill.warn{background:#fff5e8;color:#bd7e22}.table-wrap{overflow:auto}.data-table{width:100%;border-collapse:collapse;font-size:11px;white-space:nowrap}.data-table th,.data-table td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left}.data-table th{color:#969bad;font-size:10px;font-weight:500}.data-table td{color:#525970}.data-table tr:last-child td{border-bottom:0}.text-button{border:0;background:transparent;color:var(--purple);font-size:10px;padding:3px 5px}.mini-flow{display:grid;grid-template-columns:repeat(8,minmax(70px,1fr));gap:5px;overflow:auto;padding:6px 0}.mini-flow-step{display:grid;justify-items:center;gap:6px;text-align:center;color:#70768a;font-size:9px;white-space:nowrap}.mini-flow-step iconify-icon{width:24px;height:24px;padding:5px;border-radius:50%;background:var(--purple-weak);color:var(--purple)}.mini-flow-step small{color:#a1a6b5}.model-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:14px;height:min(720px,calc(100vh - 176px));min-height:540px}.conversation-panel{display:flex;flex-direction:column;padding:13px;background:#fff}.conversation-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.conversation-panel-head h2{font-size:12px;margin:0}.new-chat{width:100%;margin-bottom:10px}.conversation-list{display:grid;align-content:start;gap:4px;overflow:auto}.conversation-item{padding:9px 10px;border:0;border-radius:7px;background:transparent;text-align:left;color:#676d81;font-size:10px}.conversation-item.active{background:var(--purple-weak);color:var(--purple);font-weight:600}.conversation-item small{display:block;margin-top:4px;color:#a1a6b5;font-size:8px;font-weight:400}.model-workspace{display:flex;min-height:0;flex-direction:column;overflow:hidden}.model-top{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;border-bottom:1px solid var(--line);background:#fff}.model-top h2{font-size:14px;margin:0}.model-select{min-width:170px;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:11px}.test-records{display:grid;align-content:start;gap:10px;flex:1;overflow:auto;padding:18px;background:#f9f9fc}.test-record{max-width:700px;padding:11px 13px;border:1px solid var(--line);border-radius:8px;background:#fff}.test-record-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:6px;color:#8e93a8;font-size:9px}.test-record p{margin:0;font-size:11px;line-height:1.7}.test-record .test-result{margin-top:7px;color:#858b9d;font-size:10px}.model-compose{padding:12px 14px;background:#fff;border-top:1px solid var(--line)}.model-compose textarea{width:100%;min-height:60px;resize:vertical;border:0;outline:0;font:12px/1.6 inherit;color:var(--ink)}.composer-tools{display:flex;align-items:center;justify-content:space-between;gap:10px}.composer-tools small{color:#a0a5b4;font-size:9px}.compose-submit{min-width:100px}.workflow-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.workflow-setting{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px;border:1px solid var(--line);border-radius:9px;background:#fff}.workflow-setting strong{display:block;font-size:11px}.workflow-setting small{display:block;margin-top:4px;color:#969bad;font-size:9px}.workflow-setting input{width:34px;height:18px;accent-color:var(--purple)}.bar-chart{display:flex;align-items:end;gap:12px;height:170px;padding:14px 8px 0;border-bottom:1px solid var(--line)}.bar-column{display:grid;flex:1;justify-items:center;gap:5px;height:100%;font-size:9px;color:#9da2b1}.bar-column i{align-self:end;width:65%;min-height:10px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,#9e85ff,#7656eb)}.bar-column span{height:15px}.tag-cloud{display:flex;flex-wrap:wrap;gap:6px}.tag-cloud span{padding:5px 8px;border-radius:5px;background:#f3f2f8;color:#71778b;font-size:9px}.view-card .filter-row{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}.filter-row .filter{border:1px solid var(--line)}
     iconify-icon{display:inline-block;width:1em;height:1em;vertical-align:-.14em}.ico iconify-icon{width:18px;height:18px}.kpi-icon iconify-icon{width:15px;height:15px}.flow-dot iconify-icon{width:14px;height:14px}
     main{padding:26px 30px 32px;max-width:1580px;width:100%;margin:auto}.crumbs{display:flex;align-items:center;gap:8px;color:#9ba0b0;font-size:11px;margin:0 0 18px}.crumbs b{font-weight:500;color:#5e647a}.page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}.page-head h1{font-size:23px;line-height:1.2;margin:0 0 7px;letter-spacing:-.4px}.page-head p{color:var(--muted);margin:0;font-size:12px}.head-controls{display:flex;gap:9px}.btn{background:white;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:11px;color:#646b80;box-shadow:0 2px 4px #25274a05}.btn.primary{background:var(--purple);border-color:var(--purple);color:#fff;padding-inline:15px}.btn:hover{border-color:#c5b9ff;color:var(--purple)}.btn.primary:hover{color:white;background:#623be1}
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:15px}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}.kpi{padding:16px 18px;min-height:105px}.kpi-top{display:flex;justify-content:space-between;color:#83899b;font-size:11px}.kpi-icon{width:26px;height:26px;border-radius:8px;background:#f2efff;color:var(--purple);display:grid;place-items:center;font-weight:700}.kpi-value{font-size:25px;font-weight:700;letter-spacing:-.7px;margin:8px 0 2px}.kpi-foot{color:#9da2b1;font-size:10px}.up{color:#22ad80;font-weight:600;margin-left:5px}
@@ -32,54 +33,48 @@
       <nav class="nav">
         <section class="nav-section">
           <div class="nav-section-label">项目运营</div>
-          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:home-outlined"></iconify-icon></span><span class="nav-copy"><strong>工作台</strong><small>生产概况与待办提醒</small></span></button>
-          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:appstore-outlined"></iconify-icon></span><span class="nav-copy"><strong>模型广场</strong><small>切换模型、生图测试与对话记录</small></span></button>
-          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:profile-outlined"></iconify-icon></span><span class="nav-copy"><strong>需求管理</strong><small>设计需求收集、拆解与分派</small></span></button>
+          <button class="nav-item active" data-screen="workbench"><span class="ico"><iconify-icon icon="ant-design:home-outlined"></iconify-icon></span>工作台</button>
+          <button class="nav-item" data-screen="model-plaza"><span class="ico"><iconify-icon icon="ant-design:appstore-outlined"></iconify-icon></span>模型广场</button>
+          <button class="nav-item" data-screen="demands"><span class="ico"><iconify-icon icon="ant-design:profile-outlined"></iconify-icon></span>需求管理</button>
         </section>
         <section class="nav-section">
           <div class="nav-section-label">生产任务</div>
-          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:picture-outlined"></iconify-icon></span><span class="nav-copy"><strong>AI 生成任务</strong><small>查看各批次生成与处理进度</small></span></button>
-          <button class="nav-child"><span class="ico"><iconify-icon icon="ant-design:loading-outlined"></iconify-icon></span><span class="nav-copy"><strong>生成队列</strong><small>生成进度、失败重试</small></span></button>
-          <button class="nav-child active"><span class="ico"><iconify-icon icon="ant-design:check-square-outlined"></iconify-icon></span><span class="nav-copy"><strong>人工快筛</strong><small>批量审核 AI 生成结果</small></span><span class="nav-count">238</span></button>
+          <button class="nav-item" data-screen="generation"><span class="ico"><iconify-icon icon="ant-design:picture-outlined"></iconify-icon></span>AI 生成任务</button>
+          <button class="nav-child" data-screen="queue"><span class="ico"><iconify-icon icon="ant-design:loading-outlined"></iconify-icon></span>生成队列</button>
+          <button class="nav-child" data-screen="manual-review"><span class="ico"><iconify-icon icon="ant-design:check-square-outlined"></iconify-icon></span>人工快筛<span class="nav-count">238</span></button>
         </section>
         <section class="nav-section">
           <div class="nav-section-label">素材流转</div>
-          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:picture-outlined"></iconify-icon></span><span class="nav-copy"><strong>素材中心</strong><small>已审核素材、标签与检索</small></span></button>
-          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:cloud-upload-outlined"></iconify-icon></span><span class="nav-copy"><strong>分发管理</strong><small>多平台同步与分发状态</small></span></button>
+          <button class="nav-item" data-screen="assets"><span class="ico"><iconify-icon icon="ant-design:picture-outlined"></iconify-icon></span>素材中心</button>
+          <button class="nav-item" data-screen="distribution"><span class="ico"><iconify-icon icon="ant-design:cloud-upload-outlined"></iconify-icon></span>分发管理</button>
         </section>
         <section class="nav-section">
           <div class="nav-section-label">配置与分析</div>
-          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:setting-outlined"></iconify-icon></span><span class="nav-copy"><strong>流程配置</strong><small>模型路由、审核与打标规则</small></span></button>
-          <button class="nav-item"><span class="ico"><iconify-icon icon="ant-design:bar-chart-outlined"></iconify-icon></span><span class="nav-copy"><strong>数据看板</strong><small>产量、效率与链路指标</small></span></button>
+          <button class="nav-item" data-screen="workflow"><span class="ico"><iconify-icon icon="ant-design:setting-outlined"></iconify-icon></span>流程配置</button>
+          <button class="nav-item" data-screen="analytics"><span class="ico"><iconify-icon icon="ant-design:bar-chart-outlined"></iconify-icon></span>数据看板</button>
         </section>
       </nav>
       <div class="side-bottom">当前空间<br /><strong style="color:#62687c;font-weight:600">设计素材 · 内容生产组</strong><br />工作流版本　v2.4.1</div>
     </aside>
-    <main>
+    <main id="mainView">
+      <section class="screen" data-screen-panel="manual-review" hidden>
       <div class="crumbs"><span>工作台</span><span>/</span><b>人工快筛</b><span>/</span><b>AI 生图审核</b></div>
       <div class="page-head">
-        <div><h1>AI 生图审核工作台</h1><p>集中查看模型生成结果，完成快速筛选、打标校验与素材入库</p></div>
+        <div><h1>人工快筛</h1><p>按批次快速审核 AI 生成素材，完成筛选、入库或退回重生成</p></div>
         <div class="head-controls"><button class="btn"><iconify-icon icon="ant-design:calendar-outlined"></iconify-icon> 今天　2025/06/18</button><button class="btn">导出记录 <iconify-icon icon="ant-design:download-outlined"></iconify-icon></button><button class="btn primary"><iconify-icon icon="ant-design:plus-outlined"></iconify-icon> 新建生产任务</button></div>
       </div>
-      <section class="kpis">
-        <article class="card kpi"><div class="kpi-top"><span>今日需求数</span><span class="kpi-icon"><iconify-icon icon="ant-design:file-search-outlined"></iconify-icon></span></div><div class="kpi-value">1,286</div><div class="kpi-foot">较昨日 <span class="up">↑ 12.8%</span></div></article>
-        <article class="card kpi"><div class="kpi-top"><span>AI 素材产出</span><span class="kpi-icon"><iconify-icon icon="ant-design:picture-outlined"></iconify-icon></span></div><div class="kpi-value">6,420 <small style="font-size:11px;color:#969bad;font-weight:500">张</small></div><div class="kpi-foot">模型生成与自动迭代 <span class="up">↑ 21.4%</span></div></article>
-        <article class="card kpi"><div class="kpi-top"><span>AI 初审通过率</span><span class="kpi-icon" style="background:#e9faf4;color:#20aa7c"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></span></div><div class="kpi-value">82.6%</div><div class="kpi-foot">本周平均 <span class="up">↑ 3.2%</span></div></article>
-        <article class="card kpi"><div class="kpi-top"><span>待人工快筛</span><span class="kpi-icon" style="background:#fff5e8;color:#d39331"><iconify-icon icon="ant-design:clock-circle-outlined"></iconify-icon></span></div><div class="kpi-value">238 <small style="font-size:11px;color:#969bad;font-weight:500">张</small></div><div class="kpi-foot">来自 12 个批次 · 约 5 分钟/批</div></article>
-      </section>
-      <section class="card flow-card">
-        <div class="card-head"><h2>内容生产工作流</h2><span>自动流转 · 人工节点可介入</span></div>
-        <div class="flow">
-          <div class="flow-step done"><div class="flow-dot"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></div><div class="flow-label">需求解析</div><div class="flow-count">1,286 条</div></div>
-          <div class="flow-step done"><div class="flow-dot"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></div><div class="flow-label">模型调度</div><div class="flow-count">1,104 次</div></div>
-          <div class="flow-step done"><div class="flow-dot"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></div><div class="flow-label">AI 生图</div><div class="flow-count">6,420 张</div></div>
-          <div class="flow-step done"><div class="flow-dot"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></div><div class="flow-label">质量初审</div><div class="flow-count">82.6% 通过</div></div>
-          <div class="flow-step done"><div class="flow-dot"><iconify-icon icon="ant-design:check-outlined"></iconify-icon></div><div class="flow-label">AI 打标</div><div class="flow-count">5,306 组</div></div>
-          <div class="flow-step current"><div class="flow-dot">6</div><div class="flow-label">人工快筛</div><div class="flow-count">238 张待审</div></div>
-          <div class="flow-step"><div class="flow-dot">7</div><div class="flow-label">超清入库</div><div class="flow-count">待处理</div></div>
-          <div class="flow-step"><div class="flow-dot">8</div><div class="flow-label">平台分发</div><div class="flow-count">多端调用</div></div>
-        </div>
-      </section>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       <div class="content-grid">
         <section class="card queue">
           <div class="card-head"><div class="queue-title"><h2>待处理素材</h2><span class="badge">第 06 批 · 50 张/页</span></div><span>批次号：AI-250618-006　<iconify-icon icon="ant-design:down-outlined"></iconify-icon></span></div>
@@ -104,20 +99,126 @@
           <div class="detail-note">通过后将自动执行超清放大、素材归档与标签写入，并按业务配置同步至下游平台。</div>
         </aside>
       </div>
+      </section>
+      <section class="screen" data-screen-panel="workbench">
+        <div class="view-breadcrumb"><span>工作台</span><span>/</span><b>生产运营总览</b></div>
+        <div class="view-title"><div><h1>工作台</h1><p>查看生产进度、待处理任务和链路异常</p></div><div class="view-actions"><button class="btn"><iconify-icon icon="ant-design:calendar-outlined"></iconify-icon> 今天　2025/06/18</button><button class="btn primary" data-route="generation"><iconify-icon icon="ant-design:plus-outlined"></iconify-icon> 新建生产任务</button></div></div>
+        <div class="view-kpis">
+          <article class="card view-kpi"><span>待解析需求</span><strong>28</strong><small>设计需求池中等待分派</small></article>
+          <article class="card view-kpi"><span>生成中任务</span><strong>16</strong><small>覆盖 4 个生产批次</small></article>
+          <article class="card view-kpi"><span>待人工快筛</span><strong>238 张</strong><small>约 5 分钟/批 · <button class="text-button" data-route="manual-review">去审核</button></small></article>
+          <article class="card view-kpi"><span>需处理异常</span><strong>3</strong><small>生成失败 2 · 分发失败 1</small></article>
+        </div>
+        <section class="card view-card"><h2>内容生产流程</h2><div class="mini-flow">
+          <div class="mini-flow-step"><iconify-icon icon="ant-design:file-search-outlined"></iconify-icon><b>需求解析</b><small>28 待处理</small></div><div class="mini-flow-step"><iconify-icon icon="ant-design:deployment-unit-outlined"></iconify-icon><b>模型调度</b><small>16 进行中</small></div><div class="mini-flow-step"><iconify-icon icon="ant-design:picture-outlined"></iconify-icon><b>AI 生成</b><small>1,204 张</small></div><div class="mini-flow-step"><iconify-icon icon="ant-design:check-circle-outlined"></iconify-icon><b>质量初审</b><small>82.6% 通过</small></div><div class="mini-flow-step"><iconify-icon icon="ant-design:tags-outlined"></iconify-icon><b>AI 打标</b><small>986 组</small></div><div class="mini-flow-step"><iconify-icon icon="ant-design:check-square-outlined"></iconify-icon><b>人工快筛</b><small>238 张</small></div><div class="mini-flow-step"><iconify-icon icon="ant-design:database-outlined"></iconify-icon><b>素材入库</b><small>52 待处理</small></div><div class="mini-flow-step"><iconify-icon icon="ant-design:cloud-upload-outlined"></iconify-icon><b>平台分发</b><small>1 项异常</small></div>
+        </div></section>
+        <div class="view-columns">
+          <section class="card view-card"><h2>我的待办</h2><div class="todo-list"><div class="todo-row"><b>人工快筛</b><span>238 张待审核</span><button class="text-button" data-route="manual-review">进入审核 →</button></div><div class="todo-row"><b>需求待分派</b><span>28 条新需求</span><button class="text-button" data-route="demands">查看需求 →</button></div><div class="todo-row"><b>生成异常</b><span>2 个任务失败</span><button class="text-button" data-route="queue">查看队列 →</button></div></div></section>
+          <section class="card view-card"><h2>链路异常</h2><div class="exception-list"><div class="exception-row"><span>AI 生成任务 · MZ-0618-103</span><b class="status-pill warn">模型超时</b></div><div class="exception-row"><span>素材分发 · MZ-0618-087</span><b class="status-pill warn">同步失败</b></div></div></section>
+        </div>
+        <section class="card view-card"><h2>近期生产批次</h2><div class="table-wrap"><table class="data-table"><thead><tr><th>批次</th><th>需求主题</th><th>产出</th><th>人工快筛</th><th>状态</th><th></th></tr></thead><tbody><tr><td>AI-250618-006</td><td>夏日海边主题插画</td><td>50 张</td><td>待审核 38 张</td><td><span class="status-pill warn">快筛中</span></td><td><button class="text-button" data-route="manual-review">查看</button></td></tr><tr><td>AI-250618-005</td><td>端午节海报素材</td><td>120 张</td><td>已完成</td><td><span class="status-pill good">已入库</span></td><td><button class="text-button" data-route="assets">查看素材</button></td></tr></tbody></table></div></section>
+      </section>
+      <section class="screen" data-screen-panel="model-plaza" hidden>
+        <div class="view-breadcrumb"><span>工作台</span><span>/</span><b>模型广场</b></div>
+        <div class="view-title"><div><h1>模型广场</h1><p>切换模型进行生图测试，记录并对比不同模型的效果</p></div></div>
+        <div class="model-layout">
+          <aside class="card conversation-panel"><div class="conversation-panel-head"><h2>对话记录</h2><iconify-icon icon="ant-design:history-outlined" style="color:#989db0"></iconify-icon></div><button class="btn new-chat" id="newConversation"><iconify-icon icon="ant-design:plus-outlined"></iconify-icon> 新建对话</button><div class="conversation-list" id="conversationList"><button class="conversation-item active" data-conversation="0">夏日插画风格测试<small>今天 10:24 · 即梦 AI</small></button><button class="conversation-item" data-conversation="1">商品主图构图测试<small>今天 09:46 · GPT Image</small></button><button class="conversation-item" data-conversation="2">海报文字排版测试<small>昨天 16:18 · 千问图像</small></button></div></aside>
+          <section class="card model-workspace"><div class="model-top"><h2 id="conversationTitle">夏日插画风格测试</h2><label><select class="model-select" id="modelSelect"><option>即梦 AI</option><option>千问图像</option><option>GPT Image</option><option>Gemini</option></select></label></div><div class="test-records" id="testRecords"><article class="test-record"><div class="test-record-head"><span>提示词 · 10:24</span><span>即梦 AI</span></div><p>生成一张清新治愈风格的夏日海边插画，画面主体明确，预留标题排版空间。</p><div class="test-result">测试记录已保存 · 1024 × 1024</div></article><article class="test-record"><div class="test-record-head"><span>提示词 · 10:21</span><span>即梦 AI</span></div><p>海边植物与蓝色天空，扁平插画风格，适合用作夏季专题配图。</p><div class="test-result">测试记录已保存 · 1024 × 1024</div></article></div><form class="model-compose" id="modelForm"><textarea id="modelPrompt" placeholder="描述你想生成的图片，也可以补充风格、构图和尺寸要求"></textarea><div class="composer-tools"><small>模型测试记录保存在当前对话中</small><button class="btn primary compose-submit" type="submit"><iconify-icon icon="ant-design:experiment-outlined"></iconify-icon> 提交测试</button></div></form></section>
+        </div>
+      </section>
+      <section class="screen" data-screen-panel="demands" hidden>
+        <div class="view-breadcrumb"><span>业务协同</span><span>/</span><b>需求管理</b></div><div class="view-title"><div><h1>需求管理</h1><p>汇总设计素材需求，完成需求整理、分派和生产跟踪</p></div><button class="btn primary" data-toast="需求录入表单已打开"><iconify-icon icon="ant-design:plus-outlined"></iconify-icon> 新建需求</button></div>
+        <section class="card view-card"><div class="filters"><button class="filter active">全部需求 <span class="count">128</span></button><button class="filter">待分派 <span class="count">28</span></button><button class="filter">生产中 <span class="count">64</span></button><button class="filter">已完成 <span class="count">36</span></button></div><div class="table-wrap"><table class="data-table searchable"><thead><tr><th>需求编号</th><th>需求内容</th><th>需求方</th><th>优先级</th><th>数量</th><th>负责人</th><th>状态</th><th>操作</th></tr></thead><tbody><tr><td>REQ-0618-028</td><td>夏日海边主题插画素材</td><td>内容设计组</td><td><span class="status-pill warn">高</span></td><td>50 张</td><td>林设计</td><td>待分派</td><td><button class="text-button" data-toast="需求已进入分派流程">分派</button></td></tr><tr><td>REQ-0618-027</td><td>家居收纳场景配图</td><td>电商运营组</td><td>普通</td><td>30 张</td><td>周设计</td><td>生产中</td><td><button class="text-button" data-route="queue">查看任务</button></td></tr><tr><td>REQ-0617-014</td><td>端午节专题海报</td><td>活动运营组</td><td>普通</td><td>120 张</td><td>陈设计</td><td><span class="status-pill good">已完成</span></td><td><button class="text-button" data-route="assets">查看素材</button></td></tr></tbody></table></div></section>
+      </section>
+      <section class="screen" data-screen-panel="generation" hidden>
+        <div class="view-breadcrumb"><span>生产任务</span><span>/</span><b>AI 生成任务</b></div><div class="view-title"><div><h1>AI 生成任务</h1><p>查看需求批次从模型生成到审核入库的处理状态</p></div><button class="btn primary" data-toast="新建生产任务表单已打开"><iconify-icon icon="ant-design:plus-outlined"></iconify-icon> 新建生产任务</button></div>
+        <div class="view-kpis"><article class="card view-kpi"><span>今日任务</span><strong>42</strong><small>较昨日 ↑ 12.8%</small></article><article class="card view-kpi"><span>生成中</span><strong>16</strong><small>预计 8 分钟内完成</small></article><article class="card view-kpi"><span>待人工快筛</span><strong>238 张</strong><small><button class="text-button" data-route="manual-review">进入审核 →</button></small></article><article class="card view-kpi"><span>异常任务</span><strong>2</strong><small><button class="text-button" data-route="queue">查看失败任务 →</button></small></article></div>
+        <section class="card view-card"><h2>生产批次</h2><div class="table-wrap"><table class="data-table"><thead><tr><th>批次号</th><th>需求主题</th><th>调用模型</th><th>目标产量</th><th>流程进度</th><th>状态</th><th>操作</th></tr></thead><tbody><tr><td>AI-250618-006</td><td>夏日海边主题插画</td><td>即梦 AI / GPT Image</td><td>50 张</td><td>AI 打标完成</td><td><span class="status-pill warn">待人工快筛</span></td><td><button class="text-button" data-route="manual-review">审核</button></td></tr><tr><td>AI-250618-007</td><td>家居收纳场景配图</td><td>千问图像</td><td>30 张</td><td>生成中 18/30</td><td><span class="status-pill">生成中</span></td><td><button class="text-button" data-route="queue">任务详情</button></td></tr></tbody></table></div></section>
+      </section>
+      <section class="screen" data-screen-panel="queue" hidden>
+        <div class="view-breadcrumb"><span>AI 生成任务</span><span>/</span><b>生成队列</b></div><div class="view-title"><div><h1>生成队列</h1><p>跟踪模型调用、批量生成进度和失败重试</p></div></div><section class="card view-card"><div class="filters"><button class="filter active">全部任务</button><button class="filter">生成中</button><button class="filter">已完成</button><button class="filter">生成失败</button></div><div class="table-wrap"><table class="data-table"><thead><tr><th>任务编号</th><th>需求主题</th><th>模型</th><th>进度</th><th>提交时间</th><th>状态</th><th>操作</th></tr></thead><tbody><tr><td>GEN-0618-103</td><td>家居收纳场景配图</td><td>千问图像</td><td>18 / 30</td><td>10:42</td><td><span class="status-pill">生成中</span></td><td><button class="text-button" data-toast="正在获取任务详情">详情</button></td></tr><tr><td>GEN-0618-102</td><td>夏日海边主题插画</td><td>即梦 AI</td><td>50 / 50</td><td>10:24</td><td><span class="status-pill good">已完成</span></td><td><button class="text-button" data-route="manual-review">进入快筛</button></td></tr><tr><td>GEN-0618-101</td><td>商品主图构图测试</td><td>GPT Image</td><td>0 / 20</td><td>10:12</td><td><span class="status-pill warn">模型超时</span></td><td><button class="text-button retry-task">重试</button></td></tr></tbody></table></div></section>
+      </section>
+      <section class="screen" data-screen-panel="assets" hidden>
+        <div class="view-breadcrumb"><span>素材流转</span><span>/</span><b>素材中心</b></div><div class="view-title"><div><h1>素材中心</h1><p>检索已审核入库的素材，查看标签、来源需求和下游使用情况</p></div><button class="btn"><iconify-icon icon="ant-design:download-outlined"></iconify-icon> 导出素材清单</button></div><section class="card view-card"><div class="filters"><button class="filter active">全部素材</button><button class="filter">待入库</button><button class="filter">已入库</button><button class="filter">已分发</button></div><div class="table-wrap"><table class="data-table searchable"><thead><tr><th>素材编号</th><th>素材名称</th><th>来源需求</th><th>模型</th><th>标签</th><th>入库时间</th><th>状态</th></tr></thead><tbody><tr><td>MZ-AI-0618-0241</td><td>夏日海边 · 清新插画风</td><td>夏日海边主题插画</td><td>即梦 AI</td><td>夏日、海边、插画</td><td>2025/06/18 10:31</td><td><span class="status-pill good">已入库</span></td></tr><tr><td>MZ-AI-0618-0242</td><td>海岛度假 · 扁平矢量风</td><td>夏日海边主题插画</td><td>GPT Image</td><td>海岛、度假、矢量</td><td>2025/06/18 10:33</td><td><span class="status-pill good">已入库</span></td></tr></tbody></table></div></section>
+      </section>
+      <section class="screen" data-screen-panel="distribution" hidden>
+        <div class="view-breadcrumb"><span>素材流转</span><span>/</span><b>分发管理</b></div><div class="view-title"><div><h1>分发管理</h1><p>查看素材同步到不同业务平台的任务状态</p></div><button class="btn primary" data-toast="已创建新的分发任务">新建分发任务</button></div><section class="card view-card"><div class="view-kpis"><article class="card view-kpi"><span>待分发素材</span><strong>52</strong><small>等待平台调用</small></article><article class="card view-kpi"><span>同步中</span><strong>8</strong><small>跨平台分发任务</small></article><article class="card view-kpi"><span>同步成功</span><strong>1,284</strong><small>本周累计</small></article><article class="card view-kpi"><span>同步失败</span><strong>1</strong><small>需要重试</small></article></div><div class="table-wrap"><table class="data-table"><thead><tr><th>分发任务</th><th>素材数量</th><th>目标平台</th><th>发起时间</th><th>状态</th><th>操作</th></tr></thead><tbody><tr><td>DST-0618-021</td><td>50</td><td>设计素材库、AI 生图站</td><td>10:36</td><td><span class="status-pill good">已完成</span></td><td><button class="text-button" data-toast="分发详情已打开">查看</button></td></tr><tr><td>DST-0618-020</td><td>2</td><td>企业素材中心</td><td>10:28</td><td><span class="status-pill warn">同步失败</span></td><td><button class="text-button retry-task">重试</button></td></tr></tbody></table></div></section>
+      </section>
+      <section class="screen" data-screen-panel="workflow" hidden>
+        <div class="view-breadcrumb"><span>配置与分析</span><span>/</span><b>流程配置</b></div><div class="view-title"><div><h1>流程配置</h1><p>配置模型路由、自动审核、打标和素材分发规则</p></div><button class="btn primary" data-toast="流程配置已保存">保存配置</button></div><section class="card view-card"><h2>创作与分发工作流</h2><div class="workflow-settings"><div class="workflow-setting"><span><strong>需求自动解析与分类</strong><small>识别尺寸、风格、用途及数量要求</small></span><input type="checkbox" checked></div><div class="workflow-setting"><span><strong>多模型路由</strong><small>按任务类型选择可用生图模型</small></span><input type="checkbox" checked></div><div class="workflow-setting"><span><strong>AI 生成结果初审</strong><small>检查主体、格式和内容规范</small></span><input type="checkbox" checked></div><div class="workflow-setting"><span><strong>自动生成 SEO 标签</strong><small>生成标题、关键词和内部检索标签</small></span><input type="checkbox" checked></div><div class="workflow-setting"><span><strong>人工快筛后自动入库</strong><small>审核通过后自动超清并写入素材中心</small></span><input type="checkbox" checked></div><div class="workflow-setting"><span><strong>入库后自动分发</strong><small>按业务平台配置同步审核通过素材</small></span><input type="checkbox"></div></div></section><section class="card view-card"><h2>模型路由规则</h2><div class="tag-cloud"><span>插画风格 → 即梦 AI</span><span>商品场景 → 千问图像</span><span>复杂指令 → GPT Image</span><span>海外创意任务 → Gemini</span></div></section>
+      </section>
+      <section class="screen" data-screen-panel="analytics" hidden>
+        <div class="view-breadcrumb"><span>配置与分析</span><span>/</span><b>数据看板</b></div><div class="view-title"><div><h1>数据看板</h1><p>查看素材生产规模、审核效率和各环节转化情况</p></div><button class="btn"><iconify-icon icon="ant-design:calendar-outlined"></iconify-icon> 最近 7 天</button></div><div class="view-kpis"><article class="card view-kpi"><span>累计生成</span><strong>6,420 张</strong><small>较上周 ↑ 21.4%</small></article><article class="card view-kpi"><span>AI 初审通过率</span><strong>82.6%</strong><small>最近 7 天</small></article><article class="card view-kpi"><span>人工快筛平均耗时</span><strong>5 分钟/批</strong><small>50 张/页</small></article><article class="card view-kpi"><span>分发成功率</span><strong>98.7%</strong><small>最近 7 天</small></article></div><div class="view-columns"><section class="card view-card"><h2>每日素材产出</h2><div class="bar-chart"><div class="bar-column"><i style="height:42%"></i><span>周一</span></div><div class="bar-column"><i style="height:56%"></i><span>周二</span></div><div class="bar-column"><i style="height:48%"></i><span>周三</span></div><div class="bar-column"><i style="height:72%"></i><span>周四</span></div><div class="bar-column"><i style="height:65%"></i><span>周五</span></div><div class="bar-column"><i style="height:88%"></i><span>周六</span></div><div class="bar-column"><i style="height:100%"></i><span>周日</span></div></div></section><section class="card view-card"><h2>模型调用占比</h2><div class="todo-list"><div class="todo-row"><b>即梦 AI</b><span>42%</span></div><div class="todo-row"><b>千问图像</b><span>28%</span></div><div class="todo-row"><b>GPT Image</b><span>18%</span></div><div class="todo-row"><b>Gemini</b><span>12%</span></div></div></section></div>
+      </section>
     </main>
   </div>
 </div>
 <div class="toast" id="toast">已记录</div>
 <script>
-  const items=[...document.querySelectorAll('.asset')],count=document.querySelector('#selectedCount'),title=document.querySelector('#detailTitle'),toast=document.querySelector('#toast');
-  function updateCount(){count.textContent=items.filter(x=>x.classList.contains('selected')).length}
-  items.forEach(item=>item.addEventListener('click',()=>{items.forEach(x=>x.classList.remove('selected'));item.classList.add('selected');title.textContent=item.dataset.title;updateCount()}));
+  const items=[...document.querySelectorAll('.asset')];
+  const count=document.querySelector('#selectedCount');
+  const detailTitle=document.querySelector('#detailTitle');
+  const toast=document.querySelector('#toast');
+  const mainView=document.querySelector('#mainView');
   function show(message){toast.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1700)}
+  function updateCount(){if(count) count.textContent=items.filter(x=>x.classList.contains('selected')).length}
+  function showScreen(name){
+    const target=document.querySelector(`[data-screen-panel="${name}"]`);
+    if(!target) return;
+    document.querySelectorAll('[data-screen-panel]').forEach(panel=>panel.hidden=panel!==target);
+    document.querySelectorAll('.nav [data-screen]').forEach(button=>button.classList.toggle('active',button.dataset.screen===name));
+    mainView.scrollTop=0; window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelector('.nav').addEventListener('click',event=>{
+    const button=event.target.closest('[data-screen]');
+    if(button) showScreen(button.dataset.screen);
+  });
+  document.addEventListener('click',event=>{
+    const route=event.target.closest('[data-route]');
+    if(route){showScreen(route.dataset.route);return;}
+    const notice=event.target.closest('[data-toast]');
+    if(notice){show(notice.dataset.toast);return;}
+    const filter=event.target.closest('.filter');
+    if(filter){const group=filter.closest('.filters');group?.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));filter.classList.add('active');return;}
+    if(event.target.closest('.retry-task')){show('已提交重试，任务将重新进入生成队列');return;}
+  });
+  items.forEach(item=>item.addEventListener('click',()=>{items.forEach(x=>x.classList.remove('selected'));item.classList.add('selected');detailTitle.textContent=item.dataset.title;updateCount()}));
   document.querySelector('#selectAll').addEventListener('click',()=>{items.forEach(x=>x.classList.add('selected'));updateCount();show('已选中本页 50 张素材')});
   document.querySelector('#approvePage').addEventListener('click',()=>show('批量通过已记录，素材将进入超清入库'));
   document.querySelector('#pass').addEventListener('click',()=>show('审核通过：素材将自动超清并进入中台素材库'));
   document.querySelector('#reject').addEventListener('click',()=>show('已退回生成队列，等待模型重新生成'));
-  document.querySelectorAll('.filter').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));button.classList.add('active')}));
+  const conversations=document.querySelector('#conversationList');
+  const records=document.querySelector('#testRecords');
+  const conversationTitle=document.querySelector('#conversationTitle');
+  const modelSelect=document.querySelector('#modelSelect');
+  const conversationRecords=new Map();
+  const initialRecords=records.innerHTML;
+  conversations.querySelectorAll('.conversation-item').forEach(button=>conversationRecords.set(button.dataset.conversation,button.classList.contains('active')?initialRecords:(button.dataset.conversation==='1'?'<article class="test-record"><div class="test-record-head"><span>提示词 · 09:46</span><span>GPT Image</span></div><p>为家居收纳产品生成一张简洁的商品主图，主体居中，浅色背景。</p><div class="test-result">测试记录已保存 · 1024 × 1024</div></article>':'<article class="test-record"><div class="test-record-head"><span>提示词 · 昨天 16:18</span><span>千问图像</span></div><p>生成节日海报标题字样，要求文字易读，适合竖版排版。</p><div class="test-result">测试记录已保存 · 1024 × 1536</div></article>')));
+  let conversationIndex=3;
+  conversations.addEventListener('click',event=>{
+    const button=event.target.closest('[data-conversation]');if(!button)return;
+    const previous=conversations.querySelector('.conversation-item.active');if(previous)conversationRecords.set(previous.dataset.conversation,records.innerHTML);
+    conversations.querySelectorAll('.conversation-item').forEach(x=>x.classList.remove('active'));
+    button.classList.add('active');conversationTitle.textContent=button.dataset.title||button.childNodes[0].textContent.trim();
+    records.innerHTML=conversationRecords.get(button.dataset.conversation)||'<div class="empty-records">这个对话还没有测试记录。输入提示词开始测试。</div>';
+    modelSelect.value=button.dataset.model||'即梦 AI';
+  });
+  document.querySelector('#newConversation').addEventListener('click',()=>{
+    const button=document.createElement('button');button.className='conversation-item active';button.dataset.conversation=String(conversationIndex++);button.dataset.title='新建对话';button.dataset.model=modelSelect.value;button.textContent='新建对话';
+    const previous=conversations.querySelector('.conversation-item.active');if(previous)conversationRecords.set(previous.dataset.conversation,records.innerHTML);
+    conversations.querySelectorAll('.conversation-item').forEach(x=>x.classList.remove('active'));conversations.prepend(button);conversationTitle.textContent='新建对话';records.innerHTML='<div class="empty-records">这个对话还没有测试记录。输入提示词开始测试。</div>';document.querySelector('#modelPrompt').focus();
+    conversationRecords.set(button.dataset.conversation,records.innerHTML);
+  });
+  document.querySelector('#modelForm').addEventListener('submit',event=>{
+    event.preventDefault();const prompt=document.querySelector('#modelPrompt');const value=prompt.value.trim();if(!value){show('先输入图片需求，再提交模型测试');prompt.focus();return;}
+    const model=modelSelect.value;const now=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});const card=document.createElement('article');card.className='test-record';
+    const head=document.createElement('div');head.className='test-record-head';const label=document.createElement('span');label.textContent=`提示词 · ${now}`;const modelLabel=document.createElement('span');modelLabel.textContent=model;head.append(label,modelLabel);
+    const text=document.createElement('p');text.textContent=value;const result=document.createElement('div');result.className='test-result';result.textContent='测试任务已提交 · 结果将显示在当前对话';card.append(head,text,result);records.querySelector('.empty-records')?.remove();records.prepend(card);prompt.value='';
+    const current=conversations.querySelector('.conversation-item.active');if(current){current.dataset.model=model;if(current.dataset.title==='新建对话'){const short=value.length>18?value.slice(0,18)+'…':value;current.dataset.title=short;current.childNodes[0].textContent=short;conversationTitle.textContent=short;}}
+    if(current)conversationRecords.set(current.dataset.conversation,records.innerHTML);
+    show(`已提交给 ${model} 测试`);
+  });
+  updateCount();
 </script>
 </body>
 </html>

@@ -7,7 +7,7 @@ import { Contact, projects, type Project } from "./HomePage";
 type Mode = "Projects" | "Notes" | "Contact";
 const modes: Mode[] = ["Projects", "Notes", "Contact"];
 const labels: Record<Mode, string> = { Projects: "项目实践", Notes: "知识沉淀", Contact: "联系我" };
-const timelineOrder = ["muldo", "ai-ppt-lab", "ai-ppt", "ai-design", "meeting-workflow", "avora", "heara", "baoda", "lingua-float"];
+const timelineOrder = ["muldo", "ai-ppt-lab", "ai-ppt", "ai-design", "meeting-workflow", "asb", "avora", "heara", "baoda", "lingua-float"];
 const timelineProjects = timelineOrder.map((id) => projects.find((project) => project.id === id)).filter((project): project is Project => Boolean(project));
 const timelineRows = Math.ceil(timelineProjects.length / 4);
 

@@ -73,6 +73,7 @@ export const projects: Project[] = [
       { src: "/assets/portfolio/ai-design/04-poster.jpg", alt: "AI 海报设计与提示词编辑界面", label: "04 / AI 海报：主题生图与快速修改" },
       { src: "/assets/portfolio/ai-design/05-editor.jpg", alt: "在线设计编辑器中的 AI 生成海报", label: "05 / 在线编辑：生成素材的二次设计" },
       { src: "/assets/portfolio/ai-design/06-generation.jpg", alt: "AI 生成结果页面与重新编辑、再次生成操作", label: "06 / 生成结果：编辑、再生成与连续创作" },
+      { src: "/assets/portfolio/ai-design/07-review.png", alt: "AI 素材人工快筛工作台：多选图片、批量审核、编辑标签与退回重生成", label: "07 / 人工快筛：批量审核与素材入库" },
     ],
     sections: [
       { label: "项目背景", text: "平台设计师用户的素材需求具有明显的定制化、长尾和高频特征。过去主要依赖外部素材供给方或设计师逐单制作，再经过多轮人工审核、打标，并手动在不同平台间流转；供给成本、格式治理、审核与重复存储逐渐成为规模化供给的瓶颈。项目从内部高频、重复的素材需求切入，规划建设 AI 创作与分发中台，并逐步将成熟能力开放为前台产品。" },

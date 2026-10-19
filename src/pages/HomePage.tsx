@@ -3,10 +3,10 @@ import Shuffle from "../components/Shuffle";
 import TargetCursor from "../components/Target_cursor";
 
 type Mode = "Work" | "Lab" | "Notes" | "Contact";
-type Section = { label: string; text?: string; cards?: Array<{ title: string; text: string }> };
+type Section = { label: string; text?: string; cards?: Array<{ title: string; text: string }>; flow?: string[] };
 export type Project = {
   id: string; title: string; short: string; category: "Work" | "Lab"; source: "company" | "personal"; period: string; status: string;
-  tags: string[]; role: string; result: string; sections: Section[]; cover?: string;
+  tags: string[]; role: string; result: string; resultPoints?: string[]; sections: Section[]; cover?: string;
   gallery?: Array<{ src: string; alt: string; label?: string }>; url?: string;
 };
 const modes: Mode[] = ["Work", "Lab", "Notes", "Contact"];
@@ -43,48 +43,70 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "ai-ppt", title: "AI PPT", short: "觅知网线上产品｜从主题或文档生成演示文稿",
-    category: "Work", source: "company", period: "2024", status: "线上运行", role: "产品规划 / 生成链路 / 编辑体验",
-    result: "约 1.5 个月上线 / 项目累计营收千万级 / 注册充值率翻倍",
-    url: "https://www.51miz.com/ai/ppt", tags: ["AI 应用", "PPT 生成", "在线编辑"],
+    id: "ai-ppt", title: "觅知网 AI PPT｜生成、编辑与商业化闭环", short: "项目负责人 / AI 产品经理｜把生成能力接入觅知网 PPT 业务",
+    category: "Work", source: "company", period: "2024.03–2024.12", status: "线上运行", role: "项目负责人 / AI 产品经理",
+    result: "约 1.5 个月完成功能上线；累计实现千万级营收；推动注册充值率翻倍提升",
+    resultPoints: [
+      "约 1.5 个月完成功能上线，实现“需求输入 → 内容生成 → 编辑导出 → 付费转化”闭环，累计实现千万级营收。",
+      "推动注册充值率翻倍提升。",
+    ],
+    url: "https://www.51miz.com/ai/ppt", tags: ["AI PPT", "主题 / 文档生成", "在线编辑", "付费转化"],
     gallery: [
-      { src: "/assets/portfolio/ai-ppt/01-topic.jpg", alt: "AI PPT 输入主题并生成演示文稿", label: "01 / 输入主题生成 PPT" },
-      { src: "/assets/portfolio/ai-ppt/02-upload.jpg", alt: "AI PPT 上传文档后生成演示文稿", label: "02 / 上传文档生成 PPT" },
-      { src: "/assets/portfolio/ai-ppt/03-beautify.jpg", alt: "AI PPT 上传现有演示稿并自动美化", label: "03 / 上传 PPT 自动美化" },
+      { src: "/assets/portfolio/ai-ppt-company/01-home.png", alt: "觅知网 AI PPT 首页，展示主题生成、文档生成和上传 PPT 自动美化入口", label: "01 / 首页：三种 PPT 创作入口" },
+      { src: "/assets/portfolio/ai-ppt-company/02-generation-entry.png", alt: "AI PPT 工作台，支持输入主题、上传文档和上传 PPT 自动美化", label: "02 / 工作台：选择生成方式" },
+      { src: "/assets/portfolio/ai-ppt-company/03-outline.png", alt: "AI 根据输入内容生成 PPT 大纲，支持重新生成或继续选择模板", label: "03 / 大纲：先确认内容结构" },
+      { src: "/assets/portfolio/ai-ppt-company/04-template-picker.png", alt: "AI PPT 模板选择器，可按风格、颜色筛选演示文稿模板", label: "04 / 模板：按风格与颜色筛选" },
+      { src: "/assets/portfolio/ai-ppt-company/05-editor.png", alt: "生成后的 PPT 在线编辑界面，可查看页面并使用 AI 更换模板", label: "05 / 编辑：生成后继续调整" },
+      { src: "/assets/portfolio/ai-ppt-company/06-presentation-result.png", alt: "AI 生成的年度工作总结 PPT 及在线编辑工作台", label: "06 / 结果：演示文稿与编辑工作台" },
+      { src: "/assets/portfolio/ai-ppt-company/07-layout-change.png", alt: "在线编辑 PPT 时打开的页面版式更换面板", label: "07 / 版式：在编辑中更换页面结构" },
     ],
     sections: [
-      { label: "项目概览", text: "觅知网 AI PPT 线上产品。负责产品规划、生成流程与编辑体验设计。" },
-      { label: "背景与问题", text: "从主题或文档开始制作 PPT，需要经历资料整理、结构规划、内容撰写和视觉排版。单独生成文本，不能完成可编辑演示稿的交付。" },
-      { label: "产品策略", text: "将生成目标从“写出内容”扩展到“形成可编辑演示文稿”，围绕主题/文档输入、大纲、页面内容、排版和编辑组织完整流程。" },
-      { label: "核心设计", text: "用户输入主题或上传文档后生成大纲与正文，并提供排版、配图建议。页面结构覆盖封面、目录、章节、正文和结尾；正文页按内容组织 3–10 个要点。" },
-      { label: "项目成果", text: "约 1.5 个月完成核心功能并上线，跑通“需求输入 → 内容生成 → 在线编辑 → 导出 → 付费转化”闭环。项目累计营收达千万级，注册充值率较优化前翻倍。线上版本目前仍在运行，技术方案保留了当年的实现水平，后续未持续迭代。" },
-      { label: "复盘沉淀", text: "项目实践沉淀了 AI PPT 内容结构、页面类型、Prompt 规则与生成效果评估方面的经验。新版技术探索作为个人实验单独展示。" },
+      { label: "项目背景 / 抢占 AI PPT 早期窗口", cards: [
+        { title: "市场｜AI 生成 PPT 进入早期爆发", text: "2024 年初市场升温，竞品尚未形成绝对壁垒。传统 PPT 制作环节多，单独生成文本也不能直接交付可用的演示稿。" },
+        { title: "业务｜把 AI 融入觅知网现有链路", text: "觅知网已有大量 PPT 核心用户和模板资源。项目目标是把 AI 接入现有业务，形成从生成、在线编辑到导出和付费的完整服务。" },
+      ] },
+      { label: "关键决策 / 将生成拆成可控阶段", text: "围绕效率、内容质量和用户控制感，把一次性生成改成逐步确认、逐步交付的流程。", flow: ["主题 / 文档输入", "大纲生成", "逐页生成", "在线编辑", "导出与付费"] },
+      { label: "关键难点与解决方案", cards: [
+        { title: "入口｜适配用户手头的材料", text: "支持输入主题、上传文档、上传 PPT 自动美化三种起点，让 AI 接入不同制作阶段，而不是只服务从空白开始的用户。" },
+        { title: "结构｜先确认大纲，再生成页面", text: "采用「需求输入 → 大纲生成 → 页面生成 → 在线编辑 → 导出」的分阶段流程。页面涵盖封面、目录、章节、正文和结尾；正文按内容组织 3–10 个要点。" },
+        { title: "质量｜同时评估内容与版面", text: "推进模型选型、Prompt 策略、RAG 文档解析和 Workflow 设计；评估覆盖内容准确性、逻辑结构与页面布局，不以“生成成功”代替质量验收。" },
+        { title: "商业化｜让生成行为进入付费设计", text: "结合用户生成、编辑和导出行为，设计会员权益、生成额度与付费路径；再用数据分析和 A/B 测试优化转化策略。" },
+      ] },
+      { label: "项目沉淀", text: "沉淀 PPT 内容组织、结构规划、版式设计和编辑交付等行业 Know-how，并将传统专业制作方法转化为可复用的生成流程、规则与质量标准。线上版本仍在运行；本案例复盘的是当时的项目方案与结果。" },
     ],
   },
   {
-    id: "ai-design", title: "觅知网 AI 素材创作与分发中台", short: "搭建 AI 素材生产中台，并将生成能力产品化为网站与 APP",
-    category: "Work", source: "company", period: "2025", status: "线上运行", role: "产品经理 / 整体方案策划 / 中后台框架与流程设计",
-    result: "1. 搭建创作与分发中台，年节省供稿成本约 80 万元、存储及带宽成本约 200 万元。\n2. 中台能力产品化至网站和 APP，前台实现百万级营收。",
-    url: "https://www.51miz.com/ai/image", tags: ["AI 素材中台", "AIGC 内容生成", "AI 生图", "人机协同审核与分发"],
+    id: "ai-design", title: "觅知网 AI 素材创作与分发｜中台与前台产品", short: "从 AI 素材创作分发中台，到 Web、APP 与编辑器端产品",
+    category: "Work", source: "company", period: "2025", status: "线上运行", role: "产品经理 / 项目负责人",
+    result: "中台累计节约外部设计师相关存储及带宽成本约 200 万元；前台产品累计实现百万级营收",
+    resultPoints: [
+      "提升素材生产与分发效率：除复杂设计场景外，其余场景生产效率提高 10 倍以上；累计节约外部设计师与审核师的招募、投稿成本，以及平台存储和带宽成本约 200 万元。",
+      "将中台能力产品化至网站、APP 与编辑器端，前台累计实现百万级营收。",
+    ],
+    url: "https://www.51miz.com/ai/image", tags: ["AI 素材创作分发中台", "AI 生图应用", "Web", "APP", "编辑器端"],
     gallery: [
-      { src: "/assets/portfolio/ai-design/01-home.jpg", alt: "觅知网 AI 生图首页与素材创作入口", label: "01 / 官网首页：AI 生图入口与创作引导" },
-      { src: "/assets/portfolio/ai-design/02-tools.jpg", alt: "AI 图片处理工具入口与功能卡片", label: "02 / AI 图片处理：智能抠图、消除、变清晰与扩图" },
-      { src: "/assets/portfolio/ai-design/03-handcopy.jpg", alt: "AI 手抄报生图与自然语言编辑界面", label: "03 / AI 生图：生成结果与自然语言修改" },
-      { src: "/assets/portfolio/ai-design/04-poster.jpg", alt: "AI 海报设计与提示词编辑界面", label: "04 / AI 海报：主题生图与快速修改" },
-      { src: "/assets/portfolio/ai-design/05-editor.jpg", alt: "在线设计编辑器中的 AI 生成海报", label: "05 / 在线编辑：生成素材的二次设计" },
-      { src: "/assets/portfolio/ai-design/06-generation.jpg", alt: "AI 生成结果页面与重新编辑、再次生成操作", label: "06 / 生成结果：编辑、再生成与连续创作" },
-      { src: "/assets/portfolio/ai-design/07-review.png", alt: "AI 素材人工快筛工作台：多选图片、批量审核、编辑标签与退回重生成", label: "07 / 人工快筛：批量审核与素材入库" },
+      { src: "/assets/portfolio/ai-design/07-review.png", alt: "AI 素材审核工作台：批量筛选、查看生成信息并处理素材入库", label: "01 / 后台审核工作台：批量快筛与素材入库" },
+      { src: "/assets/portfolio/ai-design/01-home.jpg", alt: "觅知网 AI 生图首页与素材创作入口", label: "02 / 前台首页：AI 生图入口与创作引导" },
+      { src: "/assets/portfolio/ai-design/02-tools.jpg", alt: "AI 图片处理工具入口与功能卡片", label: "03 / AI 图片处理：智能抠图、消除、变清晰与扩图" },
+      { src: "/assets/portfolio/ai-design/03-handcopy.jpg", alt: "AI 手抄报生图与自然语言编辑界面", label: "04 / AI 生图：生成结果与自然语言修改" },
+      { src: "/assets/portfolio/ai-design/04-poster.jpg", alt: "AI 海报设计与提示词编辑界面", label: "05 / AI 海报：主题生图与快速修改" },
+      { src: "/assets/portfolio/ai-design/05-editor.jpg", alt: "在线设计编辑器中的 AI 生成海报", label: "06 / 在线编辑：生成素材的二次设计" },
+      { src: "/assets/portfolio/ai-design/06-generation.jpg", alt: "AI 生成结果页面与重新编辑、再次生成操作", label: "07 / 生成结果：编辑、再生成与连续创作" },
     ],
     sections: [
-      { label: "项目背景", text: "平台设计师用户的素材需求具有明显的定制化、长尾和高频特征。过去主要依赖外部素材供给方或设计师逐单制作，再经过多轮人工审核、打标，并手动在不同平台间流转；供给成本、格式治理、审核与重复存储逐渐成为规模化供给的瓶颈。项目从内部高频、重复的素材需求切入，规划建设 AI 创作与分发中台，并逐步将成熟能力开放为前台产品。" },
-      { label: "个人职责", text: "担任产品经理，负责项目整体方案策划，规划中后台框架、核心业务流程与产品边界；梳理从需求进入、AI 生产和审核到素材分发的端到端链路，并推动中台能力向前台网站及 APP 延伸。" },
-      { label: "项目成果一｜搭建创作与分发中台", text: "策划并推动搭建面向 C 端业务的 AI 素材创作分发工作流，覆盖需求解析、模型调度、生图迭代、审核打标、素材入库与多平台调用。中台减少各平台重复存储和带宽开销，并降低设计师供稿及审核成本；按项目复盘口径，年节省供稿成本约 80 万元、存储及带宽成本约 200 万元。" },
-      { label: "项目成果二｜中台能力产品化", text: "将中台生图链路复用到前台，迭代用户可直接使用的 AI 生图网站和 APP，打通从内部生产能力到用户创作服务的产品化路径，前台产品实现百万级营收。" },
-      { label: "关键工作｜需求解析与模型路由", text: "将原始设计需求结构化，根据需求特征匹配适合的模型和生成流程，组合使用即梦、千问及 GPT、Gemini 等模型。" },
-      { label: "关键工作｜生成、审核与迭代", text: "编排多模型生图流程，引入 Agent 对结果进行质量判断、打回与迭代；记录生成链路数据，为后续模型路径和生成效果优化提供依据。" },
-      { label: "关键工作｜AI 打标与人工快筛", text: "根据原始需求为图片生成 SEO 标题、关键词及内部检索标签；建设人工预审平台，将逐张查看优化为一页约 50 张的批量快筛，审核通过后进入中台素材池。" },
-      { label: "关键工作｜素材加工与多平台分发", text: "审核通过的素材自动进行超清放大并入库，供下游业务平台统一调用；针对局部细节修改，提供自然语言驱动的局部编辑、智能高清、等比扩图、背景抠图、智能调色及在线二次编辑能力。" },
-      { label: "项目沉淀", text: "沉淀从需求结构化、模型编排、生成质检、人机协同审核到素材治理和多端分发的模块化工作流。中台既能承接内部重复供给需求，也能作为前台 AI 创作产品的可复用底座。" },
+      { label: "项目背景 / 两端问题", cards: [
+        { title: "后台｜供给规模与成本", text: "素材需求定制化、长尾且高频。过去依赖外部设计师逐单制作，再人工审核、打标并跨多个平台分发；供给成本、重复存储和审核效率逐渐成为规模化瓶颈。" },
+        { title: "前台｜找图、用图与编辑闭环", text: "把后台生图能力产品化，并结合公司已有的在线编辑、AI 抠图和超清能力，形成设计师找图、用图、加工的一体化前台路径。" },
+      ] },
+      { label: "关键决策 / 先搭中台，再做前台产品化", text: "从内部高频、重复的素材需求切入：先把创作、审核、素材治理与分发组织成可复用链路，再将成熟能力开放给前台产品。", flow: ["AI 素材创作分发中台", "Web", "APP", "编辑器端"] },
+      { label: "关键难点与解决方案", cards: [
+        { title: "需求解析｜先弄清用户想要什么", text: "将需求拆成主题、用途、风格与画面要素。描述含糊时先改写 query；需要时联网补充最新知识，再进入生成，减少因需求缺项导致的反复试错。" },
+        { title: "模型路由｜按任务选擅长的模型", text: "不同任务走不同模型：例如 Nano Banana 更适合手抄报，即梦 4.0 更适合艺术字。系统按需求特征匹配模型与生成方式，不用同一模型硬套所有场景。" },
+        { title: "多轮生成｜每次结果都能追溯", text: "把需求解析、模型选择、批量生图和结果检查编排成连续流程；Agent 可判断结果是否需要重试。每次生成保留全链路细节，便于定位问题、调整后续生成。" },
+        { title: "简化人工审核｜AI 补齐素材信息", text: "SEO 标题、关键词和检索标签均由 AI 生成。审核工作台把素材集中呈现，支持每页约 50 张批量快筛；通过后进入中台素材池，减少逐张查看与手工补录。" },
+        { title: "素材复用｜加工入库并多端分发", text: "审核通过后自动超清放大、入库并供下游平台调用；同时把生成和编辑能力延伸到网站、APP 与编辑器端。" },
+      ] },
+      { label: "前台产品化与反馈闭环", text: "按海报、手抄报等细分类目拆分创作入口，把在线编辑、抠图和超清等已有能力接入对应场景。用户的使用与编辑反馈回到后台，用于调整需求理解、模型路由和素材生产。", flow: ["后台：生成、审核、入库", "前台：按类目创作与编辑", "反馈：问题与使用信号回流"] },
     ],
   },
   {
@@ -154,13 +176,14 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "ai-ppt-lab", title: "课映 / AI PPT 自研版", short: "面向教辅场景，把课件从“生成页面”推进到可互动的教学体验",
+    id: "ai-ppt-lab", title: "课映 / AI互动教学课件", short: "面向教辅场景，把课件从“生成页面”推进到可互动的教学体验",
     category: "Lab", source: "personal", period: "2026", status: "持续迭代", role: "AI Native 产品主导 / 教学生成策略 / Agent 工作流设计",
     result: "已形成大纲到多类型课件的生成链路，并实现互动课件与可恢复 Agent 工作台",
     url: "https://keying.vercel.app", tags: ["AI 课件", "教辅行业", "PBL", "互动生成", "Agent Runtime"],
-    // Current product screenshots will be added after the owner captures them.
-    // Do not reuse archived GIFs/screens from the previous interface.
-    gallery: [],
+    gallery: [
+      { src: "/images/portfolio/ai-ppt-lab/01-course-builder-entry-redacted.png", alt: "课映 AI 课件生成首页：课程需求输入与课件入口，账户邮箱已隐藏", label: "01 / 课程需求输入与生成入口" },
+      { src: "/images/portfolio/ai-ppt-lab/02-requirement-analysis.png", alt: "课映 AI 正在分析课程需求的生成准备界面", label: "02 / Agent 分析课程需求" },
+    ],
     sections: [
       { label: "S / 背景与问题", text: "通用 AI PPT 常见路径是输入主题、生成大纲、套用模板；这能加快通用演示稿制作，但对细分行业里的知识结构、教学过程和课堂活动未必贴合。课映选择教辅行业作为切入口：课件使用频繁，而静态页面不总能直观解释抽象知识，也难让学生在课堂中动手验证。" },
       { label: "T / 我的职责", text: "我以 AI Native 产品经理的方式推进个人项目：聚焦教辅场景，梳理教学目标与课堂方法，定义大纲和场景生成策略，设计可互动课件的表达方式，并把 Agent Runtime、工具调用与生成校验纳入完整工作流。" },

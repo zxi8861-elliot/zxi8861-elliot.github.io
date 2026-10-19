@@ -55,7 +55,9 @@ function ProjectArtwork({ project, detail = false }: { project: Project; detail?
       </div>
     );
   }
-  const image = projectImage(project);
+  const image = !detail && project.id === "ai-design"
+    ? project.gallery?.[1]?.src ?? projectImage(project)
+    : projectImage(project);
   if (image) return <img className="project-art-image" src={image} alt={`${project.title}项目展示`} />;
   return (
     <div className={`project-artwork project-artwork--${project.id}${detail ? " is-detail" : ""}`} aria-label={`${project.title}项目视觉封面`}>
@@ -142,14 +144,22 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
             <h1>{titleText(project)}</h1>
             <p className="project-case-lede">{project.short}</p>
             <div className="project-case-tags">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-            <div className="project-case-facts">
+            {project.resultPoints?.length ? <section className="project-case-owner-results">
+              <span>本人职责 <strong>（{project.role}）</strong></span>
+              <ol>{project.resultPoints.map((point) => <li key={point}>{point}</li>)}</ol>
+            </section> : <div className="project-case-facts">
               <div><span>本人职责</span><p>{project.role}</p></div>
               <div><span>代表结果</span><p>{project.result}</p></div>
-            </div>
+            </div>}
             {project.sections.map((section, index) => (
               <section className="project-case-section" key={section.label}>
                 <span>{String(index + 1).padStart(2, "0")} / {section.label}</span>
                 {section.text && <p>{section.text}</p>}
+                {section.flow && <div className="project-case-flow" aria-label={section.flow.join(" 到 ")}>
+                  {section.flow.map((step, stepIndex) => <div className="project-case-flow-step" key={step}>
+                    <strong>{step}</strong>{stepIndex < section.flow!.length - 1 && <span aria-hidden="true">→</span>}
+                  </div>)}
+                </div>}
                 {section.cards && <div className="project-case-cards">
                   {section.cards.map((card) => <div className="project-case-card" key={card.title}>
                     <strong>{card.title}</strong><p>{card.text}</p>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-type FolderId = "agent" | "experience" | "ppt" | "editor";
+type FolderId = "agent" | "experience" | "ppt" | "editor" | "muldo";
 type KnowledgeSelection = string;
 
 type ExperienceArticleData = {
@@ -21,6 +21,7 @@ type ExperienceArticleData = {
   illustration?: "smart-guides" | "history-stack" | "editor-blueprint" | "ppt-structured-output";
   glossary?: Array<{ term: string; visual: string; purpose: string; persistence: string }>;
   comparison?: Array<{ approach: string; model: string; strengths: string; tradeoffs: string }>;
+  comparisonTitle?: string;
   sources?: Array<{ label: string; href: string }>;
   resources?: Array<{ category: string; name: string; description: string; href: string }>;
 };
@@ -47,6 +48,7 @@ const folders: Array<{ id: FolderId; index: string; title: string }> = [
   { id: "experience", index: "02", title: "UI/UX 与前端体验" },
   { id: "ppt", index: "03", title: "搭建中" },
   { id: "editor", index: "04", title: "编辑器产品与技术" },
+  { id: "muldo", index: "05", title: "MulDo / Agent 协作研究" },
 ];
 
 const agentArticles: AgentArticleData[] = [
@@ -400,46 +402,6 @@ const agentArticles: AgentArticleData[] = [
     ],
   },
   {
-    id: "agent-jit-context",
-    title: "JIT / JITT：Agent 为什么要按需加载上下文与工具？",
-    summary: "你提到的“JET / Jade”最接近 JIT Context；同时核对了 Jentic 提出的 JITT，避免把两个概念混为一谈。",
-    tags: ["Just-in-Time Context", "JITT", "上下文工程", "工具发现"],
-    sections: [
-      { title: "先核对名称：不是一个叫 Jade 的通用 Agent 技术", problem: "“JET / Jade”不是一手资料中能确认的统一技术名。结合近期 Agent 讨论，最接近的是 JIT（Just-In-Time）context：Agent 执行到需要时再加载资料；另有 Jentic 使用的 JITT（Just-In-Time Tooling），特指按需发现和加载工具能力。JIT 也常指编译器即时编译，语境不同。", table: { headers: ["术语", "指什么", "边界"], rows: [
-        ["JIT context / just-in-time context", "运行时按需取入相关文件、数据或上下文", "通用上下文工程模式"],
-        ["JITT / Just-In-Time Tooling", "按需发现、加载工具说明与调用能力", "Jentic 使用的术语，不是全行业唯一标准"],
-        ["JIT compiler", "程序运行时编译热点代码", "编译器技术，与 Agent 上下文无关"],
-      ] } },
-      { title: "它解决什么问题：不要一开始把所有东西塞给模型", body: "预先把所有历史、项目文件和工具 schema 放进上下文，容易占满有限 token、拉高成本与延迟、稀释关键线索；静态索引也可能过期。Anthropic 将 JIT 描述为保存轻量标识（路径、查询、链接等），Agent 运行时通过工具动态加载，再逐层探索。代价是多了工具调用和检索延迟，也要求权限、导航工具和停止条件可靠。" },
-      { title: "按需加载链路：先有索引，再逐步取证", cards: [
-        { label: "01 / 入口上下文", body: "先给目标、核心约束、项目目录或可用工具入口；不传所有原始资料。" },
-        { label: "02 / 定位", body: "模型判断缺什么，搜索目录、文档索引、工具目录或数据库元信息。" },
-        { label: "03 / 取片段", body: "按权限读取相关文件、段落、工具 schema；保留路径、版本、更新时间。" },
-        { label: "04 / 决策后续", body: "检查证据是否足够；必要时继续读取，完成后将重要状态写入结构化产物。" },
-      ] },
-      { title: "JIT、RAG、长上下文：各自解决不同层次", table: { headers: ["方式", "核心做法", "优势", "风险 / 边界"], rows: [
-        ["长上下文", "一次把更多文本放入模型窗口", "范围明确、规模可控时路径简单", "窗口大仍有注意力与成本问题；不自动解决权限与时效"],
-        ["RAG", "推理前检索相关文档片段", "知识库大时减少无关输入", "依赖索引、切块和召回；不一定能自主发现未知信息"],
-        ["JIT context", "Agent 在执行循环里用工具按需探索和读取", "渐进披露，能跟随任务发现线索", "更慢；需要控制工具选择、循环和读取范围"],
-        ["混合", "入口摘要 + RAG / 搜索 + JIT 深挖", "兼顾常用信息速度与长尾探索", "路由复杂；必须追踪每段上下文来源"],
-      ] } },
-      { title: "工程难点：按需不等于随便搜", problem: "Agent 如果可以无边界地搜和读，可能反复探索、越权访问、拿到旧版本，或者在多个工具之间循环。", cards: [
-        { label: "权限先于检索", body: "先按用户、项目、角色做 ACL 过滤；不能先召回越权文档再靠模型自觉忽略。" },
-        { label: "有界探索", body: "限制每步候选数、最大调用次数、token / 时间预算；设置停止与证据门槛。" },
-        { label: "版本与新鲜度", body: "读取带文档 ID、版本或更新时间；高风险任务提交前重新验证来源。" },
-        { label: "缓存要看权限和版本", body: "缓存 key 至少包含 scope、授权版本和数据版本，避免跨用户复用。" },
-      ] },
-      { title: "MULDO 可借鉴：项目上下文的渐进披露", body: "新任务启动时给 Agent 一个短的项目地图（目标、角色、核心文档链接、权限说明）；它再按任务查具体决策记录、任务卡、评论、代码或工具。不同 Agent 获得不同上下文视图：规划 Agent 读目标和约束，执行 Agent 读取负责的任务材料，审阅 Agent 读取变更与验收标准。跨 Agent 传交付物和来源，不把每个成员的完整历史广播给所有 Agent。此处是设计建议，不代表 JIT/JITT 是 MULDO 已采用的实现。" },
-      { title: "面试追问：JIT 与 RAG 怎么选？", body: "先看任务是否已知检索目标、资料是否稳定、是否需要探索。资料池明确、问题可检索、低延迟重要时，RAG 往往更合适；任务需要主动发现文件、工具或下一步证据时，JIT 更有价值。生产系统通常组合使用：先用索引缩小范围，再用工具按需取原文；关键结论保留来源和版本，评测召回质量、任务完成率、越权率、工具调用数、token 与端到端延迟。" },
-    ],
-    sources: [
-      { label: "Anthropic · Effective context engineering：JIT context 与渐进披露", href: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" },
-      { label: "Google Developers · Context-aware multi-agent production 架构", href: "https://developers.googleblog.com/architecting-efficient-context-aware-multi-agent-framework-for-production/" },
-      { label: "Jentic · Just-In-Time-Tooling (JITT)：作者对术语和模式的定义", href: "https://jentic.com/blog/just-in-time-tooling" },
-      { label: "Jentic · Announcing Jentic：动态加载工具的产品方向", href: "https://jentic.com/blog/announcing-jentic" },
-    ],
-  },
-  {
     id: "agent-collaboration",
     title: "协同 Agent：如何分工、共享上下文并把结果交接回来？",
     summary: "从任务拆分到共享状态、权限隔离、并发冲突与验收，梳理多 Agent 协作的系统设计。",
@@ -502,9 +464,144 @@ const agentArticles: AgentArticleData[] = [
     ],
   },
 ];
-const agentArticleOrder = ["agent-edit-message", "agent-memory", "agent-context-compaction", "agent-rag-retrieval", "agent-personal-agent", "agent-jit-context", "agent-collaboration", "agent-side-chat", "agent-add-to-chat", "agent-fork", "agent-annotation"];
+const agentArticleOrder = ["agent-edit-message", "agent-memory", "agent-context-compaction", "agent-rag-retrieval", "agent-personal-agent", "agent-collaboration", "agent-side-chat", "agent-add-to-chat", "agent-fork", "agent-annotation"];
 
 const experienceArticles: Record<string, ExperienceArticleData> = {
+  "muldo-competitor-landscape": {
+    kicker: "MULDO RESEARCH / COLLABORATIVE AGENT PRODUCTS",
+    title: "协作型 Agent 产品：它们如何一起做事、管理项目？",
+    summary: "从一个具体任务看清每个产品里的参与者、共享上下文、任务交接、项目状态和人工把关；多 Agent 开发框架放在后半部分作为技术补充。",
+    tags: ["竞品研究", "人机协作", "项目管理", "多 Agent"],
+    sections: [
+      { title: "先把“协作”说清楚：不是把几个机器人放进群聊", body: "一款协作型 Agent 产品至少要让人回答五个问题：谁参与（同事、Agent 或外部协作者）？大家围绕什么共同工作（项目、任务、文档或客户请求）？Agent 如何知道当前项目背景？任务怎样被分配、推进、阻塞、交回和验收？出了错由谁负责、谁能批准、成本记在哪里？群聊只是交流界面；项目管理还需要独立的任务对象、状态、负责人、权限和变更记录。下面按一个实际工作过程拆解产品，而不是只列“用了几个 Agent”。" },
+      { title: "Multica：把 Agent 当作团队成员来派 Issue（偏研发团队）", body: "你说的“Mutika”对应的产品大概率是 Multica（拼写 Multica）。它不是通用办公 Agent，而是面向人和 AI 编码 Agent 一起工作的项目工作台。举例：负责人把“给登录页补上密码重置流程”建成 Issue，写清需求与讨论，在负责人字段里选一个 Agent；Multica 根据这个 Issue 创建一次 Run，把 Agent 的指令、技能、模型和运行环境配置带过去；连接的电脑 Runtime 从队列领取 Run，在本地调用已安装的 Codex、Claude Code 等编码工具；执行进度、评论、阻塞原因和最终结果再写回 Issue。人可以边看日志边补充指令，最后在 review 阶段查看代码交付，再决定是否合并。", cards: [
+        { label: "它怎么协作", body: "Issue 是人和 Agent 的共同工作现场：描述与评论是任务上下文，Agent 作为 assignee 接单，运行中的进度和求助回到同一时间线；Agent 不需要和同事另开一个不可追溯的私聊。人可以指导、处理 blocker、review 结果。" },
+        { label: "它怎么管理项目", body: "Workspace 隔离团队成员、项目、Issue、Agent、技能和运行记录；项目/Issue 负责工作组织，Run 负责一次次执行。Issue 可排队、被 Runtime 领取、执行、完成或失败；项目上下文作为团队长期背景，单次要求仍写在 Issue 里。" },
+        { label: "交付、权限与成本", body: "执行日志可回放工具调用和错误，结果先进入 review gate 而不是直接进主分支；工作区角色及 Agent 可运行范围由管理员控制；运行用量可按 Agent / Issue 查看。官方将其描述为 source-available、可自托管，许可证带有额外条件，不应简单写成“无条件 Apache 开源”。" },
+        { label: "源码入口：产品层如何接上执行层", body: "本机 shallow clone 中，server/internal/service/issue.go 可追 Issue 的创建、更新与分派；server/internal/service/task.go 可继续看 Agent task 的入队、领取与状态推进；server/internal/handler/issue_assignee_types_test.go 展示 assignee 类型如何区分人、Agent 与 Squad。它的关键不是几个 Agent 互发自然语言，而是 Issue 将责任对象映射到执行队列，再由 Runtime 执行并把事件带回任务。源码只在本地 research/muldo-agent-collaboration/repos/multica/ 供阅读，许可证含额外条件，不随站点构建发布。" },
+        { label: "一句话定位与边界", body: "它管理的是“团队如何把编码任务交给现有 Agent 工具并收回可审查的代码”，不是替你提供通用写作、市场、运营等全行业 Agent，也不是把 Agent runtime 本身等同于完整项目管理。" },
+      ] },
+      { title: "Linear：Issue 的人类负责人不变，Agent 受托执行其中一段工作", body: "Linear 首先是团队工作/项目管理系统，再把 Agent 接到 Issue 工作流里。举例：产品经理创建一个 Issue 并指定团队、优先级、状态和负责人；负责人可以把执行委托给某个 Agent，但自己仍然保留责任人身份。Agent 可以被 @mention，也可在被分配时按接入权限处理任务、回 Issue 评论或创建 PR；任务历史、Agent 委派关系、通知和筛选仍留在 Linear。管理者能够按团队限制 Agent 访问，并查看由谁负责、交给哪个 Agent、状态如何变化。", cards: [
+        { label: "它怎么协作", body: "协作围绕团队共享的 Issue 发生：人在描述、评论中给 Agent 指令，或通过 assignee 字段委派；Agent 按 workspace/team guidance 和被授予的 scope 读取资料、回评论、写文档或连接代码工作流。这里的核心不是 Agent 们互相聊天，而是人在现有工作现场召唤/委派 Agent。" },
+        { label: "它怎么管理项目", body: "项目由 Project / Milestone 组织，具体工作拆成有单一人类 assignee 的 Issue；状态、优先级、团队、依赖和 Activity feed 留下进展与变更。即使 Issue 委派给 Agent，负责人仍对结果负责；My Issues、Inbox 和筛选视图帮助成员跟进自己负责或委派的事项。" },
+        { label: "治理特点", body: "管理员安装 Agent 时选择可访问的团队，之后可调整授权；组织级与团队级指导分层生效。官方文档说明 Issue 委派能力适用于 Business / Enterprise 计划，第三方 Agent 需按开发者集成配置。" },
+        { label: "一句话定位与边界", body: "Linear 适合观察“传统团队项目管理如何增加 Agent 这个受托执行者”，但主工作模型仍以软件产品研发的 Issue 流为中心；它不等于一套从头搭建的跨行业多 Agent 团队。" },
+      ] },
+      { title: "Taskade：通用项目里配置 AI Team，再把 Agent 放进任务", body: "Taskade 更接近跨场景的团队工作空间。举例：市场同事创建“新品上市”项目，里面列出调研、卖点、渠道文案和发布计划等任务；团队可以组建 AI Team，挑选不同职责的 Agent。项目聊天可以带着当前项目上下文向团队提问，也可以指定某个 Agent、让系统自动选人，或让全队都回答。对具体任务，还能用命令把 AI Team 分配过去；完成后选择把输出插入任务、替换任务内容，或存入 Agent 知识。", cards: [
+        { label: "它怎么协作", body: "一个 AI Team 由至少两个 Agent 组成；在 Auto 模式下由系统选择合适成员，在 Everyone 模式下全员响应，也可手动指定一个或多个 Agent。成员通过同一个项目聊天共享当前项目上下文，Agent 输出可以继续变成任务、项目知识或自动化流程。" },
+        { label: "它怎么管理项目", body: "Workspace / Team 下组织文件夹、项目和任务；任务可以分配、安排时间、拆子任务，并以列表、看板等方式管理。AI Team 可以在项目级对话，也可以被指派到单项任务，交付结果回写到任务，因此聊天产出能接回项目工作，而非只停留在独立聊天页。" },
+        { label: "适用和边界", body: "更适合营销、研究、内容运营等任务结构相对灵活的团队，也覆盖一般团队协作；从官方帮助文档能核实的是多 Agent 对话模式、项目上下文和任务分配机制。不要仅凭产品称呼就推断 Agent 会自主协调所有项目依赖、拥有完整企业治理或自动对结果负责。" },
+      ] },
+      { title: "Asana AI Teammates：Agent 进入已有业务流程，并保留人工审批", body: "Asana 的思路不是先建一个 Agent 群聊，而是把 AI Teammate 接到已有的团队任务与流程。举例：客户项目中的一项创意需求进入任务后，AI Teammate 可以提示是否协助；团队确认后，它开始处理，并创建子任务/草稿交回给人 review。官方目前描述的 Client Management 流程明确采用“notice → recommend → approve”：Agent 可以发现、建议和准备工作，发送或改动前仍由人审批。Asana Work Graph 把人、Agent、任务、项目、目标和依赖放在同一个工作关系图中。", cards: [
+        { label: "它怎么协作", body: "Agent 作为项目/任务中的协作者理解业务背景；它在当前任务里提出帮助建议，成员确认后再执行，并把可审阅的子任务或草稿分派回人。跨团队工作可由 AI Studio 处理结构化 intake / routing，AI Teammates 承担具体工作，Dash 协助发现优先级与路由。" },
+        { label: "它怎么管理项目", body: "项目、目标、任务、依赖和负责人仍是工作事实来源；Agent 不是另开一个脱离业务系统的执行空间。共享 Work Graph 提供上下文，工作流把请求转成项目/任务并持续更新，团队可沿原有的项目计划追踪工作。" },
+        { label: "人类控制点", body: "以目前官方 Client Management 文档为例，AI Teammate 的工作需要团队成员触发，客户不能从客户门户直接启动；草稿/建议要由人审核，未经批准不会自动发送给客户。这种明确的审批边界对客户沟通类 Agent 尤其重要。" },
+        { label: "一句话定位与边界", body: "Asana 展示的是一般业务团队如何把 Agent 嵌进跨职能工作管理；但具体 AI 功能、套餐和开放范围依产品模块而异，调研或采购时要核对当前计划和工作区设置，不能把一个场景的规则推成全产品通则。" },
+      ] },
+      { title: "先对比协作机制，再看名字：四种产品究竟在管什么", table: { headers: ["产品", "共同工作对象", "Agent 怎样加入", "项目管理的核心", "最适合借鉴"], rows: [
+        ["Multica", "研发 Issue、执行 Run、代码产物", "Issue 指派 → Runtime 领取 → 本地 Agent 工具执行 → 日志/结果回 Issue", "Workspace、项目、Issue 生命周期、review gate、运行用量", "任务队列、可见执行、接管与代码审查"],
+        ["Linear", "团队 Issue、Project、文档", "人保留负责人；委派 Agent / @mention，并按团队 scope 授权", "Issue 负责人/状态/优先级/活动历史及项目里程碑", "责任链与 Agent 委派如何共存"],
+        ["Taskade", "通用项目、任务、项目聊天", "项目聊天选一个/多个 Agent 或 AI Team；AI Team 可被指派给任务", "Workspace → Project → Task / 子任务，输出回写项目", "项目上下文、多 Agent 选择与产物回流"],
+        ["Asana", "跨团队目标、项目、请求和任务", "Agent 成为任务协作者，成员确认后接手建议工作流", "Work Graph 上的目标、责任人、项目、依赖和审批流程", "把 Agent 嵌入企业流程及人工审批"],
+      ] } },
+      { title: "“Gorilla Bot”需要先核对具体指哪个产品", body: "按 Gorilla Bot / GorillaBot 的名称检索，没有找到能可靠确认是“AI 多人协作与项目管理工作台”的官方产品。搜索结果里有 Gorilla 实验研究平台（支持研究项目成员与权限协作）、LeadsGorilla 销售线索 Agent，以及 Iron Gorilla AI employee 等不同产品，彼此不是同一个工具。为了不把名字相近的产品错误写进竞品分析，这版暂不把它们当作你提到的协作 Agent；如果你之后给我链接或截图，我再按同一模板补上它真实的协作过程与项目流转。" },
+      { title: "再看开发框架：它们是协作底座，不等于协作产品", body: "AutoGen、LangGraph、CrewAI、MetaGPT、OpenHands SDK 仍然值得研究，但回答的是另一类问题：开发者如何定义 Agent、消息/状态如何传递、流程如何恢复、工具在哪里执行。它们一般不会自动带来同事邀请、公司角色、项目看板、审批、Usage ledger、套餐扣费和团队级权限。后面的源码对比继续保留，作为 MULDO 技术实现的参考，不再把它们与 Multica、Linear、Taskade、Asana 当成同一类产品直接横比。" },
+      { title: "代表性产品与框架一览", body: "先列协作产品，再列开发框架，避免把项目管理产品和 Agent 库当作同一种竞品。价格/套餐随时间变化，表中只说明官方公开的计费形态，不把不稳定的具体单价写死；落地前应再核对链接中的最新套餐。", table: { headers: ["工具", "主要协作方式", "开放与商业边界", "更适合观察什么"], rows: [
+        ["Multica", "人和 Agent 共用 Workspace / Project / Issue；Agent 被指派后由连接 Runtime 领取 Run，在本地编码工具执行，结果与日志回到 Issue", "Source-available、可自托管；托管云/商用服务及许可证附加条款需按官方说明核对", "Agent 作为任务参与者的队列、运行记录、接管与 review gate"],
+        ["Linear + Agents", "围绕团队 Issue；保留人类负责人并委派 Agent，评论、项目和活动历史保持在工作现场", "Linear 是商业 SaaS；官方文档列出 Business / Enterprise 的 Issue 委派能力；第三方 Agent 另按集成授权", "传统项目管理如何追踪 Agent 委派而不丢责任人"],
+        ["Taskade AI Teams", "通用项目聊天中的多个 Agent 协作，可自动/手动选人，也可把 AI Team 直接指派给任务", "商业云产品，AI 能力按当前订阅、额度和功能计划提供；官方帮助中心说明操作方式", "Agent 团队、项目上下文与任务输出回流"],
+        ["Asana AI Teammates", "Agent 进入目标/项目/任务与请求处理流程，准备工作并交由成员审批", "商业 SaaS；Client Management 等能力有单独订阅边界，采购前核对当前套餐", "跨团队 Work Graph、流程路由和 human-in-the-loop"],
+        ["GitHub Copilot cloud agent", "从 Issue 或提示启动云端编码任务，按仓库工作，生成分支/PR，成员 review、反馈、合并", "GitHub 平台闭源托管；官方文档标为付费 Copilot 计划可用，消耗按计划/配额管理", "成熟的人机交接、仓库权限、PR 审查和任务入口"],
+        ["Cursor Cloud Agents", "每个 Agent 运行在独立云 VM，克隆仓库、执行任务、附日志/截图/PR；团队可查看和接手", "产品闭源；需付费计划，按计划额度及用量计费，具体以当前官方定价页为准", "隔离运行环境、并行任务、凭据与网络控制"],
+        ["OpenHands", "开源 Agent SDK / Server / Canvas 可运行开发会话；托管 Cloud 增加团队、分享、RBAC 与集成", "核心代码 MIT；Cloud/企业托管有商业功能与许可边界，不能把企业目录一概视为 MIT", "开源运行时如何与商业多用户控制面拆层"],
+        ["LangGraph", "用有状态图表达节点、分支、并行与人工介入；checkpoint 恢复 thread/run", "开源框架 MIT；LangSmith 平台提供团队协作、部署及按席位/用量计费服务", "状态快照、暂停恢复、版本历史与共享存储边界"],
+        ["CrewAI", "以 Agent、Task、Crew 组织角色协作；Flow 用事件/状态驱动较长业务流程", "开源框架；CrewAI AMP 提供托管部署、观测与治理，基础执行额度/企业套餐规则以官方当前页面为准", "任务依赖、角色分工与 Flow 状态管理"],
+        ["Microsoft AutoGen", "AgentChat 用会话/团队模式协作，Core 提供消息、事件和 runtime；支持人参与和工具扩展", "开源 MIT；当前仓库已标注 maintenance mode，新项目官方建议 Microsoft Agent Framework", "消息路由、handoff、可插拔 runtime；也观察其维护状态治理"],
+        ["MetaGPT", "用产品经理、架构师、工程师等角色及 SOP 把需求拆成软件交付物", "开源 MIT；模型 API、运行资源另计，另有商业产品 MGX", "把团队 SOP 显式化为可复用角色、消息与产物"],
+      ] } },
+      { title: "五个开源仓库：代码到底解决了什么", body: "本地已分别克隆 LangGraph、CrewAI、AutoGen、MetaGPT 和 OpenHands software-agent-sdk 到本项目 research/muldo-agent-collaboration/repos/ 的独立子目录，便于逐个追踪源码。初步阅读重点是其运行时/状态、任务或消息路由和恢复机制。它们是可运行的框架源码，不是完整的团队 SaaS；不会在此声称源码中存在其并未实现的团队账单或 SaaS 租户模块。", table: { headers: ["仓库（许可）", "源码里的核心协作机制", "多人/项目层缺口或可借鉴点"], rows: [
+        ["LangGraph（MIT）", "StateGraph 把工作拆成节点和边；共享 State 在节点间传递，checkpointer 按 thread 保存 checkpoint / writes，支持中断、恢复和时间旅行；Store 承载跨 thread 的应用数据。", "thread/checkpoint 不等于组织成员权限；租户、RBAC、项目列表与额度需上层应用实现。适合借鉴可恢复执行与状态快照。"],
+        ["CrewAI（MIT）", "Agent 描述角色/目标/工具，Task 描述工作和依赖，Crew 选择顺序/层级过程；Flow 以事件、状态和监听器编排更长工作流。", "角色是 Agent 的职责设定，不是企业用户角色或访问控制。共享协作看 Flow state 和 task 输出；租户、账单和审批由平台层负责。"],
+        ["AutoGen（MIT）", "Core 以消息、事件和 runtime 构成基础；AgentChat 提供对话式团队和 handoff 模式；组件边界允许模型、工具和执行器扩展。", "对话协作很灵活，但真实项目任务状态/资源权限/成本台账仍要系统层维护。注意官方仓库现为 maintenance mode。"],
+        ["MetaGPT（MIT）", "Role + Action + Message / Environment 形成团队式 SOP；角色把需求转成 PRD、设计、任务和代码等工件，消息发布订阅支持角色间交接。", "“模拟公司”是编排范式，不是多人工作区。交付物和 SOP 值得借鉴；并发冲突、真实团队权限和调用预算要另建。"],
+        ["OpenHands SDK（MIT）", "Conversation/事件流记录 Agent、用户和工具事件；Agent Server 暴露会话执行接口，workspace/runtime 隔离执行环境，工具调用结果继续进入事件流。", "开源 SDK 与 Canvas/Cloud/Enterprise 是不同边界；多用户分享、RBAC、Slack/Jira 等在商业托管层出现。适合研究事件溯源与执行环境隔离。"],
+      ] } },
+      { title: "源码阅读结论：协作状态不能只藏在聊天记录里", body: "五个仓库的共同思路，是把“下一步谁做什么”变成可执行结构：图节点/边、Task/Flow、消息/handoff、角色 Action 或 Conversation event。对产品而言，聊天适合讨论；项目状态则应有独立对象和生命周期。建议 MulDo 的最小核心对象为 Organization → Project → Task → Run → Artifact：任务保存目标、负责人、协作者、验收标准和版本；Run 保存输入快照、执行者 Agent、工具调用与费用；Artifact 保存结果、来源和审查状态。" , code: `Project(id, tenantId, members, policyVersion)\nTask(id, projectId, owner, assignees, status, dependsOn, acceptance)\nRun(id, taskId, actorId, inputSnapshot, model, status, usage, idempotencyKey)\nArtifact(id, taskId, runId, version, sourceRefs, reviewStatus)\n\nqueued -> running -> waiting_approval -> completed | failed | cancelled` },
+      { title: "积分、任务流转和预算：不要让 Agent 自己报账", body: "多数开源编排框架并不实现 SaaS 积分扣费。商业产品通常在服务端的用量/计费层做授权和记账：先校验组织余额、计划额度、模型与工具预算，再创建 Run；执行期间记录模型 token、工具调用、运行时长及外部服务费用；完成后按真实账单结算或释放预留额度。幂等键避免重试重复扣费；失败任务应区分已发生费用与未发生费用，不应简单全额退款。预算接近上限时可暂停、降级模型或请求管理员审批。" , cards: [
+        { label: "建议的扣费时点", body: "创建 Run 时预占预算 / 并发额度；每个模型或工具步骤记录 usage ledger；结束时对账，多退少补。账单记录绑定 tenant、project、task、run、model/tool、价格版本和幂等键。" },
+        { label: "任务状态与积分分离", body: "Task 描述业务是否完成；Run 描述一次执行；Ledger 描述费用变化。重试是新 Run，不能覆盖旧 Run，也不能因为任务状态回到 queued 就抹掉已发生用量。" },
+        { label: "可审计和可申诉", body: "向成员展示预计花费、实际花费、消耗明细、失败原因与退款/补偿记录；组织管理员设置项目预算、成员上限、模型白名单和审批门槛。" },
+      ] },
+      { title: "给 MulDo 的竞品判断", body: "可借鉴的是：GitHub/Cursor 的任务→隔离执行→可审查交付；LangGraph 的可恢复状态；CrewAI/MetaGPT 的角色与流程表达；AutoGen 的消息协作；OpenHands 的事件可追溯与 runtime 边界。不能照搬的是把 Agent 群聊当项目管理、把 Agent role 当成员权限、把模型 token 估算当最终账单。MulDo 的产品差异点应落在‘团队共同管理工作事实，同时可把任务安全委派给 Agent，并能审查、追踪成本和接管’。" },
+    ],
+    comparison: [
+      { approach: "人发起多个 Agent", model: "一个用户 + 多个并行/串行 Run", strengths: "效率高，控制面简单", tradeoffs: "共享上下文与合并结果仍需用户负责" },
+      { approach: "多人协同项目", model: "多个用户共享 Project / Task / Artifact", strengths: "责任、状态、权限可见", tradeoffs: "并发编辑、通知、权限和审计复杂" },
+      { approach: "多人 + 多 Agent", model: "成员、Agent 都是可授权参与者；任务与运行分离", strengths: "最接近完整 Agent 团队工作台", tradeoffs: "权限、上下文隔离、预算、冲突与可解释性要求最高" },
+    ],
+    comparisonTitle: "协作形态对照 / THREE PATTERNS",
+    sources: [
+      { label: "Multica 官方文档：Workspace 包含的项目、Issue、成员、Agent 与共享上下文", href: "https://multica.ai/docs/workspaces" },
+      { label: "Multica 官方文档：Issue 指派、Run 队列、Runtime 领取与结果回写", href: "https://multica.ai/docs/how-multica-works" },
+      { label: "Multica 官方 GitHub：执行日志、review gate、角色、权限与许可证说明", href: "https://github.com/multica-ai/multica" },
+      { label: "Linear 官方文档：Agents in Linear（指派、@mention、团队权限）", href: "https://linear.app/docs/agents-in-linear" },
+      { label: "Linear 官方文档：Assign and delegate issues（人类负责人、历史与计划边界）", href: "https://linear.app/docs/assigning-issues" },
+      { label: "Taskade 官方帮助：AI Teams、项目上下文和任务分派", href: "https://help.taskade.com/en/articles/9586050-ai-teams" },
+      { label: "Asana 官方产品说明：AI Teammates、AI Studio、Work Graph", href: "https://asana.com/product/ai" },
+      { label: "Asana 官方帮助：Client Management 中 AI Teammate 的审批与任务交接", href: "https://help.asana.com/s/article/getting-started-with-ai-teammates-in-client-management" },
+      { label: "LangGraph 官方持久化文档：checkpointer 与 store", href: "https://docs.langchain.com/oss/python/langgraph/persistence" },
+      { label: "LangGraph 源码与 MIT 许可", href: "https://github.com/langchain-ai/langgraph" },
+      { label: "LangSmith 官方套餐、席位与用量计费", href: "https://www.langchain.com/pricing" },
+      { label: "CrewAI 官方文档：Flows", href: "https://docs.crewai.com/en/concepts/flows" },
+      { label: "CrewAI 源码", href: "https://github.com/crewAIInc/crewAI" },
+      { label: "CrewAI 官方套餐与企业治理能力", href: "https://www.crewai.com/pricing" },
+      { label: "Microsoft AutoGen 官方仓库（含维护状态说明）", href: "https://github.com/microsoft/autogen" },
+      { label: "MetaGPT 官方仓库与 SOP 协作范式", href: "https://github.com/FoundationAgents/MetaGPT" },
+      { label: "OpenHands 官方仓库：开源与 Cloud / Enterprise 边界", href: "https://github.com/OpenHands/OpenHands" },
+      { label: "OpenHands SDK 源码", href: "https://github.com/OpenHands/software-agent-sdk" },
+      { label: "OpenHands 官方套餐与多用户/RBAC边界", href: "https://www.openhands.dev/pricing/" },
+      { label: "GitHub Docs：Copilot cloud agent 从 Issue 到 PR", href: "https://docs.github.com/en/copilot/get-started/quickstart-for-using-github-copilot-on-github-com" },
+      { label: "Cursor Docs：Cloud Agents 的隔离 VM、仓库和团队运行", href: "https://cursor.com/docs/cloud-agent" },
+    ],
+  },
+  "muldo-opportunity-sectors": {
+    kicker: "MULDO RESEARCH / COLLABORATION OPPORTUNITY MAP",
+    title: "多人协作 Agent：三种协作形态与产品机会",
+    summary: "先区分个人多 Agent、多人协作和人机混合团队，再从工作流的任务边界、交付物和责任链寻找可落地赛道。",
+    tags: ["赛道研究", "人机协作", "项目管理", "产品策略"],
+    sections: [
+      { title: "先分清三种常被混为一谈的协作", body: "第一种是一个人邀请多个 Agent 在自己的工作台协作：核心价值是个人的并行研究、分工执行和结果汇总，本质上是多 Agent 助手。第二种是现实中的多个同事围绕项目协作：核心是目标、任务、责任、文件、审批和进度透明，Agent 可以没有，也可以只做轻辅助。第三种才是多个同事与多个 Agent 共同推进项目：人负责目标、判断、授权和验收，Agent 负责被委派的可执行工作；系统要同时处理身份权限、共享上下文、执行隔离、交付审查和成本治理。" },
+      { title: "机会不在‘多几个 Agent’，而在工作闭环", body: "Agent 数量不是价值指标。适合切入的工作通常有明确输入、可拆任务、可检查产物、可追踪责任与可接受失败成本。先找到一个高频且有人工交接损耗的窄流程，让 Agent 产物进入团队现有工具，再扩展到跨职能协作。若产物无法验收、权限边界说不清或错误代价很高，就不应一开始追求全自动。" },
+      { title: "赛道机会地图", table: { headers: ["赛道", "典型任务", "为什么适合 Agent 协作", "风险 / 切入方式"], rows: [
+        ["软件研发与 IT 运维", "Issue 拆分、代码修改、测试、文档、PR 审查、故障复盘", "已有仓库/工单/测试等结构化对象，变更可 diff、可回滚，结果容易人工审查", "代码权限和供应链风险高；从低风险 issue、测试与文档起步，隔离环境并以 PR 交付"],
+        ["市场与内容运营", "选题调研、渠道适配、素材生成、审核、排期、效果复盘", "从 brief 到多渠道内容有明确交接与版本链，可并行生成后由人审", "品牌事实、版权、平台政策；保留来源和审稿人，未经审批不自动发布"],
+        ["销售与客户成功", "线索研究、会前准备、会议纪要、跟进邮件、CRM 更新", "工作跨多个角色和系统，Agent 可减少信息搬运并生成待确认更新", "客户数据敏感，写 CRM/外发消息需逐项授权，记录来源与修改前后值"],
+        ["产品与设计团队", "需求分析、竞品整理、原型文案、设计评审、测试用例", "产物有文档/原型/问题单，能够让产品、设计、研发共同评论并验收", "模糊需求不能被虚构确定性；记录假设、来源和决策责任人"],
+        ["财务 / 法务 / 人力等知识流程", "资料归纳、合同差异、政策问答、入职材料检查", "知识密集、步骤重复且常需要复核，适合受控辅助", "高影响决策需要专业人员最终确认；权限、保留周期与证据链优先"],
+        ["教育与培训", "课程资料改写、教学活动设计、测验生成、课后反馈整理", "多角色（教师、教研、运营）围绕课程资产协作，产物易复用", "事实准确和适龄性需教师把关，区分建议与已验证教学效果"],
+        ["中小企业项目交付 / 咨询", "客户需求拆解、材料搜集、方案、交付件和复盘", "项目型工作天然按阶段、责任人和交付物推进，Agent 可承担明确子任务", "客户隔离、数据边界和定制成本；从标准化模板化交付切入"],
+      ] } },
+      { title: "三种形态的产品能力递进", body: "个人多 Agent 工作台先证明任务分解、并行运行和结果合并能省下时间；多人协作先建立可靠的项目对象、权限和活动记录；人 + Agent 团队则把 Agent 纳入与人一致的任务生命周期，但 Agent 的权限、预算和写操作必须受限。推荐按能力逐级演进，不建议一上来做“全员 Agent 社交网络”。", table: { headers: ["形态", "核心对象", "必须解决", "合理的首版"], rows: [
+        ["1. 一人 × 多 Agent", "个人工作区、Agent、Run、结果", "并行隔离、上下文分配、结果去重与汇总", "一个任务拆成 2–3 个有边界子任务，结果由用户合并"],
+        ["2. 多人 × 项目", "组织、成员、项目、任务、文档", "角色权限、责任归属、版本冲突、通知与审计", "团队任务板 + 文件/评论 + 明确 owner 和验收条件"],
+        ["3. 多人 × 多 Agent", "成员、Agent 身份、任务、Run、工具、Artifact、预算", "代理授权、共享/私有上下文、审批、计费、并发与可恢复", "人在项目中创建任务，选择 Agent 能力，审批执行范围，review 产物后合入"],
+      ] } },
+      { title: "推荐 MulDo 的切入策略", body: "以第三种形态为长期定位，但先从一个可控楔子开始：团队项目任务中，可把清晰子任务委派给 Agent，Agent 以独立 Run 执行并产出可审查 Artifact；人可评论、补充上下文、暂停或接管。首版不必实现实时多人编辑器，也不必让 Agent 自由互聊。先做好任务状态、上下文引用、运行记录、权限和交付审查，再验证团队是否愿意把真实工作交给它。", cards: [
+        { label: "P0：可信交付", body: "任务输入快照、Agent 能力声明、最小权限工具集、隔离执行、运行日志、产物版本、人工验收与可重试状态。" },
+        { label: "P1：团队协同", body: "成员/团队角色、任务 owner 与协作者、评论/活动流、项目知识引用、Agent 运行可见性、通知和接管。" },
+        { label: "P2：规模化治理", body: "预算与额度、模型/工具策略、组织审计、私有部署/数据保留策略、跨项目复用模板和指标。" },
+      ] },
+      { title: "关键产品指标：衡量完成，而非热闹", body: "活跃 Agent 数、对话条数或 token 数容易制造虚假繁荣。更接近价值的指标是：委派任务的验收通过率、从创建到交付的周期、人工返工量、成员接管率、失败重试成功率、每个验收产物的总成本、按时交付率，以及用户是否愿意在下一个项目再次委派。团队场景还应观察任务状态是否长期无人认领、审批是否成为瓶颈、多人是否理解 Agent 正在访问和修改什么。" },
+      { title: "访谈验证问题", body: "先找正在做真实项目的人，而不是问“你会不会用 AI”。让对方回忆最近一个项目：哪些任务反复转手？上下文在哪里丢？哪个交付物最耗时但容易核对？谁能批准 Agent 访问资料或调用工具？失败后如何恢复？如果 Agent 省下 30 分钟但需要 40 分钟校验，还值得吗？愿意为节省的时间、可控的交付、还是组织治理付费？用真实流程和现有工具验证痛点，再决定先做个人工作台、团队项目管理还是二者之间的桥接层。" },
+    ],
+    sources: [
+      { label: "Anthropic Engineering：多 Agent 研究系统的任务分解与协调经验", href: "https://www.anthropic.com/engineering/multi-agent-research-system" },
+      { label: "Google Developers：A2A 跨 Agent 互操作协议", href: "https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/" },
+      { label: "GitHub Docs：从 Issue 委派到 PR 人工审查", href: "https://docs.github.com/en/copilot/get-started/quickstart-for-using-github-copilot-on-github-com" },
+      { label: "Cursor Docs：云 Agent 的团队共享与隔离环境", href: "https://cursor.com/docs/cloud-agent" },
+      { label: "OpenHands：社区版与团队/企业托管能力边界", href: "https://github.com/OpenHands/OpenHands" },
+    ],
+  },
   ...(import.meta.env.DEV ? { "ppt-structured-interactive": {
     kicker: "AI PPT / INTERACTIVE GENERATION",
     title: "互动课件如何从生成结果变成可操作的网页？",
@@ -1012,6 +1109,7 @@ function AgentExecutionFlow() {
 }
 
 function folderForSelection(selection: KnowledgeSelection): FolderId {
+  if (selection.startsWith("muldo-")) return "muldo";
   if (selection.startsWith("editor")) return "editor";
   if (selection.startsWith("ppt-")) return "ppt";
   if (selection === "experience" || selection.startsWith("uiux-") || selection.startsWith("motion-")) return "experience";
@@ -1034,6 +1132,7 @@ export function KnowledgeDirectory({ activeId, onSelect }: { activeId: string; o
     if (folderId === "agent") onSelect("agent-edit-message");
     if (folderId === "ppt") onSelect("ppt-draft");
     if (folderId === "editor") onSelect("editor-canvas");
+    if (folderId === "muldo") onSelect("muldo-competitor-landscape");
   };
 
   return (
@@ -1072,6 +1171,14 @@ export function KnowledgeDirectory({ activeId, onSelect }: { activeId: string; o
                 {folder.id === "editor" ? editorArticles.map((entry, index) => <button className={`knowledge-entry cursor-target${activeId === entry.id ? " is-selected" : ""}`} key={entry.id} onClick={() => onSelect(entry.id)}>
                   <span>{String(index + 1).padStart(2, "0")}</span><strong>{entry.title}</strong><em>↗</em>
                 </button>) : null}
+                {folder.id === "muldo" ? <>
+                  <button className={`knowledge-entry cursor-target${activeId === "muldo-competitor-landscape" ? " is-selected" : ""}`} onClick={() => onSelect("muldo-competitor-landscape")}>
+                    <span>01</span><strong>AI 协作工具与开源实现</strong><em>↗</em>
+                  </button>
+                  <button className={`knowledge-entry cursor-target${activeId === "muldo-opportunity-sectors" ? " is-selected" : ""}`} onClick={() => onSelect("muldo-opportunity-sectors")}>
+                    <span>02</span><strong>多人协作 Agent 的赛道机会</strong><em>↗</em>
+                  </button>
+                </> : null}
               </div> : null}
             </section>
           );
@@ -1124,7 +1231,7 @@ function ProjectExperienceArticle({ article }: { article: ExperienceArticleData 
         {section.checks?.length ? <ul className="knowledge-check-grid">{section.checks.map((check) => <li key={check}>{check}</li>)}</ul> : null}
       </section>)}
       {article.comparison ? <section className="knowledge-article-section knowledge-editor-comparison">
-        <span>技术路线对照 / 2D EDITOR</span>
+        <span>{article.comparisonTitle ?? "技术路线对照 / 2D EDITOR"}</span>
         <KnowledgeTableScroller label="编辑器技术路线表格横向滚动条">
           <table>
             <thead><tr><th>路线</th><th>核心模型</th><th>适合点</th><th>主要代价</th></tr></thead>

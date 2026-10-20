@@ -1646,6 +1646,12 @@ h1 {
 .project-case-section { padding: 20px 0; border-bottom: 1px solid var(--border-soft); }
 .project-case-section > span { color: var(--blue); font-size: 12px; }
 .project-case-section > p { max-width: 70ch; margin: 10px 0 0; font-size: 14px; line-height: 1.8; }
+.project-case-knowledge-links { display: grid; gap: 8px; margin-top: 14px; }
+.project-case-knowledge-links a { display: grid; grid-template-columns: 30px minmax(0, 1fr) 18px; align-items: center; gap: 8px; padding: 11px 12px; border: 1px solid var(--border-soft); color: var(--text); text-decoration: none; transition: border-color .18s ease, color .18s ease, background .18s ease; }
+.project-case-knowledge-links a:hover { border-color: var(--blue); background: var(--muted-2); color: var(--blue); }
+.project-case-knowledge-links span { color: var(--blue); font: 12px "Departure Mono", monospace; }
+.project-case-knowledge-links strong { font-size: 13px; font-weight: 500; }
+.project-case-knowledge-links em { color: var(--subtle); font-style: normal; text-align: right; }
 .project-case-flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 18px; margin-top: 14px; }
 .project-case-flow-step { position: relative; display: grid; min-height: 62px; align-items: center; padding: 10px 12px; border: 1px solid var(--border-soft); background: color-mix(in srgb, var(--blue) 5%, var(--bg)); }
 .project-case-flow-step strong { font-size: 13px; font-weight: 500; line-height: 1.5; }

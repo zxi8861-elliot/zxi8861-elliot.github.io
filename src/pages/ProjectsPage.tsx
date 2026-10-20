@@ -155,6 +155,11 @@ function ProjectCase({ project, onBack }: { project: Project; onBack: () => void
               <section className="project-case-section" key={section.label}>
                 <span>{String(index + 1).padStart(2, "0")} / {section.label}</span>
                 {section.text && <p>{section.text}</p>}
+                {section.knowledgeLinks && <div className="project-case-knowledge-links">
+                  {section.knowledgeLinks.map((link, linkIndex) => <a key={link.id} href={`#notes?item=${encodeURIComponent(link.id)}`}>
+                    <span>0{linkIndex + 1}</span><strong>{link.title}</strong><em aria-hidden="true">↗</em>
+                  </a>)}
+                </div>}
                 {section.flow && <div className="project-case-flow" aria-label={section.flow.join(" 到 ")}>
                   {section.flow.map((step, stepIndex) => <div className="project-case-flow-step" key={step}>
                     <strong>{step}</strong>{stepIndex < section.flow!.length - 1 && <span aria-hidden="true">→</span>}
@@ -285,7 +290,7 @@ export function ProjectsPage() {
               onPointerDown={beginPanelResize} onPointerMove={movePanelResize} onPointerUp={endPanelResize} onPointerCancel={endPanelResize}
               onKeyDown={(event) => { if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); setDirectoryWidth((width) => { const nextWidth = Math.max(260, Math.min(maxNotesDirectoryWidth(), width + (event.key === "ArrowRight" ? 24 : -24))); localStorage.setItem("notes-directory-width", String(nextWidth)); return nextWidth; }); } }} />
             <section className={`preview-panel notes-preview-panel${view.knowledgeId.startsWith("ppt-") ? "" : " notes-article-panel"}`}>
-            <div className="panel-toolbar"><span>// {view.knowledgeId.startsWith("ppt-") ? "搭建中" : view.knowledgeId.startsWith("editor-") ? "编辑器产品与技术" : view.knowledgeId.startsWith("uiux-") || view.knowledgeId.startsWith("motion-") ? "UI/UX 与前端体验" : "AI Agent 实战难点"}</span><span>KNOWLEDGE / 02</span></div>
+            <div className="panel-toolbar"><span>// {view.knowledgeId.startsWith("ppt-") ? "搭建中" : view.knowledgeId.startsWith("editor-") ? "编辑器产品与技术" : view.knowledgeId.startsWith("muldo-") ? "MulDo / Agent 协作研究" : view.knowledgeId.startsWith("uiux-") || view.knowledgeId.startsWith("motion-") ? "UI/UX 与前端体验" : "AI Agent 实战难点"}</span><span>KNOWLEDGE / 02</span></div>
             <KnowledgeReader activeId={view.knowledgeId} />
             </section>
           </> : <section className="preview-panel lucky-snake-panel">
